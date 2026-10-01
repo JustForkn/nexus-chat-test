@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Games · Global Chat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       RESET & BASE
+       ============================================================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      min-height: 100%;
+    }
+
+    body {
+      background: #0b0814;
+      font-family: 'Press Start 2P', 'Courier New', monospace;
+      color: #f0eaff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, #ffffff30 100%, transparent),
+        radial-gradient(1px 1px at 30% 70%, #ffffff20 100%, transparent),
+        radial-gradient(2px 2px at 50% 30%, #ffffff15 100%, transparent),
+        radial-gradient(1px 1px at 70% 80%, #ffffff25 100%, transparent),
+        radial-gradient(2px 2px at 90% 10%, #ffffff20 100%, transparent),
+        radial-gradient(1px 1px at 15% 90%, #ffffff30 100%, transparent),
+        radial-gradient(2px 2px at 85% 60%, #ffffff15 100%, transparent),
+        linear-gradient(145deg, #0b0814 0%, #1b1030 100%);
+    }
+
+    .app {
+      max-width: 1000px;
+      width: 100%;
+      background: #140c24;
+      border: 3px solid #c34eff;
+      border-radius: 20px;
+      box-shadow: 0 0 30px #c34eff66, 0 0 60px #7a2eff33, inset 0 0 40px #2a1a4a;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #ff2eff, #c34eff, #7a2eff, #ff2eff);
+      background-size: 300% 100%;
+      animation: borderGlow 3s linear infinite;
+    }
+
+    @keyframes borderGlow {
+      0% { background-position: 0% 0; }
+      100% { background-position: 300% 0; }
+    }
+
+    /* ============================================================
+       HEADER
+       ============================================================ */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 2px dashed #3d2a5a;
+      padding-bottom: 14px;
+    }
+
+    .header h1 {
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #f06eff;
+      text-shadow: 0 0 8px #c34eff, 0 0 20px #7a2eff, 2px 2px 0 #2a0a4a;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header h1 span {
+      font-size: 0.55rem;
+      background: #2a1a4a;
+      padding: 6px 12px;
+      border-radius: 40px;
+      border: 1px solid #c34eff;
+      color: #e0b0ff;
+      text-shadow: none;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .online-badge {
+      background: #0b0814;
+      border: 2px solid #7a2eff;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-size: 0.6rem;
+      color: #c9a0ff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: inset 0 0 10px #2a1a4a;
+    }
+
+    .online-dot {
+      width: 10px;
+      height: 10px;
+      background: #4aff8a;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #4aff8a;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* ============================================================
+       CONNECTION STATUS BANNER
+       ============================================================ */
+    .conn-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 0.55rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: 2px solid;
+      transition: all 0.3s;
+    }
+
+    .conn-banner.connected {
+      background: #0a2a1a;
+      border-color: #4aff8a;
+      color: #4aff8a;
+      box-shadow: 0 0 16px #4aff8a44, inset 0 0 12px #4aff8a22;
+    }
+
+    .conn-banner.connecting {
+      background: #2a2a0a;
+      border-color: #ffdd4a;
+      color: #ffdd4a;
+      box-shadow: 0 0 16px #ffdd4a44, inset 0 0 12px #ffdd4a22;
+    }
+
+    .conn-banner.disconnected {
+      background: #2a0a0a;
+      border-color: #ff6b9d;
+      color: #ff6b9d;
+      box-shadow: 0 0 16px #ff6b9d44, inset 0 0 12px #ff6b9d22;
+    }
+
+    .conn-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
+      animation: pulse 1.5s infinite;
+    }
+
+    /* ============================================================
+       SETUP PANEL
+       ============================================================ */
+    .setup-panel {
+      background: #1c1230;
+      border: 2px solid #3d2a5a;
+      border-radius: 16px;
+      padding: 18px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      align-items: flex-end;
+      box-shadow: inset 0 0 20px #0b0814;
+      transition: border-color 0.2s;
+    }
+
+    .setup-panel:hover {
+      border-color: #7a2eff;
+    }
+
+    .field-group {
+      flex: 1 1 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-group label {
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #b090e0;
+      padding-left: 4px;
+      text-shadow: 0 0 6px #7a2eff66;
+    }
+
+    .field-group input {
+      background: #0b0814;
+      border: 2px solid #3d2a5a;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-family: 'Press Start 2P', 'Courier New', monospace;
+      font-size: 0.7rem;
+      color: #f0eaff;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    .field-group input:focus {
+      border-color: #c34eff;
+      box-shadow: 0 0 12px #c34eff66, inset 0 0 8px #2a1a4a;
+    }
+
+    .field-group input::placeholder {
+      color: #5a4a7a;
+      font-size: 0.6rem;
+    }
+
+    .field-group input:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      border-color: #2a1a4a;
+    }
+
+    .pfp-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pfp-preview {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #0b0814;
+      border: 3px solid #7a2eff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #b090e0;
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: 0 0 16px #7a2eff66;
+      transition: box-shadow 0.2s;
+    }
+
+    .pfp-preview:hover {
+      box-shadow: 0 0 24px #c34eff;
+    }
+
+    .pfp-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .pfp-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* ============================================================
+       BUTTONS
+       ============================================================ */
+    .btn {
+      background: #2a1a4a;
+      border: 2px solid #7a2eff;
+      border-radius: 12px;
+      padding: 10px 18px;
+      font-family: 'Press Start 2P', 'Courier New', monospace;
+      font-size: 0.55rem;
+      color: #e0b0ff;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+      text-shadow: 0 0 6px #c34eff66;
+      box-shadow: 0 0 10px #7a2eff33, inset 0 0 10px #0b0814;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: #3d2a5a;
+      border-color: #c34eff;
+      color: #ffffff;
+      box-shadow: 0 0 20px #c34eff88, inset 0 0 14px #2a1a4a;
+      transform: translateY(-1px);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow: 0 0 8px #c34eff;
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: #3d2a5a;
+      color: #7a6a9a;
+      box-shadow: none;
+      filter: grayscale(0.6);
+    }
+
+    .btn-primary {
+      background: #7a2eff;
+      border-color: #c34eff;
+      color: #ffffff;
+      padding: 12px 28px;
+      font-size: 0.65rem;
+      box-shadow: 0 0 20px #c34eff88, inset 0 0 16px #2a1a4a;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #9a4eff;
+      border-color: #f06eff;
+      box-shadow: 0 0 30px #f06effaa, inset 0 0 20px #3d2a5a;
+    }
+
+    .btn-icon {
+      padding: 8px 12px;
+      font-size: 0.7rem;
+      background: transparent;
+      border: 2px solid #3d2a5a;
+      border-radius: 10px;
+      color: #b090e0;
+    }
+
+    .btn-icon:hover:not(:disabled) {
+      border-color: #c34eff;
+      background: #2a1a4a;
+    }
+
+    /* ============================================================
+       ERROR MESSAGE
+       ============================================================ */
+    .error-msg {
+      font-size: 0.5rem;
+      color: #ff6b9d;
+      min-height: 1.2em;
+      padding-left: 6px;
+      text-shadow: 0 0 8px #ff2eff66;
+      letter-spacing: 0.5px;
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       CHAT CONTAINER
+       ============================================================ */
+    .chat-container {
+      background: #0b0814;
+      border: 2px solid #3d2a5a;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      height: 440px;
+      overflow: hidden;
+      box-shadow: inset 0 0 30px #00000088, 0 0 20px #7a2eff33;
+    }
+
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      background: #1c1230;
+      border-bottom: 2px solid #3d2a5a;
+    }
+
+    .chat-header h2 {
+      font-size: 0.7rem;
+      color: #f06eff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px #c34eff88;
+    }
+
+    .global-badge {
+      background: #2a1a4a;
+      border: 1px solid #c34eff;
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-size: 0.5rem;
+      color: #e0b0ff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 10px #c34eff44;
+    }
+
+    .online-count {
+      font-size: 0.55rem;
+      color: #b090e0;
+      background: #0b0814;
+      padding: 6px 14px;
+      border-radius: 40px;
+      border: 1px solid #3d2a5a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ============================================================
+       MESSAGES AREA
+       ============================================================ */
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #0b0814;
+      scroll-behavior: smooth;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, #ffffff10 100%, transparent),
+        radial-gradient(1px 1px at 90% 80%, #ffffff10 100%, transparent),
+        radial-gradient(1px 1px at 50% 50%, #ffffff08 100%, transparent);
+    }
+
+    .messages::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .messages::-webkit-scrollbar-track {
+      background: #1c1230;
+      border-radius: 8px;
+    }
+
+    .messages::-webkit-scrollbar-thumb {
+      background: #7a2eff;
+      border-radius: 8px;
+      border: 1px solid #c34eff;
+    }
+
+    .messages::-webkit-scrollbar-thumb:hover {
+      background: #9a4eff;
+    }
+
+    /* ============================================================
+       MESSAGE BUBBLES
+       ============================================================ */
+    .message {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      animation: msgFade 0.25s ease;
+    }
+
+    @keyframes msgFade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg-pfp {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #1c1230;
+      border: 2px solid #7a2eff;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #b090e0;
+      flex-shrink: 0;
+      box-shadow: 0 0 10px #7a2eff44;
+    }
+
+    .msg-pfp img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .msg-content {
+      background: #1c1230;
+      border: 2px solid #3d2a5a;
+      border-radius: 16px 16px 16px 4px;
+      padding: 12px 16px;
+      max-width: 80%;
+      box-shadow: 0 0 12px #7a2eff22, inset 0 0 12px #0b0814;
+      transition: border-color 0.15s;
+    }
+
+    .msg-content:hover {
+      border-color: #7a2eff;
+    }
+
+    .msg-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .msg-username {
+      font-weight: bold;
+      font-size: 0.6rem;
+      color: #f06eff;
+      text-shadow: 0 0 8px #c34eff88;
+      letter-spacing: 0.5px;
+    }
+
+    .msg-time {
+      font-size: 0.45rem;
+      color: #6a5a8a;
+    }
+
+    .msg-text {
+      color: #e0d0ff;
+      font-size: 0.6rem;
+      line-height: 1.8;
+      word-break: break-word;
+      letter-spacing: 0.3px;
+    }
+
+    .system-msg {
+      text-align: center;
+      font-size: 0.55rem;
+      color: #7a6a9a;
+      padding: 10px 0;
+      font-style: italic;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px #7a2eff33;
+    }
+
+    /* ============================================================
+       CHAT INPUT AREA
+       ============================================================ */
+    .chat-input-area {
+      display: flex;
+      gap: 10px;
+      padding: 14px 18px;
+      background: #1c1230;
+      border-top: 2px solid #3d2a5a;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      background: #0b0814;
+      border: 2px solid #3d2a5a;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-family: 'Press Start 2P', 'Courier New', monospace;
+      font-size: 0.6rem;
+      color: #f0eaff;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .chat-input-area input:focus {
+      border-color: #c34eff;
+      box-shadow: 0 0 16px #c34eff66, inset 0 0 10px #2a1a4a;
+    }
+
+    .chat-input-area input:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .chat-input-area input::placeholder {
+      color: #5a4a7a;
+      font-size: 0.55rem;
+    }
+
+    .chat-input-area button {
+      background: #7a2eff;
+      border: 2px solid #c34eff;
+      border-radius: 12px;
+      padding: 0 28px;
+      font-family: 'Press Start 2P', 'Courier New', monospace;
+      font-size: 0.6rem;
+      font-weight: bold;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px #c34eff88;
+      box-shadow: 0 0 16px #c34eff44, inset 0 0 12px #2a1a4a;
+    }
+
+    .chat-input-area button:hover:not(:disabled) {
+      background: #9a4eff;
+      border-color: #f06eff;
+      box-shadow: 0 0 28px #f06eff88, inset 0 0 16px #3d2a5a;
+      transform: scale(1.02);
+    }
+
+    .chat-input-area button:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    .chat-input-area button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      border-color: #3d2a5a;
+      background: #2a1a4a;
+      box-shadow: none;
+      filter: grayscale(0.7);
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 700px) {
+      .app {
+        padding: 16px;
+        border-radius: 14px;
+      }
+      .header h1 {
+        font-size: 1rem;
+      }
+      .setup-panel {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .field-group {
+        flex: 1 1 auto;
+      }
+      .chat-container {
+        height: 380px;
+      }
+      .msg-content {
+        max-width: 90%;
+      }
+      .pfp-preview {
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    @media (max-width: 450px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header h1 {
+        font-size: 0.8rem;
+      }
+      .msg-text {
+        font-size: 0.5rem;
+      }
+      .chat-input-area button {
+        padding: 0 14px;
+        font-size: 0.5rem;
+      }
+    }
+
+    #pfpFileInput {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <div class="header">
+      <h1>
+        🌌 NEXUS GAMES
+        <span>global chat · supabase</span>
+      </h1>
+      <div class="online-badge">
+        <span class="online-dot"></span>
+        <span id="onlineCount">0 online</span>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         CONNECTION STATUS
+         ============================================================ -->
+    <div class="conn-banner connecting" id="connBanner">
+      <span class="conn-dot"></span>
+      <span id="connText">connecting to global server...</span>
+    </div>
+
+    <!-- ============================================================
+         SETUP PANEL
+         ============================================================ -->
+    <div class="setup-panel">
+      <div class="field-group" style="flex: 2 1 200px;">
+        <label>⬤ username (unique)</label>
+        <input type="text" id="usernameInput" placeholder="e.g. starGazer42" maxlength="24" autocomplete="off">
+        <div class="error-msg" id="usernameError"></div>
+      </div>
+
+      <div class="field-group" style="flex: 1 1 160px;">
+        <label>⬤ profile picture</label>
+        <div class="pfp-row">
+          <div class="pfp-preview" id="pfpPreview">?</div>
+          <div class="pfp-actions">
+            <button class="btn" id="uploadPfpBtn" type="button">📁 upload</button>
+            <button class="btn btn-icon" id="removePfpBtn" type="button" title="remove">✕</button>
+          </div>
+          <input type="file" id="pfpFileInput" accept="image/*">
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <button class="btn btn-primary" id="setIdentityBtn">set identity</button>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         CHAT CONTAINER
+         ============================================================ -->
+    <div class="chat-container">
+      <div class="chat-header">
+        <h2>
+          💬 live messages
+          <span class="global-badge">global · all devices</span>
+        </h2>
+        <div class="online-count" id="chatOnlineCount">0 online</div>
+      </div>
+
+      <div class="messages" id="messagesContainer">
+        <div class="system-msg">✨ connecting to global chat...</div>
+      </div>
+
+      <div class="chat-input-area">
+        <input type="text" id="messageInput" placeholder="type a message..." maxlength="500" disabled>
+        <button id="sendMsgBtn" disabled>send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SUPABASE SDK
+       ============================================================ -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+
+  <script>
+    // ================================================================
+    // NEXUS GAMES · GLOBAL CHAT (SUPABASE EDITION)
+    // ================================================================
+    //
+    //   ⬇️⬇️⬇️  PASTE YOUR SUPABASE KEYS HERE  ⬇️⬇️⬇️
+    //
+    //   Get these from: supabase.com → your project
+    //                   → Settings → API
+    //
+    //   1. SUPABASE_URL  = "Project URL"   (https://xxxxx.supabase.co)
+    //   2. SUPABASE_KEY  = "anon public"   (the long eyJ... string)
+    //
+    //   Then save the file and open it in a browser.
+    //
+    // ================================================================
+
+    const SUPABASE_URL = 'https://nkwpvclvhmrwbofuwsqs.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_YEfvLJKOctQ50DVe8MZbbQ_Oc3_lcrA';
+
+    // ================================================================
+    // EVERYTHING BELOW IS THE CHAT LOGIC — no need to edit
+    // ================================================================
+    (function() {
+      'use strict';
+
+      // --------------------------------------------------------------
+      // DOM REFERENCES
+      // --------------------------------------------------------------
+      const connBanner = document.getElementById('connBanner');
+      const connText = document.getElementById('connText');
+      const usernameInput = document.getElementById('usernameInput');
+      const usernameError = document.getElementById('usernameError');
+      const pfpPreview = document.getElementById('pfpPreview');
+      const uploadPfpBtn = document.getElementById('uploadPfpBtn');
+      const removePfpBtn = document.getElementById('removePfpBtn');
+      const pfpFileInput = document.getElementById('pfpFileInput');
+      const setIdentityBtn = document.getElementById('setIdentityBtn');
+      const messagesContainer = document.getElementById('messagesContainer');
+      const messageInput = document.getElementById('messageInput');
+      const sendMsgBtn = document.getElementById('sendMsgBtn');
+      const onlineCountSpan = document.getElementById('onlineCount');
+      const chatOnlineCount = document.getElementById('chatOnlineCount');
+
+      // --------------------------------------------------------------
+      // CLIENT STATE
+      // --------------------------------------------------------------
+      const CLIENT_ID_KEY = 'nexus_client_id_v1';
+      let clientId = localStorage.getItem(CLIENT_ID_KEY);
+      if (!clientId) {
+        clientId = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now());
+        localStorage.setItem(CLIENT_ID_KEY, clientId);
+      }
+
+      const currentUser = {
+        username: null,
+        pfpDataUrl: null,
+        clientId: clientId
+      };
+
+      let supa = null;
+      let channel = null;
+      let connected = false;
+      let identitySet = false;
+      let heartbeatInterval = null;
+
+      let cachedMessages = [];
+      let cachedOnlineUsers = {};
+
+      // --------------------------------------------------------------
+      // CONNECTION STATUS
+      // --------------------------------------------------------------
+      function setConnectionStatus(status, text) {
+        connBanner.className = 'conn-banner ' + status;
+        connText.textContent = text;
+      }
+
+      // --------------------------------------------------------------
+      // INIT SUPABASE
+      // --------------------------------------------------------------
+      function initSupabase() {
+        if (!SUPABASE_URL || SUPABASE_URL === 'PASTE_YOUR_PROJECT_URL_HERE') {
+          setConnectionStatus('disconnected', '⚠ paste your supabase url in the html');
+          messagesContainer.innerHTML = `<div class="system-msg" style="color:#ff6b9d">⚠ Open the HTML file and paste your Supabase URL + anon key at the top of the script.</div>`;
+          return false;
+        }
+        if (!SUPABASE_KEY || SUPABASE_KEY === 'PASTE_YOUR_ANON_KEY_HERE') {
+          setConnectionStatus('disconnected', '⚠ paste your supabase anon key in the html');
+          messagesContainer.innerHTML = `<div class="system-msg" style="color:#ff6b9d">⚠ Open the HTML file and paste your Supabase URL + anon key at the top of the script.</div>`;
+          return false;
+        }
+
+        try {
+          supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            realtime: { params: { eventsPerSecond: 10 } }
+          });
+          connected = true;
+          setConnectionStatus('connecting', 'connecting to supabase...');
+          return true;
+        } catch (err) {
+          console.error('Supabase init error:', err);
+          setConnectionStatus('disconnected', 'supabase error · check keys');
+          return false;
+        }
+      }
+
+      // --------------------------------------------------------------
+      // LOAD DATA + SUBSCRIBE REALTIME
+      // --------------------------------------------------------------
+      async function loadInitialData() {
+        const { data: msgs, error: msgErr } = await supa
+          .from('messages')
+          .select('*')
+          .order('created_at', { ascending: true })
+          .limit(200);
+
+        if (msgErr) {
+          console.error('load messages error:', msgErr);
+          messagesContainer.innerHTML = `<div class="system-msg" style="color:#ff6b9d">⚠ could not load messages — did you run the SQL setup?</div>`;
+        } else {
+          cachedMessages = msgs || [];
+          renderMessages();
+        }
+
+        await refreshOnlineUsers();
+        subscribeRealtime();
+        setConnectionStatus('connected', 'connected · global chat active');
+      }
+
+      async function refreshOnlineUsers() {
+        const cutoff = new Date(Date.now() - 45000).toISOString();
+        await supa.from('online_users').delete().lt('last_seen', cutoff);
+
+        const { data: users, error } = await supa.from('online_users').select('*');
+        if (!error && users) {
+          cachedOnlineUsers = {};
+          users.forEach(u => { cachedOnlineUsers[u.client_id] = u; });
+          updateOnlineCount();
+          renderMessages();
+        }
+      }
+
+      // --------------------------------------------------------------
+      // REALTIME
+      // --------------------------------------------------------------
+      function subscribeRealtime() {
+        if (channel) supa.removeChannel(channel);
+
+        channel = supa
+          .channel('nexus-global-chat')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, (payload) => {
+            if (payload.eventType === 'INSERT') {
+              const exists = cachedMessages.find(m => m.id === payload.new.id);
+              if (!exists) {
+                cachedMessages.push(payload.new);
+                if (cachedMessages.length > 200) cachedMessages = cachedMessages.slice(-200);
+                renderMessages();
+              }
+            } else if (payload.eventType === 'DELETE') {
+              cachedMessages = cachedMessages.filter(m => m.id !== payload.old.id);
+              renderMessages();
+            }
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'online_users' }, async () => {
+            await refreshOnlineUsers();
+          })
+          .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+              setConnectionStatus('connected', 'connected · realtime active');
+            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+              setConnectionStatus('connecting', 'reconnecting...');
+            }
+          });
+      }
+
+      // --------------------------------------------------------------
+      // USER MANAGEMENT
+      // --------------------------------------------------------------
+      async function registerOnlineUser() {
+        if (!supa || !currentUser.username) return;
+        const userData = {
+          client_id: currentUser.clientId,
+          username: currentUser.username,
+          pfp_data_url: currentUser.pfpDataUrl || null,
+          last_seen: new Date().toISOString()
+        };
+        const { error } = await supa
+          .from('online_users')
+          .upsert(userData, { onConflict: 'client_id' });
+        if (error) console.error('register error:', error);
+      }
+
+      async function unregisterOnlineUser() {
+        if (!supa) return;
+        await supa.from('online_users').delete().eq('client_id', currentUser.clientId);
+      }
+
+      async function isUsernameTaken(username, excludeClientId = null) {
+        if (!supa) return false;
+        const { data, error } = await supa
+          .from('online_users')
+          .select('client_id, username')
+          .ilike('username', username);
+        if (error) {
+          console.error('username check error:', error);
+          return false;
+        }
+        return (data || []).some(u => u.client_id !== excludeClientId);
+      }
+
+      // --------------------------------------------------------------
+      // SEND MESSAGE
+      // --------------------------------------------------------------
+      async function sendMessageToSupabase(username, pfpDataUrl, text) {
+        if (!supa) return;
+        const { error } = await supa.from('messages').insert({
+          username: username,
+          pfp_data_url: pfpDataUrl || null,
+          text: text
+        });
+        if (error) {
+          console.error('send error:', error);
+          alert('⚠ failed to send message: ' + error.message);
+        }
+      }
+
+      // --------------------------------------------------------------
+      // RENDER
+      // --------------------------------------------------------------
+      function renderMessages() {
+        const messages = cachedMessages;
+        const onlineUsers = cachedOnlineUsers;
+
+        if (!messages || messages.length === 0) {
+          messagesContainer.innerHTML = `<div class="system-msg">✨ no messages yet — start the conversation</div>`;
+          return;
+        }
+
+        let html = '';
+        messages.forEach(msg => {
+          let pfpDataUrl = msg.pfp_data_url;
+          if (!pfpDataUrl) {
+            const found = Object.values(onlineUsers).find(u => u && u.username === msg.username);
+            if (found && found.pfp_data_url) pfpDataUrl = found.pfp_data_url;
+          }
+
+          const avatarContent = pfpDataUrl
+            ? `<img src="${pfpDataUrl}" alt="pfp" onerror="this.style.display='none'">`
+            : (msg.username ? msg.username.charAt(0).toUpperCase() : '?');
+
+          const timeStr = msg.created_at
+            ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : '--:--';
+
+          html += `
+            <div class="message">
+              <div class="msg-pfp">${avatarContent}</div>
+              <div class="msg-content">
+                <div class="msg-header">
+                  <span class="msg-username">${escapeHtml(msg.username || 'anonymous')}</span>
+                  <span class="msg-time">${timeStr}</span>
+                </div>
+                <div class="msg-text">${escapeHtml(msg.text || '')}</div>
+              </div>
+            </div>
+          `;
+        });
+
+        messagesContainer.innerHTML = html;
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+
+      function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function updateOnlineCount() {
+        const users = cachedOnlineUsers || {};
+        const count = Object.keys(users).length;
+        onlineCountSpan.textContent = `${count} online`;
+        chatOnlineCount.textContent = `${count} online`;
+      }
+
+      // --------------------------------------------------------------
+      // SET IDENTITY
+      // --------------------------------------------------------------
+      async function setIdentity() {
+        const desiredUsername = usernameInput.value.trim();
+        usernameError.textContent = '';
+
+        if (!desiredUsername) {
+          usernameError.textContent = '⚠ username cannot be empty';
+          return false;
+        }
+        if (desiredUsername.length < 2) {
+          usernameError.textContent = '⚠ username must be at least 2 characters';
+          return false;
+        }
+        if (!/^[a-zA-Z0-9_\-\.]+$/.test(desiredUsername)) {
+          usernameError.textContent = '⚠ only letters, numbers, _ - . allowed';
+          return false;
+        }
+        if (!supa) {
+          usernameError.textContent = '⚠ not connected to server yet';
+          return false;
+        }
+
+        setIdentityBtn.disabled = true;
+        setIdentityBtn.textContent = 'checking...';
+
+        try {
+          const taken = await isUsernameTaken(desiredUsername, currentUser.clientId);
+          if (taken) {
+            usernameError.textContent = '⚠ username already taken by someone else';
+            setIdentityBtn.disabled = false;
+            setIdentityBtn.textContent = 'set identity';
+            return false;
+          }
+
+          currentUser.username = desiredUsername;
+          identitySet = true;
+
+          await registerOnlineUser();
+
+          messageInput.disabled = false;
+          sendMsgBtn.disabled = false;
+
+          await sendMessageToSupabase('system', null, `${desiredUsername} joined the chat`);
+
+          usernameInput.disabled = true;
+          setIdentityBtn.disabled = true;
+          setIdentityBtn.textContent = '✓ identity set';
+          uploadPfpBtn.disabled = true;
+          removePfpBtn.disabled = true;
+          pfpFileInput.disabled = true;
+
+          return true;
+        } catch (err) {
+          console.error('setIdentity error:', err);
+          usernameError.textContent = '⚠ error: ' + err.message;
+          setIdentityBtn.disabled = false;
+          setIdentityBtn.textContent = 'set identity';
+          return false;
+        }
+      }
+
+      // --------------------------------------------------------------
+      // PFP
+      // --------------------------------------------------------------
+      function updatePfpPreview(dataUrl) {
+        if (dataUrl) {
+          pfpPreview.innerHTML = `<img src="${dataUrl}" alt="pfp preview">`;
+        } else {
+          pfpPreview.textContent = '?';
+        }
+      }
+
+      uploadPfpBtn.addEventListener('click', () => {
+        if (uploadPfpBtn.disabled) return;
+        pfpFileInput.click();
+      });
+
+      pfpFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (file.size > 200000) {
+          alert('⚠ image too large (max 200KB). Please compress it.');
+          pfpFileInput.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const dataUrl = ev.target.result;
+          if (dataUrl.length > 300000) {
+            alert('⚠ image too large after encoding. Try a smaller image.');
+            return;
+          }
+          currentUser.pfpDataUrl = dataUrl;
+          updatePfpPreview(dataUrl);
+          if (identitySet && currentUser.username) {
+            registerOnlineUser();
+          }
+        };
+        reader.readAsDataURL(file);
+        pfpFileInput.value = '';
+      });
+
+      removePfpBtn.addEventListener('click', () => {
+        if (removePfpBtn.disabled) return;
+        currentUser.pfpDataUrl = null;
+        updatePfpPreview(null);
+        if (identitySet && currentUser.username) {
+          registerOnlineUser();
+        }
+      });
+
+      // --------------------------------------------------------------
+      // SEND
+      // --------------------------------------------------------------
+      function sendMessage() {
+        const text = messageInput.value.trim();
+        if (!text) return;
+        if (!currentUser.username) {
+          alert('⚠ set a username first');
+          return;
+        }
+        if (!supa) {
+          alert('⚠ not connected to server');
+          return;
+        }
+        sendMessageToSupabase(currentUser.username, currentUser.pfpDataUrl, text);
+        messageInput.value = '';
+        messageInput.focus();
+        if (identitySet) registerOnlineUser();
+      }
+
+      sendMsgBtn.addEventListener('click', sendMessage);
+      messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      // --------------------------------------------------------------
+      // HEARTBEAT
+      // --------------------------------------------------------------
+      function startHeartbeat() {
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        heartbeatInterval = setInterval(async () => {
+          if (identitySet && currentUser.username && supa) {
+            await registerOnlineUser();
+            await refreshOnlineUsers();
+          }
+        }, 20000);
+      }
+
+      // --------------------------------------------------------------
+      // CLEANUP
+      // --------------------------------------------------------------
+      window.addEventListener('beforeunload', () => {
+        unregisterOnlineUser();
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && identitySet && currentUser.username) {
+          registerOnlineUser();
+          refreshOnlineUsers();
+        }
+      });
+
+      // --------------------------------------------------------------
+      // INIT
+      // --------------------------------------------------------------
+      (async function init() {
+        const adjectives = ['cosmic', 'stellar', 'neon', 'quantum', 'lunar', 'solar', 'cyber', 'electric', 'astral', 'void'];
+        const nouns = ['pioneer', 'wanderer', 'nomad', 'seeker', 'voyager', 'comet', 'photon', 'echo', 'rider', 'drifter'];
+        const randomName = adjectives[Math.floor(Math.random() * adjectives.length)] +
+                           nouns[Math.floor(Math.random() * nouns.length)] +
+                           Math.floor(Math.random() * 100);
+        usernameInput.placeholder = `e.g. ${randomName}`;
+
+        messageInput.disabled = true;
+        sendMsgBtn.disabled = true;
+
+        const ok = initSupabase();
+        if (!ok) return;
+
+        await new Promise(r => setTimeout(r, 300));
+        await loadInitialData();
+        startHeartbeat();
+      })();
+
+      window.NexusChat = {
+        getClientId: () => currentUser.clientId,
+        isConnected: () => connected
+      };
+
+    })();
+  </script>
+</body>
+</html>
