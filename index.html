@@ -7,9 +7,6 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 127.14 96.36'%3E%3Cpath fill='%235865F2' d='M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77.7,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ============================================================
-   THEME VARIABLES
-   ============================================================ */
 :root{
   --bg:#313338;--bg-alt:#2b2d31;--bg-alt2:#1e1f22;--bg-panel:#232428;
   --text:#dbdee1;--text-muted:#949ba4;--text-bright:#f2f3f5;
@@ -26,9 +23,6 @@ a:hover{text-decoration:underline}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:#1a1b1e;border-radius:4px}
 
-/* ============================================================
-   LAYOUT
-   ============================================================ */
 .app{display:flex;height:100vh;width:100vw}
 .server-rail{width:72px;background:var(--bg-alt2);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:8px;flex-shrink:0;overflow-y:auto}
 .server-rail::-webkit-scrollbar{width:0}
@@ -52,6 +46,7 @@ a:hover{text-decoration:underline}
 .channel.active{background:#404249;color:#fff}
 .channel .hash{color:#80848e;font-size:18px;font-weight:400;width:20px;text-align:center}
 .channel .lock{color:#80848e;font-size:14px;width:20px;text-align:center}
+.channel .globe{color:#80848e;font-size:13px;width:20px;text-align:center}
 .channel .c-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .channel .c-close{opacity:0;font-size:12px;color:var(--text-muted);padding:2px 4px}
 .channel:hover .c-close{opacity:1}
@@ -74,6 +69,7 @@ a:hover{text-decoration:underline}
 .chat-header{height:48px;padding:0 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(0,0,0,.2);flex-shrink:0;z-index:3}
 .chat-header .hash{color:#80848e;font-size:22px;font-weight:400}
 .chat-header .lock{color:#80848e;font-size:16px}
+.chat-header .globe{color:#80848e;font-size:16px}
 .chat-header-title{font-size:15px;font-weight:700;color:var(--text-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
 .chat-header-sub{font-size:12px;color:var(--text-muted);margin-left:8px;border-left:1px solid #3f4147;padding-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
 .chat-header-spacer{flex:1}
@@ -95,14 +91,12 @@ a:hover{text-decoration:underline}
 .welcome h2{font-size:32px;font-weight:800;color:var(--text-bright);margin-top:8px}
 .welcome p{color:#b5bac1;font-size:16px}
 
-/* Connection banner */
 .conn-banner{background:linear-gradient(90deg,rgba(240,178,50,.15),rgba(240,178,50,.08));border:1px solid rgba(240,178,50,.3);border-radius:8px;padding:8px 14px;margin:8px 16px 4px;font-size:12px;color:var(--yellow);display:none;align-items:center;gap:8px;animation:msgFade .3s ease}
 .conn-banner.show{display:flex}
 .conn-banner .conn-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);animation:pulse 1.2s ease infinite}
 .conn-banner.ok{background:linear-gradient(90deg,rgba(35,165,90,.15),rgba(35,165,90,.08));border-color:rgba(35,165,90,.3);color:var(--green)}
 .conn-banner.ok .conn-dot{background:var(--green);animation:none}
 
-/* Announcement banner */
 .announcement-banner{background:linear-gradient(90deg,rgba(88,101,242,.18),rgba(139,61,252,.18));border:1px solid var(--blurple);border-radius:8px;padding:12px 16px;margin:10px 16px 4px;font-size:14px;color:var(--text-bright);display:flex;align-items:flex-start;gap:12px;animation:msgFade .3s ease}
 .announcement-banner .ann-icon{font-size:20px;flex-shrink:0;line-height:1.2}
 .announcement-banner .ann-body{flex:1;min-width:0}
@@ -112,7 +106,6 @@ a:hover{text-decoration:underline}
 .announcement-banner .ann-dismiss{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:2px 4px}
 .announcement-banner .ann-dismiss:hover{color:var(--text)}
 
-/* Pinned */
 .pinned-bar{background:linear-gradient(90deg,rgba(240,178,50,.12),transparent);border-left:3px solid var(--yellow);padding:8px 14px;margin:6px 16px;border-radius:6px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
 .pinned-bar:hover{background:linear-gradient(90deg,rgba(240,178,50,.2),rgba(240,178,50,.05))}
 .pinned-bar .pin-icon{color:var(--yellow);font-size:15px;flex-shrink:0}
@@ -121,7 +114,6 @@ a:hover{text-decoration:underline}
 .pinned-bar .pin-text{color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pinned-bar .pin-count{background:rgba(240,178,50,.25);color:var(--yellow);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;flex-shrink:0}
 
-/* Messages */
 .msg{position:relative;padding:2px 16px;display:flex;gap:16px;margin-top:16px;transition:background .05s;border-radius:0}
 .msg:hover{background:rgba(0,0,0,.06)}
 .msg.grouped{margin-top:0}
@@ -157,7 +149,6 @@ a:hover{text-decoration:underline}
 .file-name{font-size:14px;font-weight:500;color:#00a8fc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .file-size{font-size:12px;color:var(--text-muted);margin-top:2px}
 
-/* Reactions */
 .msg-reactions{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
 .reaction{display:flex;align-items:center;gap:6px;background:var(--bg-alt);border:1px solid transparent;border-radius:8px;padding:2px 8px;font-size:14px;cursor:pointer;transition:all .1s;user-select:none;line-height:1.5}
 .reaction:hover{background:#35373c;border-color:#4e5058}
@@ -166,7 +157,6 @@ a:hover{text-decoration:underline}
 .reaction .count{font-size:13px;font-weight:600;color:var(--text)}
 .reaction.mine .count{color:#c9cdfb}
 
-/* Hover actions */
 .msg-actions{position:absolute;top:-16px;right:16px;background:var(--bg);border:1px solid rgba(0,0,0,.3);border-radius:8px;display:none;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:10}
 .msg:hover .msg-actions{display:flex}
 .action-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#b5bac1;font-size:16px;border-radius:6px}
@@ -177,7 +167,6 @@ a:hover{text-decoration:underline}
 .emoji-popup button{width:34px;height:34px;font-size:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:transform .1s}
 .emoji-popup button:hover{background:#35373c;transform:scale(1.15)}
 
-/* Composer */
 .composer{padding:0 16px 24px;flex-shrink:0}
 .composer-inner{background:#383a40;border-radius:8px;display:flex;align-items:flex-end;padding:0 16px}
 .composer-inner.locked{opacity:.5}
@@ -192,7 +181,6 @@ a:hover{text-decoration:underline}
 .composer-lock-notice{padding:10px 14px;background:rgba(240,178,50,.12);border:1px solid rgba(240,178,50,.3);border-radius:8px;margin:0 16px 12px;font-size:13px;color:var(--yellow);display:none;align-items:center;gap:8px}
 .composer-lock-notice.show{display:flex}
 
-/* Emoji picker */
 .emoji-picker{position:absolute;bottom:80px;right:24px;width:320px;height:380px;background:var(--bg-alt);border:1px solid rgba(0,0,0,.4);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.5);display:none;flex-direction:column;z-index:100;overflow:hidden}
 .emoji-picker.show{display:flex}
 .emoji-picker-header{padding:12px 16px;border-bottom:1px solid rgba(0,0,0,.3);font-size:14px;font-weight:600;color:var(--text-bright);display:flex;justify-content:space-between;align-items:center}
@@ -204,9 +192,11 @@ a:hover{text-decoration:underline}
 .emoji-grid button{width:32px;height:32px;font-size:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all .1s}
 .emoji-grid button:hover{background:#35373c;transform:scale(1.15)}
 
-/* Members */
 .members{width:240px;background:var(--bg-alt);flex-shrink:0;padding:16px 8px;overflow-y:auto}
 .members-category{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;padding:8px;letter-spacing:.02em}
+.members-section-header{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;padding:14px 8px 6px;display:flex;align-items:center;gap:6px;border-top:1px solid rgba(255,255,255,.05);margin-top:6px}
+.members-section-header:first-child{border-top:none;margin-top:0}
+.members-section-header .sec-count{font-size:10px;background:rgba(255,255,255,.08);padding:2px 7px;border-radius:10px;color:var(--text-muted);font-weight:700;letter-spacing:0}
 .member{display:flex;align-items:center;gap:12px;padding:6px 8px;border-radius:4px;cursor:pointer;margin-bottom:1px;position:relative}
 .member:hover{background:#35373c}
 .member-avatar-wrap{position:relative;width:32px;height:32px;flex-shrink:0}
@@ -215,6 +205,11 @@ a:hover{text-decoration:underline}
 .member-online{position:absolute;bottom:-2px;right:-2px;width:14px;height:14px;border-radius:50%;background:var(--green);border:3px solid var(--bg-alt)}
 .member.timeout .member-online{background:var(--red)}
 .member.banned .member-online{background:#6e1e1f}
+.member.offline .member-online{background:#80848e;border-color:var(--bg-alt)}
+.member.offline .member-avatar{opacity:.55;filter:grayscale(.6)}
+.member.offline .member-name{color:#6d6f78}
+.member.offline:hover .member-avatar{opacity:.85;filter:grayscale(.3)}
+.member.offline:hover .member-name{color:var(--text-muted)}
 .member-name{font-size:15px;font-weight:500;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;display:flex;align-items:center;gap:5px}
 .member:hover .member-name{color:var(--text)}
 .member.self .member-name{color:var(--text-bright)}
@@ -224,7 +219,6 @@ a:hover{text-decoration:underline}
 .member.in-call-ring{animation:memberRinging .8s ease infinite alternate}
 @keyframes memberRinging{from{background:rgba(35,165,90,0.15);}to{background:rgba(35,165,90,0.4);}}
 
-/* Rank badges */
 .rank-badge{display:inline-flex;align-items:center;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 6px;border-radius:3px;line-height:1;height:15px;flex-shrink:0;vertical-align:middle}
 .rank-owner{background:linear-gradient(135deg,#f0b232,#f9dd4f);color:#000}
 .rank-admin{background:#f23f43;color:#fff}
@@ -234,7 +228,6 @@ a:hover{text-decoration:underline}
 .timeout-indicator{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--red);background:rgba(242,63,67,.15);padding:2px 6px;border-radius:3px;font-weight:600;line-height:1;height:15px;flex-shrink:0}
 .warn-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--yellow);background:rgba(240,178,50,.15);padding:2px 6px;border-radius:3px;font-weight:600;line-height:1;height:15px;flex-shrink:0}
 
-/* Frames */
 .frame-wrapper{border-radius:50%;display:inline-flex;padding:0;position:relative}
 .frame-wrapper.frame-gold{padding:2px;background:linear-gradient(135deg,#f0b232,#f9dd4f,#c9790a,#f0b232)}
 .frame-wrapper.frame-blurple{padding:2px;background:linear-gradient(135deg,#5865f2,#8b94ff,#404eed,#5865f2)}
@@ -252,7 +245,6 @@ a:hover{text-decoration:underline}
 @keyframes neonPulse{from{box-shadow:0 0 4px currentColor}to{box-shadow:0 0 14px currentColor}}
 .frame-inner{border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--blurple);color:#fff;overflow:hidden;width:100%;height:100%}
 
-/* Modals */
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(2px)}
 .modal-backdrop.show{display:flex}
 .modal{width:560px;max-width:92vw;max-height:90vh;background:var(--bg);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.6)}
@@ -290,7 +282,6 @@ a:hover{text-decoration:underline}
 .btn-secondary:hover{text-decoration:underline}
 .modal-error{color:var(--red);font-size:13px;min-height:18px}
 
-/* Color pickers */
 .color-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
 .color-row label{flex:1;margin:0;text-transform:none;font-size:14px;font-weight:500;color:var(--text);letter-spacing:0}
 .color-input{width:44px;height:36px;border-radius:6px;border:2px solid rgba(0,0,0,.3);cursor:pointer;background:transparent;padding:2px;flex-shrink:0}
@@ -302,20 +293,20 @@ a:hover{text-decoration:underline}
 .theme-section{padding:14px;background:var(--bg-alt);border-radius:8px;margin-bottom:10px}
 .theme-section h4{font-size:13px;font-weight:700;color:var(--text-bright);margin-bottom:10px;text-transform:uppercase;letter-spacing:.03em}
 
-/* Channel modal */
 .channel-modal-help{font-size:12px;color:var(--text-muted);line-height:1.6;margin-top:-8px}
 .channel-key-display{background:var(--bg-alt2);border-radius:6px;padding:12px 14px;font-family:monospace;font-size:14px;color:var(--text-bright);display:flex;align-items:center;gap:8px;justify-content:space-between;word-break:break-all}
 .channel-key-copy{background:var(--blurple);color:#fff;padding:6px 12px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;font-family:'Inter',sans-serif}
 .channel-key-copy:hover{background:var(--blurple-hover)}
+.public-toggle{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-alt2);border-radius:6px;margin-top:-8px}
+.public-toggle input[type="checkbox"]{width:18px;height:18px;cursor:pointer;accent-color:var(--blurple)}
+.public-toggle label{margin:0;text-transform:none;font-size:14px;color:var(--text);font-weight:500;cursor:pointer;letter-spacing:0}
 
-/* Toast */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:10px 20px;border-radius:6px;font-size:14px;font-weight:500;z-index:9999;animation:toastIn .2s ease;box-shadow:0 4px 12px rgba(0,0,0,.4)}
 .toast.error{background:var(--red)}
 .toast.info{background:var(--blurple)}
 .toast.warn{background:var(--yellow);color:#000}
 @keyframes toastIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
 
-/* Lightbox */
 .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;z-index:3000;cursor:zoom-out;animation:lightboxIn .15s ease;backdrop-filter:blur(4px)}
 .lightbox.show{display:flex}
 @keyframes lightboxIn{from{opacity:0}to{opacity:1}}
@@ -327,7 +318,6 @@ a:hover{text-decoration:underline}
 .lightbox-action{background:rgba(255,255,255,.1);color:#fff;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15)}
 .lightbox-action:hover{background:rgba(255,255,255,.2)}
 
-/* Snake */
 .snake-modal{width:520px;max-width:95vw;background:#1e1f22;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.85);border:2px solid var(--blurple);animation:snakeIn .3s ease}
 @keyframes snakeIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
 .snake-header{padding:14px 20px;background:linear-gradient(90deg,var(--blurple),#8b94ff);color:#fff;display:flex;justify-content:space-between;align-items:center;font-weight:700}
@@ -342,7 +332,6 @@ a:hover{text-decoration:underline}
 .snake-restart{background:var(--blurple);color:#fff;padding:10px 28px;border-radius:6px;font-weight:600;font-size:14px;display:none;letter-spacing:.03em}
 .snake-restart:hover{background:var(--blurple-hover)}
 
-/* Notification banner */
 .notif-banner{position:fixed;bottom:20px;right:20px;background:var(--bg);border:1px solid var(--blurple);border-radius:10px;padding:16px 18px;max-width:340px;box-shadow:0 12px 40px rgba(0,0,0,.6);display:none;z-index:500;animation:notifIn .35s ease}
 .notif-banner.show{display:block}
 @keyframes notifIn{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -355,7 +344,6 @@ a:hover{text-decoration:underline}
 .notif-banner-btn.dismiss{background:transparent;color:var(--text-muted)}
 .notif-banner-btn.dismiss:hover{color:var(--text)}
 
-/* Video call */
 .incoming-call{position:fixed;bottom:20px;right:20px;background:var(--bg);border:2px solid var(--green);border-radius:12px;padding:18px;max-width:360px;box-shadow:0 12px 40px rgba(0,0,0,.65),0 0 0 0 rgba(35,165,90,.7);display:none;z-index:800;animation:incomingPulse 2s ease infinite, notifIn .35s ease}
 .incoming-call.show{display:block}
 @keyframes incomingPulse{0%{box-shadow:0 12px 40px rgba(0,0,0,.65),0 0 0 0 rgba(35,165,90,.7);}70%{box-shadow:0 12px 40px rgba(0,0,0,.65),0 0 0 18px rgba(35,165,90,0);}100%{box-shadow:0 12px 40px rgba(0,0,0,.65),0 0 0 0 rgba(35,165,90,0);}}
@@ -418,7 +406,6 @@ a:hover{text-decoration:underline}
 .call-info-strip{padding:10px 22px;background:rgba(255,255,255,.03);color:rgba(255,255,255,.5);font-size:12px;text-align:center;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0}
 .call-info-strip kbd{background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;font-family:'SF Mono',monospace;font-size:11px}
 
-/* Admin Panel */
 .admin-panel{display:flex;flex-direction:column;gap:16px}
 .admin-panel-header{display:flex;align-items:center;gap:12px;padding:14px;background:linear-gradient(135deg,rgba(242,63,67,.15),rgba(139,61,252,.15));border:1px solid var(--red);border-radius:8px}
 .admin-panel-header .ap-icon{font-size:28px}
@@ -486,7 +473,13 @@ a:hover{text-decoration:underline}
 .rank-menu button:hover{background:#35373c}
 .rank-menu .rank-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 
-/* Responsive */
+.admin-channel-row{display:flex;align-items:center;gap:10px;padding:10px;border-radius:6px;background:var(--bg-alt2);margin-bottom:6px;flex-wrap:wrap}
+.admin-channel-row .ch-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+.admin-channel-row .ch-info{flex:1;min-width:140px}
+.admin-channel-row .ch-name{font-size:13px;font-weight:600;color:var(--text-bright);word-break:break-word}
+.admin-channel-row .ch-meta{font-size:10px;color:var(--text-muted);margin-top:3px;font-family:'SF Mono',monospace;letter-spacing:.02em}
+.admin-channel-row .ch-actions{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+
 @media (max-width:900px){.members{display:none}}
 @media (max-width:700px){.server-rail{display:none}.channels{width:60px}.channels .c-name{display:none}.channels .channel-category{display:none}.channels .user-panel-info,.channels .user-panel-settings{display:none}}
 @media (max-width:600px){
@@ -578,7 +571,7 @@ a:hover{text-decoration:underline}
   </div>
 
   <div class="members" id="membersSidebar">
-    <div class="members-category" id="membersCount">Online — 0</div>
+    <div class="members-category" id="membersCount">Members — 0</div>
     <div id="membersList"></div>
   </div>
 </div>
@@ -764,7 +757,7 @@ a:hover{text-decoration:underline}
 <div class="modal-backdrop" id="createChannelModal">
   <div class="modal small">
     <div class="modal-header">
-      <div class="modal-title">Create Private Channel</div>
+      <div class="modal-title" id="createChannelTitle">Create Channel</div>
       <div class="modal-close" id="createChannelClose">✕</div>
     </div>
     <div class="modal-body">
@@ -772,7 +765,11 @@ a:hover{text-decoration:underline}
         <label>Channel Name</label>
         <input type="text" id="newChannelName" maxlength="40" placeholder="e.g. secret-hangout">
       </div>
-      <div>
+      <div class="public-toggle">
+        <input type="checkbox" id="newChannelPublic">
+        <label for="newChannelPublic">Make this channel public — everyone can see and join it</label>
+      </div>
+      <div id="privateKeyWrap">
         <label>Private Key</label>
         <input type="text" id="newChannelKey" maxlength="40" placeholder="e.g. sparkle-pony-42">
         <div class="channel-modal-help">Share this key with people you want to invite. They'll enter it to join. Case-insensitive.</div>
@@ -820,7 +817,7 @@ a:hover{text-decoration:underline}
         <label>Name</label>
         <div id="channelInfoName" style="font-size:15px;color:var(--text-bright);"></div>
       </div>
-      <div>
+      <div id="channelInfoKeyWrap">
         <label>Private Key (share to invite)</label>
         <div class="channel-key-display">
           <span id="channelInfoKey">—</span>
@@ -831,6 +828,27 @@ a:hover{text-decoration:underline}
     <div class="modal-footer">
       <button class="btn-secondary" id="channelInfoLeave" style="color:var(--red);">Leave channel</button>
       <button class="btn-primary" id="channelInfoDone">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- RENAME CHANNEL MODAL (admin) -->
+<div class="modal-backdrop" id="renameChannelModal">
+  <div class="modal small">
+    <div class="modal-header">
+      <div class="modal-title">✏️ Rename Channel</div>
+      <div class="modal-close" id="renameChannelClose">✕</div>
+    </div>
+    <div class="modal-body">
+      <div>
+        <label>New channel name</label>
+        <input type="text" id="renameChannelInput" class="admin-inline-input" maxlength="40" placeholder="New name">
+      </div>
+      <div class="modal-error" id="renameChannelError"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" id="renameChannelCancel">Cancel</button>
+      <button class="btn-primary" id="renameChannelApply">Apply</button>
     </div>
   </div>
 </div>
@@ -885,17 +903,12 @@ a:hover{text-decoration:underline}
 const SUPABASE_URL = 'https://nkwpvclvhmrwbofuwsqs.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_YEfvLJKOctQ50DVe8MZbbQ_Oc3_lcrA';
 // ================================================================
-//   🔒 ADMIN PASSWORD
-// ================================================================
 const ADMIN_PASSWORD = '6171399';
 // ================================================================
 
 (function(){
 'use strict';
 
-// ============================================================
-// DOM
-// ============================================================
 const $=id=>document.getElementById(id);
 const el={
   serverHome:$('serverHome'),
@@ -929,13 +942,20 @@ const el={
   bgPresets:$('bgPresets'),resetTheme:$('resetTheme'),
   createChannelModal:$('createChannelModal'),createChannelClose:$('createChannelClose'),
   createChannelCancel:$('createChannelCancel'),createChannelSave:$('createChannelSave'),
-  newChannelName:$('newChannelName'),newChannelKey:$('newChannelKey'),createChannelError:$('createChannelError'),
+  createChannelTitle:$('createChannelTitle'),
+  newChannelName:$('newChannelName'),newChannelKey:$('newChannelKey'),newChannelPublic:$('newChannelPublic'),
+  privateKeyWrap:$('privateKeyWrap'),
+  createChannelError:$('createChannelError'),
   joinChannelModal:$('joinChannelModal'),joinChannelClose:$('joinChannelClose'),
   joinChannelCancel:$('joinChannelCancel'),joinChannelSave:$('joinChannelSave'),
   joinChannelKey:$('joinChannelKey'),joinChannelError:$('joinChannelError'),
   channelInfoModal:$('channelInfoModal'),channelInfoClose:$('channelInfoClose'),
   channelInfoName:$('channelInfoName'),channelInfoKey:$('channelInfoKey'),channelInfoCopy:$('channelInfoCopy'),
+  channelInfoKeyWrap:$('channelInfoKeyWrap'),
   channelInfoLeave:$('channelInfoLeave'),channelInfoDone:$('channelInfoDone'),
+  renameChannelModal:$('renameChannelModal'),renameChannelClose:$('renameChannelClose'),
+  renameChannelCancel:$('renameChannelCancel'),renameChannelApply:$('renameChannelApply'),
+  renameChannelInput:$('renameChannelInput'),renameChannelError:$('renameChannelError'),
   lightbox:$('lightbox'),lightboxImg:$('lightboxImg'),lightboxClose:$('lightboxClose'),
   lightboxDownload:$('lightboxDownload'),lightboxOpen:$('lightboxOpen'),
   snakeModal:$('snakeModal'),snakeCanvas:$('snakeCanvas'),snakeScore:$('snakeScore'),
@@ -957,9 +977,6 @@ const el={
   broadcastError:$('broadcastError')
 };
 
-// ============================================================
-// LS KEYS / HELPERS
-// ============================================================
 const LS={
   CLIENT_ID:'nexus_client_id_v3',
   PROFILE:'nexus_profile_v3',
@@ -975,9 +992,6 @@ const LS={
 function lsGet(k,fb){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb;}catch(e){return fb;}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-// ============================================================
-// STATE
-// ============================================================
 let clientId=lsGet(LS.CLIENT_ID,null);
 if(!clientId){
   clientId=(crypto.randomUUID?crypto.randomUUID():'c_'+Math.random().toString(36).slice(2)+Date.now());
@@ -1005,6 +1019,8 @@ let heartbeatTimer=null;
 let expireTimer=null;
 let cachedMessages=[];
 let cachedUsers={};
+let cachedKnownUsers={};
+let cachedPublicChannels=[];
 let cachedSettings=null;
 let pendingFile=null;
 let editingSnapshot=null;
@@ -1014,7 +1030,6 @@ const baseTitle=document.title;
 
 let isAdmin=lsGet(LS.ADMIN_AUTH+'::'+clientId,false)===true;
 
-// Realtime health
 let realtimeConnected=false;
 let realtimeStatus='connecting';
 let realtimeLastMessageAt=0;
@@ -1024,16 +1039,9 @@ const POLL_MIN=1000;
 const POLL_MAX=15000;
 let realtimeReconnectAttempts=0;
 
-// Channel unread markers
 let channelUnread=lsGet(LS.CHANNEL_UNREAD,{});
 
-// ============================================================
-// LIVE BROADCAST (the instant delivery layer)
-// This is a separate broadcast-only channel that fans out every
-// insert/update/delete within ~50ms. Postgres_changes + polling
-// remain as redundant backups. Dedup by message id means no double
-// rendering when both fire.
-// ============================================================
+// Live broadcast channel
 let liveBroadcastChannel=null;
 let liveBroadcastRoom=null;
 let liveBroadcastConnected=false;
@@ -1056,6 +1064,15 @@ function newUuid(){
     const v=c==='x'?r:(r&0x3|0x8);
     return v.toString(16);
   });
+}
+function shortTimeAgo(d){
+  if(!d)return '';
+  const diff=(Date.now()-new Date(d).getTime())/1000;
+  if(diff<60)return 'just now';
+  if(diff<3600)return Math.floor(diff/60)+'m ago';
+  if(diff<86400)return Math.floor(diff/3600)+'h ago';
+  if(diff<604800)return Math.floor(diff/86400)+'d ago';
+  return new Date(d).toLocaleDateString();
 }
 
 // ============================================================
@@ -1189,7 +1206,7 @@ function updateConnectionUI(){
     dot.classList.add('reconnecting');
     banner.classList.add('show');
     banner.classList.remove('ok');
-    el.connText.textContent='Reconnecting — messages still arrive within a second via fallback.';
+    el.connText.textContent='Reconnecting — messages still arrive via fallback.';
     indicator.classList.add('rt-bad');
     indicator.title='Reconnecting…';
   }else{
@@ -1423,14 +1440,12 @@ function buildEmojiPicker(){
 }
 
 // ============================================================
-// CACHED MESSAGE UPSERT (single source of truth for merging)
+// MESSAGE CACHE UPSERT
 // ============================================================
-function upsertCachedMessage(row, options){
+function upsertCachedMessage(row){
   if(!row||!row.id)return {changed:false,isNew:false};
-  options=options||{};
   const idx=cachedMessages.findIndex(m=>m.id===row.id);
   if(idx>=0){
-    // Preserve nothing — server row is truth, but keep _pending if we haven't sent yet
     const prev=cachedMessages[idx];
     const merged={...row};
     if(prev._local_only&&!row.created_at)merged._local_only=true;
@@ -1446,11 +1461,10 @@ function upsertCachedMessage(row, options){
 }
 
 // ============================================================
-// LIVE BROADCAST (instant layer)
+// LIVE BROADCAST
 // ============================================================
 function subscribeLiveBroadcast(channelId){
   if(!supa)return;
-  // Tear down old
   if(liveBroadcastChannel){
     try{supa.removeChannel(liveBroadcastChannel);}catch(e){}
     liveBroadcastChannel=null;
@@ -1467,17 +1481,14 @@ function subscribeLiveBroadcast(channelId){
       const row=payload.message;
       if(row.channel_id!==activeChannel)return;
       realtimeLastMessageAt=Date.now();
-
       const{changed,isNew}=upsertCachedMessage(row);
       if(!changed)return;
-
       if(isNew){
         cachedMessages.sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
         if(cachedMessages.length>200)cachedMessages=cachedMessages.slice(-200);
       }
       renderMessages(isNew?row.id:null);
       renderPinned();
-
       if(isNew){
         const isFromOther=row.username!==me.username&&row.username!=='system';
         if(isFromOther){
@@ -1534,24 +1545,15 @@ function subscribeLiveBroadcast(channelId){
 
 function broadcastMessageLive(row){
   if(!liveBroadcastChannel||!liveBroadcastConnected)return;
-  liveBroadcastChannel.send({
-    type:'broadcast',event:'msg',
-    payload:{message:row}
-  }).catch(()=>{});
+  liveBroadcastChannel.send({type:'broadcast',event:'msg',payload:{message:row}}).catch(()=>{});
 }
 function broadcastUpdateLive(row){
   if(!liveBroadcastChannel||!liveBroadcastConnected)return;
-  liveBroadcastChannel.send({
-    type:'broadcast',event:'update',
-    payload:{message:row}
-  }).catch(()=>{});
+  liveBroadcastChannel.send({type:'broadcast',event:'update',payload:{message:row}}).catch(()=>{});
 }
 function broadcastDeleteLive(id){
   if(!liveBroadcastChannel||!liveBroadcastConnected)return;
-  liveBroadcastChannel.send({
-    type:'broadcast',event:'delete',
-    payload:{id:id}
-  }).catch(()=>{});
+  liveBroadcastChannel.send({type:'broadcast',event:'delete',payload:{id:id}}).catch(()=>{});
 }
 
 // ============================================================
@@ -1563,6 +1565,16 @@ function renderChannelList(){
   const globalActive=activeChannel==='global';
   const globalUnread=!globalActive&&channelUnread['global'];
   html+=`<div class="channel ${globalActive?'active':''}" data-channel="global"><span class="hash">#</span><span class="c-name">global-chat</span>${globalUnread?'<span class="c-unread"></span>':''}</div>`;
+  // Admin-created public channels
+  cachedPublicChannels.forEach(ch=>{
+    const active=activeChannel===ch.id;
+    const unread=!active&&channelUnread[ch.id];
+    html+=`<div class="channel ${active?'active':''}" data-channel="${ch.id}">
+      <span class="globe">🌐</span><span class="c-name">${escapeHtml(ch.name)}</span>
+      ${unread?'<span class="c-unread"></span>':''}
+    </div>`;
+  });
+
   html+='<div class="channel-category"><span>Private Channels</span><span class="add-btn" id="joinChannelBtn" title="Join with key">+</span></div>';
   if(joinedChannels.length===0){html+='<div style="padding:8px 12px;font-size:12px;color:var(--text-muted);">No private channels yet. Click + to join one, or use the button below.</div>';}
   else{
@@ -1577,7 +1589,7 @@ function renderChannelList(){
       </div>`;
     });
   }
-  html+=`<div style="padding:8px 12px 0;"><button class="btn-primary" id="createChannelBtn" style="width:100%;padding:8px;font-size:13px;">+ Create Private Channel</button></div>`;
+  html+=`<div style="padding:8px 12px 0;"><button class="btn-primary" id="createChannelBtn" style="width:100%;padding:8px;font-size:13px;">+ Create Channel</button></div>`;
   el.channelList.innerHTML=html;
 
   el.channelList.querySelectorAll('.channel[data-channel]').forEach(ch=>{
@@ -1597,6 +1609,20 @@ function renderChannelList(){
   const jb=$('joinChannelBtn');if(jb)jb.addEventListener('click',openJoinChannelModal);
 }
 
+async function refreshPublicChannels(){
+  if(!supa)return;
+  try{
+    const{data,error}=await supa.from('channels').select('*').eq('is_public',true);
+    if(error)throw error;
+    cachedPublicChannels=data||[];
+    // Merge into channelMeta
+    cachedPublicChannels.forEach(ch=>{
+      channelMeta[ch.id]={id:ch.id,name:ch.name,isPublic:true,key:ch.channel_key};
+    });
+    renderChannelList();
+  }catch(e){console.warn('public channels fetch',e);}
+}
+
 async function switchChannel(id){
   if(id===activeChannel)return;
   activeChannel=id;
@@ -1613,7 +1639,6 @@ async function switchChannel(id){
   renderPinned();
   renderMessages();
   updateLockNotice();
-  // Re-subscribe live broadcast to the new channel room
   subscribeLiveBroadcast(activeChannel);
   if(typeof startPollingFallback==='function'){
     try{startPollingFallback();}catch(e){}
@@ -1623,50 +1648,89 @@ async function switchChannel(id){
 function updateChatHeader(){
   const meta=channelMeta[activeChannel]||{name:'global-chat',isPublic:true};
   el.chatHeaderTitle.textContent=meta.name;
-  if(meta.isPublic){
+  if(activeChannel==='global'){
     el.chatHeaderIcon.className='hash';
     el.chatHeaderIcon.textContent='#';
     el.chatHeaderSub.textContent='';
+  }else if(meta.isPublic){
+    el.chatHeaderIcon.className='globe';
+    el.chatHeaderIcon.textContent='🌐';
+    el.chatHeaderSub.textContent='Public channel · everyone can see this';
   }else{
     el.chatHeaderIcon.className='lock';
     el.chatHeaderIcon.textContent='🔒';
     el.chatHeaderSub.textContent='Private · click header for key';
   }
-  el.messageInput.placeholder='Message '+(meta.isPublic?'#'+meta.name:meta.name);
+  el.messageInput.placeholder='Message '+(activeChannel==='global'?'#global-chat':meta.name);
 }
-el.chatHeaderTitle.addEventListener('click',()=>{const m=channelMeta[activeChannel];if(m&&!m.isPublic)openChannelInfoModal();});
-el.chatHeaderIcon.addEventListener('click',()=>{const m=channelMeta[activeChannel];if(m&&!m.isPublic)openChannelInfoModal();});
+el.chatHeaderTitle.addEventListener('click',()=>{
+  const m=channelMeta[activeChannel];
+  if(m&&!m.isPublic&&activeChannel!=='global')openChannelInfoModal();
+});
+el.chatHeaderIcon.addEventListener('click',()=>{
+  const m=channelMeta[activeChannel];
+  if(m&&!m.isPublic&&activeChannel!=='global')openChannelInfoModal();
+});
 
+// ---- Create channel modal ----
 function openCreateChannelModal(){
   if(!identitySet){toast('Set your profile first',true);return;}
-  el.newChannelName.value='';el.newChannelKey.value='';el.createChannelError.textContent='';
+  el.newChannelName.value='';
+  el.newChannelKey.value='';
+  el.newChannelPublic.checked=false;
+  el.createChannelTitle.textContent='Create Channel';
+  el.createChannelError.textContent='';
+  updatePrivateKeyVisibility();
   el.createChannelModal.classList.add('show');
 }
+function updatePrivateKeyVisibility(){
+  el.privateKeyWrap.style.display=el.newChannelPublic.checked?'none':'';
+}
+el.newChannelPublic.addEventListener('change',updatePrivateKeyVisibility);
 function closeCreateChannelModal(){el.createChannelModal.classList.remove('show');}
 el.createChannelClose.addEventListener('click',closeCreateChannelModal);
 el.createChannelCancel.addEventListener('click',closeCreateChannelModal);
 el.createChannelSave.addEventListener('click',async()=>{
   const name=(el.newChannelName.value||'').trim();
-  const key=(el.newChannelKey.value||'').trim();
+  const isPublic=el.newChannelPublic.checked;
+  const key=isPublic?('pub_'+newUuid().slice(0,12)):(el.newChannelKey.value||'').trim();
   el.createChannelError.textContent='';
   if(!name){el.createChannelError.textContent='Channel name required';return;}
   if(!/^[a-zA-Z0-9_\-\.]+$/.test(name)){el.createChannelError.textContent='Name: letters, numbers, _ - . only';return;}
-  if(!key){el.createChannelError.textContent='Private key required';return;}
-  if(key.length<3){el.createChannelError.textContent='Key must be at least 3 chars';return;}
+  if(!isPublic){
+    if(!key){el.createChannelError.textContent='Private key required';return;}
+    if(key.length<3){el.createChannelError.textContent='Key must be at least 3 chars';return;}
+  }
   el.createChannelSave.disabled=true;el.createChannelSave.textContent='Creating...';
   try{
-    const{data:existing,error:qerr}=await supa.from('channels').select('id,name').ilike('channel_key',key);
-    if(qerr)throw qerr;
-    if(existing&&existing.length>0){el.createChannelError.textContent='That key is already in use. Pick another.';throw new Error('key taken');}
+    if(!isPublic){
+      const{data:existing,error:qerr}=await supa.from('channels').select('id,name').ilike('channel_key',key);
+      if(qerr)throw qerr;
+      if(existing&&existing.length>0){el.createChannelError.textContent='That key is already in use. Pick another.';throw new Error('key taken');}
+    }
     const{data:inserted,error}=await supa.from('channels').insert({
-      name:name,channel_key:key,created_by:me.username
+      name:name,
+      channel_key:key,
+      created_by:me.username,
+      is_public:isPublic
     }).select().single();
     if(error)throw error;
-    const ch={id:inserted.id,name:inserted.name,key:key};
-    joinedChannels.push(ch);lsSet(LS.JOINED_CHANNELS,joinedChannels);
-    channelMeta[ch.id]={id:ch.id,name:ch.name,key:ch.key,isPublic:false};
-    await sendMessageToSupabase('system',null,'Channel created by '+me.username,null);
-    closeCreateChannelModal();switchChannel(ch.id);toast('Channel created! Key: '+key,'info');
+
+    if(isPublic){
+      channelMeta[inserted.id]={id:inserted.id,name:inserted.name,isPublic:true,key:key};
+      await refreshPublicChannels();
+      closeCreateChannelModal();
+      switchChannel(inserted.id);
+      toast('Public channel created!');
+    }else{
+      const ch={id:inserted.id,name:inserted.name,key:key};
+      joinedChannels.push(ch);lsSet(LS.JOINED_CHANNELS,joinedChannels);
+      channelMeta[ch.id]={id:ch.id,name:ch.name,key:ch.key,isPublic:false};
+      await sendMessageToSupabase('system',null,'Channel created by '+me.username,null);
+      closeCreateChannelModal();
+      switchChannel(ch.id);
+      toast('Channel created! Key: '+key,'info');
+    }
   }catch(e){
     if(e.message!=='key taken')el.createChannelError.textContent='Failed: '+e.message;
   }finally{
@@ -1674,6 +1738,7 @@ el.createChannelSave.addEventListener('click',async()=>{
   }
 });
 
+// ---- Join channel modal ----
 function openJoinChannelModal(){
   if(!identitySet){toast('Set your profile first',true);return;}
   el.joinChannelKey.value='';el.joinChannelError.textContent='';
@@ -1692,6 +1757,11 @@ el.joinChannelSave.addEventListener('click',async()=>{
     if(error)throw error;
     if(!data||data.length===0){el.joinChannelError.textContent='No channel found with that key';return;}
     const ch=data[0];
+    if(ch.is_public){
+      channelMeta[ch.id]={id:ch.id,name:ch.name,isPublic:true,key:ch.channel_key};
+      closeJoinChannelModal();switchChannel(ch.id);toast('Joined public channel');
+      return;
+    }
     if(joinedChannels.some(c=>c.id===ch.id)){el.joinChannelError.textContent="You're already in this channel";return;}
     const joined={id:ch.id,name:ch.name,key:ch.channel_key};
     joinedChannels.push(joined);lsSet(LS.JOINED_CHANNELS,joinedChannels);
@@ -1712,11 +1782,13 @@ function leaveChannel(id){
   if(activeChannel===id)switchChannel('global');else renderChannelList();
   toast('Left channel');
 }
+
 function openChannelInfoModal(){
   const meta=channelMeta[activeChannel];
   if(!meta||meta.isPublic)return;
   el.channelInfoName.textContent=meta.name;
   el.channelInfoKey.textContent=meta.key;
+  el.channelInfoKeyWrap.style.display='';
   el.channelInfoModal.classList.add('show');
 }
 el.channelInfoClose.addEventListener('click',()=>el.channelInfoModal.classList.remove('show'));
@@ -1788,7 +1860,7 @@ function renderAnnouncement(){
 }
 
 // ============================================================
-// PINNED MESSAGES
+// PINNED
 // ============================================================
 function renderPinned(){
   if(!el.pinnedArea)return;
@@ -1815,7 +1887,7 @@ function renderPinned(){
 }
 
 // ============================================================
-// LOCK / TIMEOUT / BAN CHECKS
+// LOCK / TIMEOUT / BAN
 // ============================================================
 function selfTimedOut(){
   const meUser=cachedUsers[me.clientId];
@@ -1971,6 +2043,7 @@ async function saveProfile(){
 
   try{
     await registerOnlineUser();
+    await upsertKnownUser();
     renderMyAvatars();
     updateChatHeader();
 
@@ -2100,28 +2173,58 @@ el.memberToggle.addEventListener('click',()=>{
 // ============================================================
 // SUPABASE OPS
 // ============================================================
+// ---- registerOnlineUser: only touch client-owned fields on update
+//      so admin-set rank/timeout/banned/warnings are preserved
 async function registerOnlineUser(){
   if(!supa||!me.username)return;
-  const existing=cachedUsers[me.clientId]||{};
+  const payload={
+    username:me.username,
+    pfp_data_url:me.pfp||null,
+    frame:me.frame||'none',
+    last_seen:new Date().toISOString()
+  };
+  // Try update first (returns array)
+  const{data:updated,error:updErr}=await supa
+    .from('online_users')
+    .update(payload)
+    .eq('client_id',me.clientId)
+    .select();
+  if(updErr)throw updErr;
+  if(updated&&updated.length>0)return;
+
+  // No row yet — insert with defaults
+  const{error:insErr}=await supa.from('online_users').insert({
+    client_id:me.clientId,
+    ...payload,
+    rank:'member',
+    timeout_until:null,
+    banned:false,
+    warnings:0,
+    force_nick:null
+  });
+  if(insErr)throw insErr;
+}
+
+async function upsertKnownUser(){
+  if(!supa||!me.username)return;
+  const existing=cachedKnownUsers[me.clientId]||{};
   const row={
     client_id:me.clientId,
     username:me.username,
     pfp_data_url:me.pfp||null,
     frame:me.frame||'none',
     last_seen:new Date().toISOString(),
-    rank:existing.rank||'member',
-    timeout_until:existing.timeout_until||null,
-    banned:existing.banned||false,
-    warnings:existing.warnings||0,
-    force_nick:existing.force_nick||null
+    rank:existing.rank||'member'
   };
-  const{error}=await supa.from('online_users').upsert(row,{onConflict:'client_id'});
-  if(error)throw error;
+  const{error}=await supa.from('known_users').upsert(row,{onConflict:'client_id'});
+  if(error)console.warn('known_users upsert',error);
 }
+
 async function unregisterOnlineUser(){
   if(!supa)return;
   try{await supa.from('online_users').delete().eq('client_id',me.clientId);}catch(e){}
 }
+
 async function isUsernameTaken(username,excludeId){
   if(!supa)return false;
   const{data,error}=await supa.from('online_users').select('client_id, username');
@@ -2130,9 +2233,6 @@ async function isUsernameTaken(username,excludeId){
   return(data||[]).some(u=>u.client_id!==excludeId&&String(u.username).toLowerCase()===target);
 }
 
-// ============================================================
-// SEND MESSAGE — optimistic + live broadcast
-// ============================================================
 async function sendMessageToSupabase(username,pfp,text,file,opts){
   if(!supa)throw new Error('not connected');
   opts=opts||{};
@@ -2183,7 +2283,6 @@ async function sendMessage(){
   pendingFile=null;
   const textToSend=text;
 
-  // ---- Optimistic local echo ----
   const localId=newUuid();
   const localRow={
     id:localId,
@@ -2208,29 +2307,20 @@ async function sendMessage(){
   if(cachedMessages.length>200)cachedMessages=cachedMessages.slice(-200);
   renderMessages(localId);
 
-  // Clear composer immediately
   el.messageInput.value='';
   el.messageInput.style.height='auto';
   el.messageInput.focus();
 
-  // ---- Fire off to server ----
   try{
     const savedRow=await sendMessageToSupabase(me.username,me.pfp,textToSend,fileToSend,{id:localId});
-
-    // Mark as delivered — keep same id, so it's the same cache entry
     const idx=cachedMessages.findIndex(m=>m.id===localId);
     if(idx>=0){
       cachedMessages[idx]={...savedRow,_justSent:true};
     }
-
-    // Broadcast to everyone else (including our own other tabs) instantly
     broadcastMessageLive({...savedRow});
-
-    // Re-render to clear the "sending…" styling
     renderMessages();
-
-    // Refresh our own online status
     if(identitySet)registerOnlineUser().catch(console.error);
+    if(identitySet)upsertKnownUser().catch(console.error);
   }catch(err){
     console.error('send failed',err);
     const idx=cachedMessages.findIndex(m=>m.id===localId);
@@ -2243,22 +2333,17 @@ async function sendMessage(){
 }
 
 // ============================================================
-// DELETE (with broadcast for instant removal on other clients)
+// DELETE
 // ============================================================
 async function deleteMessage(id){
   if(!supa)throw new Error('not connected');
-
-  // Optimistic removal
   const before=cachedMessages.length;
   cachedMessages=cachedMessages.filter(m=>m.id!==id);
   if(cachedMessages.length!==before){
     renderMessages();
     renderPinned();
   }
-
-  // Broadcast delete for instant removal on other clients
   broadcastDeleteLive(id);
-
   const{error}=await supa.from('messages').delete().eq('id',id);
   if(error){
     console.error('delete failed',error);
@@ -2269,7 +2354,7 @@ async function deleteMessage(id){
 }
 
 // ============================================================
-// REACTIONS (with broadcast)
+// REACTIONS
 // ============================================================
 async function toggleReaction(messageId,emoji,username){
   if(!supa)return;
@@ -2280,54 +2365,39 @@ async function toggleReaction(messageId,emoji,username){
   const idx=list.indexOf(username);
   if(idx>=0){list.splice(idx,1);if(list.length===0)delete reactions[emoji];else reactions[emoji]=list;}
   else{list.push(username);reactions[emoji]=list;}
-
   const newActivity=new Date().toISOString();
-
-  // Optimistic local update
   const i=cachedMessages.findIndex(m=>m.id===messageId);
   if(i>=0){
     cachedMessages[i]={...cachedMessages[i],reactions:reactions,last_activity:newActivity};
     renderMessages();
   }
-
   const{error}=await supa.from('messages').update({
     reactions:reactions,
     last_activity:newActivity
   }).eq('id',messageId);
   if(error)throw error;
-
-  // Broadcast the updated message for instant reaction sync
   const updated=cachedMessages.find(m=>m.id===messageId);
   if(updated)broadcastUpdateLive(updated);
 }
 
-// ============================================================
-// PIN TOGGLE (with broadcast)
-// ============================================================
 async function togglePin(msgId){
   if(!isAdmin){toast('Only admins can pin messages',true);return;}
   const msg=cachedMessages.find(m=>m.id===msgId);
   if(!msg)return;
   const newVal=!msg.pinned;
-
-  // Optimistic
   const i=cachedMessages.findIndex(m=>m.id===msgId);
   if(i>=0){
     cachedMessages[i]={...cachedMessages[i],pinned:newVal,pinned_by:newVal?me.username:null};
     renderMessages();
     renderPinned();
   }
-
   const{error}=await supa.from('messages').update({
     pinned:newVal,
     pinned_by:newVal?me.username:null
   }).eq('id',msgId);
   if(error)throw error;
-
-  // Broadcast
   const updated=cachedMessages.find(m=>m.id===msgId);
   if(updated)broadcastUpdateLive(updated);
-
   toast(newVal?'📌 Pinned':'Unpinned');
 }
 
@@ -2345,6 +2415,9 @@ async function loadChannelMessages(){
   cachedMessages=data||[];
 }
 
+// ============================================================
+// ONLINE + KNOWN USERS
+// ============================================================
 async function refreshOnlineUsers(){
   if(!supa)return;
   try{
@@ -2364,8 +2437,19 @@ async function refreshOnlineUsers(){
   }catch(e){console.error(e);}
 }
 
+async function refreshKnownUsers(){
+  if(!supa)return;
+  try{
+    const{data,error}=await supa.from('known_users').select('*').order('last_seen',{ascending:false}).limit(500);
+    if(error)throw error;
+    cachedKnownUsers={};
+    (data||[]).forEach(u=>{cachedKnownUsers[u.client_id]=u;});
+    renderMembers();
+  }catch(e){console.warn('known users fetch',e);}
+}
+
 // ============================================================
-// REALTIME (postgres_changes as backup to live broadcast)
+// REALTIME
 // ============================================================
 function subscribeRealtime(){
   if(!supa)return;
@@ -2379,15 +2463,12 @@ function subscribeRealtime(){
   realtimeConnected=false;
   updateConnectionUI();
 
-  channel=supa.channel(channelName,{
-    config:{broadcast:{self:false},presence:{key:''}}
-  })
+  channel=supa.channel(channelName,{config:{broadcast:{self:false},presence:{key:''}}})
   .on('postgres_changes',{event:'*',schema:'public',table:'messages'},payload=>{
     try{
       realtimeLastMessageAt=Date.now();
       const row=payload.new||payload.old;
       if(!row)return;
-
       if(payload.eventType==='DELETE'){
         const before=cachedMessages.length;
         cachedMessages=cachedMessages.filter(m=>m.id!==row.id);
@@ -2397,9 +2478,7 @@ function subscribeRealtime(){
         }
         return;
       }
-
       if(row.channel_id!==activeChannel)return;
-
       if(payload.eventType==='INSERT'){
         const{changed,isNew}=upsertCachedMessage(row);
         if(!changed)return;
@@ -2407,7 +2486,6 @@ function subscribeRealtime(){
         if(cachedMessages.length>200)cachedMessages=cachedMessages.slice(-200);
         renderMessages(isNew?row.id:null);
         renderPinned();
-
         if(isNew){
           const isFromOther=row.username!==me.username&&row.username!=='system';
           if(isFromOther){
@@ -2430,6 +2508,9 @@ function subscribeRealtime(){
   .on('postgres_changes',{event:'*',schema:'public',table:'online_users'},()=>{
     refreshOnlineUsers().catch(console.error);
   })
+  .on('postgres_changes',{event:'*',schema:'public',table:'known_users'},()=>{
+    refreshKnownUsers().catch(console.error);
+  })
   .on('postgres_changes',{event:'*',schema:'public',table:'channel_settings'},payload=>{
     try{
       const row=payload.new||payload.old;
@@ -2439,6 +2520,9 @@ function subscribeRealtime(){
       renderAnnouncement();
       renderChannelList();
     }catch(e){console.error(e);}
+  })
+  .on('postgres_changes',{event:'*',schema:'public',table:'channels'},()=>{
+    refreshPublicChannels().catch(console.error);
   })
   .subscribe((status,err)=>{
     realtimeStatus=status;
@@ -2462,32 +2546,23 @@ function subscribeRealtime(){
 }
 
 // ============================================================
-// POLLING FALLBACK — last-resort safety net
+// POLLING FALLBACK
 // ============================================================
 async function catchUpMissedMessages(){
   if(!supa||!activeChannel)return;
   try{
     const lastReal=cachedMessages.filter(m=>!m._local_only).pop();
     const since=lastReal?lastReal.created_at:new Date(Date.now()-2*60*1000).toISOString();
-
-    const{data,error}=await supa
-      .from('messages')
-      .select('*')
-      .eq('channel_id',activeChannel)
+    const{data,error}=await supa.from('messages')
+      .select('*').eq('channel_id',activeChannel)
       .gte('created_at',since)
-      .order('created_at',{ascending:true})
-      .limit(200);
-
+      .order('created_at',{ascending:true}).limit(200);
     if(error||!data)return;
-
-    let changed=false;
-    let newestId=null;
-
+    let changed=false;let newestId=null;
     data.forEach(row=>{
       const{changed:c,isNew}=upsertCachedMessage(row);
       if(c){changed=true;if(isNew)newestId=row.id;}
     });
-
     if(changed){
       cachedMessages.sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
       if(cachedMessages.length>200)cachedMessages=cachedMessages.slice(-200);
@@ -2503,24 +2578,15 @@ function startPollingFallback(){
   const pollTick=async()=>{
     if((realtimeConnected||liveBroadcastConnected)&&Date.now()-realtimeLastMessageAt<1500)return;
     if(!supa||!activeChannel)return;
-
     try{
       const lastReal=cachedMessages.filter(m=>!m._local_only).pop();
       const since=lastReal?lastReal.created_at:new Date(Date.now()-60000).toISOString();
-
-      const{data,error}=await supa
-        .from('messages')
-        .select('*')
-        .eq('channel_id',activeChannel)
+      const{data,error}=await supa.from('messages')
+        .select('*').eq('channel_id',activeChannel)
         .gte('created_at',since)
-        .order('created_at',{ascending:true})
-        .limit(100);
-
+        .order('created_at',{ascending:true}).limit(100);
       if(error||!data)return;
-
-      let changed=false;
-      let newestId=null;
-
+      let changed=false;let newestId=null;
       data.forEach(row=>{
         const{changed:c,isNew}=upsertCachedMessage(row);
         if(c){
@@ -2541,7 +2607,6 @@ function startPollingFallback(){
           }
         }
       });
-
       if(changed){
         cachedMessages.sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
         if(cachedMessages.length>200)cachedMessages=cachedMessages.slice(-200);
@@ -2554,7 +2619,6 @@ function startPollingFallback(){
   pollTick();
   pollInterval=setInterval(pollTick,pollBackoff);
 
-  // Adaptive interval: fast when both realtime layers are down
   setInterval(()=>{
     const bothDown=!realtimeConnected&&!liveBroadcastConnected;
     const desired=bothDown?1000:(realtimeConnected&&liveBroadcastConnected?10000:3000);
@@ -2571,24 +2635,21 @@ function startPollingFallback(){
 // ============================================================
 function renderMessages(highlightId){
   const msgs=cachedMessages||[];
-
   if(msgs.length===0){
     const meta=channelMeta[activeChannel]||{name:'global-chat',isPublic:true};
-    el.messagesContainer.innerHTML='<div class="welcome"><div class="welcome-icon">'+(meta.isPublic?'#':'🔒')+'</div>'+
-      '<h2>Welcome to '+(meta.isPublic?'#'+meta.name:meta.name)+'!</h2>'+
-      '<p>'+(meta.isPublic?'This is the start of the channel. Say hi 👋':'This is a private channel. Share the key to invite others. Messages auto-delete after 30 min of inactivity.')+'</p></div>';
+    el.messagesContainer.innerHTML='<div class="welcome"><div class="welcome-icon">'+(activeChannel==='global'?'#':(meta.isPublic?'🌐':'🔒'))+'</div>'+
+      '<h2>Welcome to '+(activeChannel==='global'?'#global-chat':meta.name)+'!</h2>'+
+      '<p>'+(activeChannel==='global'?'This is the start of the channel. Say hi 👋':(meta.isPublic?'This is a public channel — everyone can see and join.':'This is a private channel. Share the key to invite others. Messages auto-delete after 30 min of inactivity.'))+'</p></div>';
     return;
   }
 
   let html='';let lastTime=0;
-
   msgs.forEach((m,i)=>{
     if(m.username==='system'){
       html+='<div style="padding:8px 16px;color:var(--text-muted);font-size:13px;text-align:center;">'+escapeHtml(m.text)+'</div>';
       lastTime=0;
       return;
     }
-
     const own=me.username&&m.username===me.username;
     const prev=msgs[i-1];
     const msgTime=m.created_at?new Date(m.created_at).getTime():0;
@@ -2666,7 +2727,6 @@ function renderMessages(highlightId){
         fileHtml+reactionsHtml+
       '</div>'+actionBar+
     '</div>';
-
     lastTime=msgTime;
   });
 
@@ -2687,7 +2747,6 @@ function renderMessages(highlightId){
       }
     });
   });
-
   el.messagesContainer.querySelectorAll('.reaction').forEach(r=>{
     r.addEventListener('click',ev=>{
       ev.stopPropagation();
@@ -2695,7 +2754,6 @@ function renderMessages(highlightId){
       toggleReaction(r.dataset.msgId,r.dataset.emoji,me.username).catch(e=>toast('Reaction failed: '+e.message,true));
     });
   });
-
   el.messagesContainer.querySelectorAll('img[data-lightbox]').forEach(img=>{
     img.addEventListener('click',()=>{
       const parent=img.closest('.msg');
@@ -2704,7 +2762,6 @@ function renderMessages(highlightId){
       openLightbox(img.src,m?m.file_name:'image');
     });
   });
-
   const nearBottom=(el.messagesContainer.scrollHeight-el.messagesContainer.scrollTop-el.messagesContainer.clientHeight)<80;
   if(nearBottom||highlightId)el.messagesContainer.scrollTop=el.messagesContainer.scrollHeight;
 }
@@ -2741,36 +2798,43 @@ function openQuickReaction(btn,msgId){
 }
 
 // ============================================================
-// RENDER MEMBERS
+// RENDER MEMBERS (online + offline sections)
 // ============================================================
 function renderMembers(){
-  const users=Object.values(cachedUsers).filter(u=>u&&u.username);
-  users.sort((a,b)=>a.username.localeCompare(b.username));
-  el.membersCount.textContent='Online — '+users.length;
-  if(users.length===0){
-    el.membersList.innerHTML='<div style="padding:12px 8px;color:var(--text-muted);font-size:13px;">No one online</div>';
-    return;
-  }
-  el.membersList.innerHTML=users.map(u=>{
-    const isSelf=u.client_id===me.clientId;
-    const inner=u.pfp_data_url?'<img src="'+u.pfp_data_url+'" alt="" onerror="this.style.display=\'none\'">':initials(u.username);
-    const av=wrapAvatar(inner,u.frame);
-    const inThisCall=CallState.active&&CallState.peers.has(u.client_id);
-    const isTimedOut=u.timeout_until&&new Date(u.timeout_until)>new Date();
-    const isBanned=u.banned;
-    const displayName=u.force_nick||u.username;
-    let cls='member';
-    if(isSelf)cls+=' self';
-    if(inThisCall)cls+=' in-call-ring';
-    if(isTimedOut)cls+=' timeout';
-    if(isBanned)cls+=' banned';
-    return '<div class="'+cls+'" data-peer-id="'+u.client_id+'">'+
-      '<div class="member-avatar-wrap"><div class="member-avatar">'+av+'</div><div class="member-online"></div></div>'+
-      '<div class="member-name">'+rankBadge(u.rank)+escapeHtml(displayName)+(isSelf?' (you)':'')+'</div>'+
-      (!isSelf?'<button class="member-call-btn" data-call-peer="'+u.client_id+'" data-call-name="'+escapeHtml(u.username)+'" title="Video call '+escapeHtml(u.username)+'">📞</button>':'')+
-    '</div>';
-  }).join('');
+  const onlineIds=new Set(Object.keys(cachedUsers));
+  const online=Object.values(cachedUsers).filter(u=>u&&u.username);
+  // Offline = known users who are not currently in online list
+  const offline=Object.values(cachedKnownUsers).filter(u=>u&&u.username&&!onlineIds.has(u.client_id));
 
+  online.sort((a,b)=>a.username.localeCompare(b.username));
+  offline.sort((a,b)=>new Date(b.last_seen||0)-new Date(a.last_seen||0));
+
+  const total=online.length+offline.length;
+  el.membersCount.textContent='Members — '+total;
+
+  let html='';
+
+  // ---- ONLINE SECTION ----
+  html+='<div class="members-section-header">🟢 Online <span class="sec-count">'+online.length+'</span></div>';
+  if(online.length===0){
+    html+='<div style="padding:6px 12px;color:var(--text-muted);font-size:12px;font-style:italic;">No one online</div>';
+  }else{
+    online.forEach(u=>{
+      html+=renderMemberRow(u,true);
+    });
+  }
+
+  // ---- OFFLINE SECTION ----
+  if(offline.length>0){
+    html+='<div class="members-section-header">⚪ Offline <span class="sec-count">'+offline.length+'</span></div>';
+    offline.forEach(u=>{
+      html+=renderMemberRow(u,false);
+    });
+  }
+
+  el.membersList.innerHTML=html;
+
+  // Wire call buttons (only for online users)
   el.membersList.querySelectorAll('.member-call-btn').forEach(btn=>{
     btn.addEventListener('click',ev=>{
       ev.stopPropagation();
@@ -2784,15 +2848,46 @@ function renderMembers(){
   });
 }
 
+function renderMemberRow(u,isOnline){
+  const isSelf=u.client_id===me.clientId;
+  const inner=u.pfp_data_url?'<img src="'+u.pfp_data_url+'" alt="" onerror="this.style.display=\'none\'">':initials(u.username);
+  const av=wrapAvatar(inner,u.frame);
+  const inThisCall=isOnline&&CallState.active&&CallState.peers.has(u.client_id);
+  const isTimedOut=u.timeout_until&&new Date(u.timeout_until)>new Date();
+  const isBanned=u.banned;
+  const displayName=u.force_nick||u.username;
+  let cls='member';
+  if(!isOnline)cls+=' offline';
+  if(isSelf)cls+=' self';
+  if(inThisCall)cls+=' in-call-ring';
+  if(isTimedOut)cls+=' timeout';
+  if(isBanned)cls+=' banned';
+
+  const lastSeenLabel=!isOnline&&u.last_seen?' · '+shortTimeAgo(u.last_seen):'';
+
+  return '<div class="'+cls+'" data-peer-id="'+u.client_id+'">'+
+    '<div class="member-avatar-wrap"><div class="member-avatar">'+av+'</div><div class="member-online"></div></div>'+
+    '<div class="member-name">'+rankBadge(u.rank)+escapeHtml(displayName)+(isSelf?' (you)':lastSeenLabel)+'</div>'+
+    (isOnline&&!isSelf?'<button class="member-call-btn" data-call-peer="'+u.client_id+'" data-call-name="'+escapeHtml(u.username)+'" title="Video call '+escapeHtml(u.username)+'">📞</button>':'')+
+  '</div>';
+}
+
 // ============================================================
-// VIDEO CALLING
+// VIDEO CALLING — with TURN servers
 // ============================================================
-const ICE_CONFIG={iceServers:[
-  {urls:'stun:stun.l.google.com:19302'},
-  {urls:'stun:stun1.l.google.com:19302'},
-  {urls:'stun:stun2.l.google.com:19302'},
-  {urls:'stun:stun3.l.google.com:19302'}
-]};
+const ICE_CONFIG={
+  iceServers:[
+    {urls:'stun:stun.l.google.com:19302'},
+    {urls:'stun:stun1.l.google.com:19302'},
+    {urls:'stun:stun2.l.google.com:19302'},
+    {urls:'stun:stun3.l.google.com:19302'},
+    // Open Relay public TURN (free, no signup) — helps on strict NATs
+    {urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},
+    {urls:'turn:openrelay.metered.ca:443',username:'openrelayproject',credential:'openrelayproject'},
+    {urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'}
+  ],
+  iceCandidatePoolSize:10
+};
 
 const CallState={
   active:false,roomId:null,isGroup:false,isCaller:false,
@@ -2846,26 +2941,45 @@ async function getAudioOnlyMedia(){
   catch(e){return null;}
 }
 
+// ---- Invite channel (always-on listening) ----
 function setupInviteChannel(){
   if(!supa)return;
-  if(CallState.inviteChannel){try{supa.removeChannel(CallState.inviteChannel);}catch(e){}}
-  CallState.inviteChannel=supa.channel('nexus-call-invites',{config:{broadcast:{self:false}}});
-  CallState.inviteChannel
-    .on('broadcast',{event:'dm-invite'},({payload})=>{
-      if(!payload||payload.to!==me.clientId)return;
-      if(payload.from===me.clientId)return;
-      handleIncomingInvite({roomId:payload.roomId,isGroup:false,fromPeerId:payload.from,fromName:payload.fromName||'Someone',fromPfp:payload.fromPfp||null});
-    })
-    .on('broadcast',{event:'group-invite'},({payload})=>{
-      if(!payload||payload.from===me.clientId)return;
-      if(payload.channelId!==activeChannel)return;
-      handleIncomingInvite({roomId:payload.roomId,isGroup:true,fromPeerId:payload.from,fromName:payload.fromName||'Someone',fromPfp:payload.fromPfp||null,channelId:payload.channelId});
-    })
-    .subscribe();
+  if(CallState.inviteChannel){
+    try{supa.removeChannel(CallState.inviteChannel);}catch(e){}
+    CallState.inviteChannel=null;
+  }
+  const chName='nexus-call-invites-'+clientId;
+  // NOTE: use ONE global invite channel so callers can reach us. But each client
+  // subscribes to the SAME channel name so all listeners get all invites. Filtering
+  // happens in the handler (payload.to === me.clientId).
+  const globalName='nexus-call-invites';
+  const ch=supa.channel(globalName,{config:{broadcast:{self:false}}});
+  ch.on('broadcast',{event:'dm-invite'},({payload})=>{
+    if(!payload||payload.to!==me.clientId)return;
+    if(payload.from===me.clientId)return;
+    handleIncomingInvite({roomId:payload.roomId,isGroup:false,fromPeerId:payload.from,fromName:payload.fromName||'Someone',fromPfp:payload.fromPfp||null});
+  });
+  ch.on('broadcast',{event:'group-invite'},({payload})=>{
+    if(!payload||payload.from===me.clientId)return;
+    if(payload.channelId!==activeChannel)return;
+    handleIncomingInvite({roomId:payload.roomId,isGroup:true,fromPeerId:payload.from,fromName:payload.fromName||'Someone',fromPfp:payload.fromPfp||null,channelId:payload.channelId});
+  });
+  ch.subscribe((status)=>{
+    if(status==='SUBSCRIBED'){
+      console.log('[Nexus] invite channel ready');
+    }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED'){
+      console.warn('[Nexus] invite channel dropped, retrying in 3s');
+      setTimeout(()=>{if(supa)setupInviteChannel();},3000);
+    }
+  });
+  CallState.inviteChannel=ch;
 }
 
 function handleIncomingInvite(invite){
-  if(CallState.active)return;
+  if(CallState.active){
+    console.log('[Nexus] busy, ignoring invite');
+    return;
+  }
   CallState.pendingInvite=invite;
   const av=invite.fromPfp?'<img src="'+invite.fromPfp+'" alt="">':initials(invite.fromName);
   el.incomingCallAvatar.innerHTML=av;
@@ -2891,8 +3005,12 @@ el.incomingCallAccept.addEventListener('click',async()=>{
   if(!inv){dismissIncomingCall();return;}
   dismissIncomingCall();
   CallState.pendingInvite=null;
-  try{await joinCallRoom(inv.roomId,inv.isGroup);}
-  catch(e){console.error(e);toast('Could not join call: '+e.message,true);}
+  try{
+    await joinCallRoom(inv.roomId,inv.isGroup,inv.fromPeerId,inv.fromName);
+  }catch(e){
+    console.error('[Nexus] joinCall failed:',e);
+    toast('Could not join call: '+e.message,true);
+  }
 });
 
 async function startDMCall(peerId,peerName){
@@ -2900,13 +3018,19 @@ async function startDMCall(peerId,peerName){
   if(CallState.active){toast('Already in a call',true);return;}
   const roomId=dmRoomId(me.clientId,peerId);
   toast('Calling '+peerName+'…','info');
-  try{await joinCallRoom(roomId,false,peerId,peerName);}
-  catch(e){console.error(e);toast('Call failed: '+e.message,true);return;}
+  try{
+    await joinCallRoom(roomId,false,peerId,peerName);
+  }catch(e){
+    console.error('[Nexus] joinCall failed:',e);
+    toast('Call failed: '+e.message,true);
+    return;
+  }
+  // Send the invite AFTER we're in the room so we don't miss incoming join events
   if(CallState.inviteChannel){
     CallState.inviteChannel.send({
       type:'broadcast',event:'dm-invite',
       payload:{from:me.clientId,fromName:me.username,fromPfp:me.pfp,to:peerId,roomId:roomId}
-    }).catch(()=>{});
+    }).catch(e=>console.warn('invite send failed',e));
   }
 }
 
@@ -2917,8 +3041,13 @@ el.startGroupCallBtn.addEventListener('click',async()=>{
   if(!supa){toast('Not connected',true);return;}
   const roomId=channelRoomId(activeChannel);
   const chanName=channelMeta[activeChannel]?.name||'channel';
-  try{await joinCallRoom(roomId,true);}
-  catch(e){console.error(e);toast('Could not start call: '+e.message,true);return;}
+  try{
+    await joinCallRoom(roomId,true);
+  }catch(e){
+    console.error('[Nexus] group join failed:',e);
+    toast('Could not start call: '+e.message,true);
+    return;
+  }
   if(CallState.inviteChannel){
     CallState.inviteChannel.send({
       type:'broadcast',event:'group-invite',
@@ -2930,14 +3059,15 @@ el.startGroupCallBtn.addEventListener('click',async()=>{
 
 async function joinCallRoom(roomId,isGroup,expectedPeerId,expectedPeerName){
   let stream;
-  try{stream=await getLocalMedia();}
-  catch(e){
-    console.warn('video failed, trying audio only',e);
+  try{
+    stream=await getLocalMedia();
+  }catch(e){
+    console.warn('[Nexus] video access failed, trying audio only:',e);
     stream=await getAudioOnlyMedia();
-    if(!stream)throw new Error('No camera or microphone available.');
+    if(!stream)throw new Error('No camera or microphone available. Check browser permissions.');
     CallState.cameraOn=false;
   }
-  if(!stream)throw new Error('No media stream');
+  if(!stream)throw new Error('No media stream obtained');
 
   CallState.active=true;
   CallState.roomId=roomId;
@@ -2964,22 +3094,32 @@ async function joinCallRoom(roomId,isGroup,expectedPeerId,expectedPeerName){
 
 async function connectSignalChannel(roomId){
   if(!supa)throw new Error('not connected');
-  if(CallState.signalChannel){try{supa.removeChannel(CallState.signalChannel);}catch(e){}}
+  if(CallState.signalChannel){
+    try{supa.removeChannel(CallState.signalChannel);}catch(e){}
+    CallState.signalChannel=null;
+  }
 
-  const ch=supa.channel('call-'+roomId,{config:{broadcast:{self:false}}});
+  // Unique channel name per room so reconnects never collide with stale subscriptions
+  const chName='call-'+roomId;
+  console.log('[Nexus] connecting signal channel:',chName);
+  const ch=supa.channel(chName,{config:{broadcast:{self:false}}});
   CallState.signalChannel=ch;
 
   ch.on('broadcast',{event:'join'},({payload})=>{
+    console.log('[Nexus] peer join:',payload);
     if(!payload||payload.peerId===me.clientId)return;
     if(!CallState.active||CallState.roomId!==roomId)return;
+    // Existing peer creates the offer to the new joiner
     createOfferToPeer(payload.peerId,payload.username,payload.pfp,payload.frame).catch(e=>console.error('offer err',e));
   });
   ch.on('broadcast',{event:'offer'},({payload})=>{
+    console.log('[Nexus] got offer from',payload.from);
     if(!payload||payload.to!==me.clientId)return;
     if(!CallState.active||CallState.roomId!==roomId)return;
     handleOffer(payload).catch(e=>console.error('handleOffer err',e));
   });
   ch.on('broadcast',{event:'answer'},({payload})=>{
+    console.log('[Nexus] got answer from',payload.from);
     if(!payload||payload.to!==me.clientId)return;
     handleAnswer(payload).catch(e=>console.error('handleAnswer err',e));
   });
@@ -2989,6 +3129,7 @@ async function connectSignalChannel(roomId){
   });
   ch.on('broadcast',{event:'leave'},({payload})=>{
     if(!payload||payload.peerId===me.clientId)return;
+    console.log('[Nexus] peer left:',payload.peerId);
     removePeer(payload.peerId);
   });
   ch.on('broadcast',{event:'media-state'},({payload})=>{
@@ -3005,15 +3146,28 @@ async function connectSignalChannel(roomId){
     leaveCall(false);
   });
 
-  await new Promise((resolve)=>{
-    ch.subscribe(async(status)=>{
+  await new Promise((resolve,reject)=>{
+    let resolved=false;
+    const timeout=setTimeout(()=>{
+      if(!resolved){resolved=true;reject(new Error('Signal channel failed to subscribe'));}
+    },10000);
+    ch.subscribe(async(status,err)=>{
+      console.log('[Nexus] signal channel status:',status,err?err.message:'');
       if(status==='SUBSCRIBED'){
+        if(resolved)return;
+        resolved=true;
+        clearTimeout(timeout);
         resolve();
         await ch.send({
           type:'broadcast',event:'join',
           payload:{peerId:me.clientId,username:me.username,pfp:me.pfp,frame:me.frame}
         }).catch(e=>console.warn('join broadcast failed',e));
         el.callTopbarSub.textContent='Waiting for others…';
+      }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED'){
+        if(resolved)return;
+        resolved=true;
+        clearTimeout(timeout);
+        reject(new Error('Could not subscribe to call channel: '+status));
       }
     });
   });
@@ -3031,7 +3185,10 @@ function createPeerConnection(peerId){
       if(!remoteStream.getTracks().includes(t))remoteStream.addTrack(t);
     });
     const peer=CallState.peers.get(peerId);
-    if(peer){peer.stream=remoteStream;renderCallGrid();}
+    if(peer){
+      peer.stream=remoteStream;
+      renderCallGrid();
+    }
   };
 
   pc.onicecandidate=(ev)=>{
@@ -3044,8 +3201,13 @@ function createPeerConnection(peerId){
   };
 
   pc.onconnectionstatechange=()=>{
+    console.log('[Nexus] peer',peerId,'state:',pc.connectionState);
     if(pc.connectionState==='connected')updateCallTopbar();
     else if(pc.connectionState==='failed'||pc.connectionState==='closed')removePeer(peerId);
+  };
+
+  pc.oniceconnectionstatechange=()=>{
+    console.log('[Nexus] peer',peerId,'ICE:',pc.iceConnectionState);
   };
 
   return {pc,remoteStream};
@@ -3053,19 +3215,16 @@ function createPeerConnection(peerId){
 
 async function createOfferToPeer(peerId,username,pfp,frame){
   if(CallState.peers.has(peerId))return;
-
   const{pc,remoteStream}=createPeerConnection(peerId);
-
   CallState.peers.set(peerId,{
     pc:pc,stream:remoteStream,
     username:username||'Unknown',pfp:pfp||null,frame:frame||'none',
     cameraOn:true,micOn:true
   });
   renderCallGrid();
-
   const offer=await pc.createOffer();
   await pc.setLocalDescription(offer);
-
+  console.log('[Nexus] sending offer to',peerId);
   CallState.signalChannel.send({
     type:'broadcast',event:'offer',
     payload:{from:me.clientId,to:peerId,sdp:{type:pc.localDescription.type,sdp:pc.localDescription.sdp}}
@@ -3075,7 +3234,6 @@ async function createOfferToPeer(peerId,username,pfp,frame){
 async function handleOffer(payload){
   const{from,sdp}=payload;
   if(CallState.peers.has(from))return;
-
   const{pc,remoteStream}=createPeerConnection(from);
   CallState.peers.set(from,{
     pc:pc,stream:remoteStream,
@@ -3083,11 +3241,10 @@ async function handleOffer(payload){
     cameraOn:true,micOn:true
   });
   renderCallGrid();
-
   await pc.setRemoteDescription(new RTCSessionDescription(sdp));
   const answer=await pc.createAnswer();
   await pc.setLocalDescription(answer);
-
+  console.log('[Nexus] sending answer to',from);
   CallState.signalChannel.send({
     type:'broadcast',event:'answer',
     payload:{from:me.clientId,to:from,sdp:{type:pc.localDescription.type,sdp:pc.localDescription.sdp}}
@@ -3123,15 +3280,12 @@ function renderCallGrid(){
   const peers=Array.from(CallState.peers.entries());
   const total=1+peers.length;
   grid.dataset.count=String(Math.min(total,9));
-
   let html='';
-
   const localLabel=me.username||'You';
   html+='<div class="call-tile call-tile-mirror'+(CallState.cameraOn?'':' camera-off')+'" data-peer-id="self">'+
     '<video id="localVideo" autoplay playsinline muted></video>'+
     '<div class="call-tile-name">'+escapeHtml(localLabel)+(CallState.micOn?'':' <span class="muted-icon">🔇</span>')+'</div>'+
   '</div>';
-
   peers.forEach(([peerId,peer])=>{
     const inner=peer.pfp?'<img src="'+peer.pfp+'" alt="" onerror="this.style.display=\'none\'">':initials(peer.username);
     const showVideo=peer.stream&&peer.stream.getVideoTracks().length>0;
@@ -3141,19 +3295,12 @@ function renderCallGrid(){
       (showVideo?'<div class="call-tile-name">'+escapeHtml(peer.username)+(peer.micOn?'':' <span class="muted-icon">🔇</span>')+'</div>':'')+
     '</div>';
   });
-
   if(peers.length===0){
-    html+='<div class="call-tile call-tile-offline">'+
-      '<div class="call-empty">'+
-        '<div class="call-empty-icon">⏳</div>'+
-        '<div class="call-empty-text">Waiting for others to join…</div>'+
-        '<div class="call-empty-sub">'+(CallState.isGroup?'Everyone in this channel can join from their header.':'They will see an incoming call prompt on their screen.')+'</div>'+
-      '</div>'+
-    '</div>';
+    html+='<div class="call-tile call-tile-offline"><div class="call-empty"><div class="call-empty-icon">⏳</div>'+
+      '<div class="call-empty-text">Waiting for others to join…</div>'+
+      '<div class="call-empty-sub">'+(CallState.isGroup?'Everyone in this channel can join from their header.':'They will see an incoming call prompt on their screen.')+'</div></div></div>';
   }
-
   grid.innerHTML=html;
-
   const localVideo=document.getElementById('localVideo');
   if(localVideo&&CallState.localStream){
     if(localVideo.srcObject!==CallState.localStream){
@@ -3161,7 +3308,6 @@ function renderCallGrid(){
       localVideo.play().catch(e=>{});
     }
   }
-
   peers.forEach(([peerId,peer])=>{
     if(peer.stream&&peer.stream.getVideoTracks().length>0){
       const videoEl=grid.querySelector('.call-tile[data-peer-id="'+peerId+'"] video');
@@ -3171,7 +3317,6 @@ function renderCallGrid(){
       }
     }
   });
-
   updateCallTopbar();
 }
 
@@ -3213,22 +3358,16 @@ el.ctrlMic.addEventListener('click',()=>{
   if(!CallState.localStream)return;
   CallState.micOn=!CallState.micOn;
   CallState.localStream.getAudioTracks().forEach(t=>{t.enabled=CallState.micOn;});
-  updateCtrlButtons();
-  renderCallGrid();
-  broadcastMediaState();
+  updateCtrlButtons();renderCallGrid();broadcastMediaState();
 });
-
 el.ctrlCam.addEventListener('click',()=>{
   if(!CallState.localStream)return;
   const videoTracks=CallState.localStream.getVideoTracks();
   if(videoTracks.length===0){toast('No camera available',true);return;}
   CallState.cameraOn=!CallState.cameraOn;
   videoTracks.forEach(t=>{t.enabled=CallState.cameraOn;});
-  updateCtrlButtons();
-  renderCallGrid();
-  broadcastMediaState();
+  updateCtrlButtons();renderCallGrid();broadcastMediaState();
 });
-
 el.ctrlEnd.addEventListener('click',()=>leaveCall(true));
 
 function broadcastMediaState(){
@@ -3358,6 +3497,7 @@ function renderAdminPanel(){
     '<div class="admin-stat green"><div class="stat-value">'+bannedCount+'</div><div class="stat-label">Banned</div></div>'+
   '</div>';
 
+  // ---- Server controls ----
   html+='<div class="admin-section">'+
     '<h4>🌐 Server Controls</h4>'+
     '<div class="admin-row">'+
@@ -3384,6 +3524,41 @@ function renderAdminPanel(){
     '</div>'+
   '</div>';
 
+  // ---- Channel management ----
+  html+='<div class="admin-section">'+
+    '<h4>📢 Channel Management</h4>'+
+    '<div class="admin-row">'+
+      '<button class="admin-btn success" id="adminCreatePublicChannel">➕ Create Public Channel</button>'+
+    '</div>';
+
+  const allChannels=[];
+  allChannels.push({id:'global',name:'global-chat',is_public:true,channel_key:null,created_by:'system'});
+  cachedPublicChannels.forEach(ch=>{if(ch.id!=='global')allChannels.push(ch);});
+  joinedChannels.forEach(ch=>{allChannels.push({id:ch.id,name:ch.name,is_public:false,channel_key:ch.key,created_by:'private'});});
+
+  if(allChannels.length===0){
+    html+='<div class="admin-empty">No channels</div>';
+  }else{
+    allChannels.forEach(ch=>{
+      const isGlobal=ch.id==='global';
+      const icon=isGlobal?'#':(ch.is_public?'🌐':'🔒');
+      const kind=isGlobal?'Default public':(ch.is_public?'Public':'Private');
+      html+='<div class="admin-channel-row" data-ch-id="'+ch.id+'">'+
+        '<div class="ch-icon">'+icon+'</div>'+
+        '<div class="ch-info">'+
+          '<div class="ch-name">'+escapeHtml(ch.name)+(isGlobal?' <span style="color:var(--text-muted);font-size:11px;">(cannot be deleted)</span>':'')+'</div>'+
+          '<div class="ch-meta">'+kind+' · id: '+ch.id.slice(0,12)+'…'+(ch.channel_key?' · key: '+escapeHtml(ch.channel_key):'')+'</div>'+
+        '</div>'+
+        '<div class="ch-actions">'+
+          (!isGlobal?'<button class="admin-btn" data-ch-rename="'+ch.id+'">✏️ Rename</button>':'')+
+          (!isGlobal?'<button class="admin-btn danger" data-ch-delete="'+ch.id+'" data-ch-public="'+(ch.is_public?'1':'0')+'">🗑️ Delete</button>':'')+
+        '</div>'+
+      '</div>';
+    });
+  }
+  html+='</div>';
+
+  // ---- Users ----
   html+='<div class="admin-section">'+
     '<h4>👥 Users <span class="ap-count">'+users.length+'</span></h4>';
   if(users.length===0){html+='<div class="admin-empty">No users online</div>';}
@@ -3430,6 +3605,7 @@ function renderAdminPanel(){
   }
   html+='</div>';
 
+  // ---- Bulk ----
   html+='<div class="admin-section">'+
     '<h4>📋 Bulk Actions</h4>'+
     '<div class="admin-row">'+
@@ -3440,6 +3616,7 @@ function renderAdminPanel(){
     '</div>'+
   '</div>';
 
+  // ---- Maintenance ----
   html+='<div class="admin-section">'+
     '<h4>🧹 Maintenance</h4>'+
     '<div class="admin-row">'+
@@ -3456,6 +3633,7 @@ function renderAdminPanel(){
   html+='</div>';
   c.innerHTML=html;
 
+  // Wire everything
   $('adminLogout').addEventListener('click',()=>{
     isAdmin=false;
     lsSet(LS.ADMIN_AUTH+'::'+clientId,false);
@@ -3463,7 +3641,6 @@ function renderAdminPanel(){
     renderAdminPanel();
     renderMessages();
   });
-
   $('adminBroadcastOpen').addEventListener('click',openBroadcastModal);
   $('adminLockToggle').addEventListener('click',async()=>{
     const newLocked=!(cachedSettings&&cachedSettings.locked);
@@ -3496,6 +3673,26 @@ function renderAdminPanel(){
     try{await saveChannelSettings({announcement:null,announcement_at:null});toast('Announcement cleared');renderAdminPanel();}
     catch(e){toast('Failed: '+e.message,true);}
   });
+
+  // Create public channel from admin
+  $('adminCreatePublicChannel').addEventListener('click',()=>{
+    el.newChannelName.value='';
+    el.newChannelKey.value='';
+    el.newChannelPublic.checked=true;
+    el.createChannelTitle.textContent='Create Public Channel (Admin)';
+    el.createChannelError.textContent='';
+    updatePrivateKeyVisibility();
+    el.createChannelModal.classList.add('show');
+  });
+
+  // Channel row buttons
+  c.querySelectorAll('[data-ch-rename]').forEach(btn=>{
+    btn.addEventListener('click',()=>openRenameChannelModal(btn.dataset.chRename));
+  });
+  c.querySelectorAll('[data-ch-delete]').forEach(btn=>{
+    btn.addEventListener('click',()=>adminDeleteChannel(btn.dataset.chDelete,btn.dataset.chPublic==='1'));
+  });
+
   $('adminClearTimeouts').addEventListener('click',async()=>{
     if(!confirm('Clear ALL timeouts for all users?'))return;
     try{await supa.from('online_users').update({timeout_until:null}).not('timeout_until','is',null);toast('All timeouts cleared');}
@@ -3528,6 +3725,8 @@ function renderAdminPanel(){
     try{
       await loadChannelMessages();
       await refreshOnlineUsers();
+      await refreshKnownUsers();
+      await refreshPublicChannels();
       await loadChannelSettings();
       renderMessages();
       renderPinned();
@@ -3540,6 +3739,7 @@ function renderAdminPanel(){
     realtimeReconnectAttempts=0;
     subscribeRealtime();
     subscribeLiveBroadcast(activeChannel);
+    setupInviteChannel();
     toast('Realtime resubscribing…','info');
   });
 
@@ -3573,6 +3773,59 @@ function renderAdminPanel(){
 }
 
 document.addEventListener('click',()=>{document.querySelectorAll('.rank-menu.show').forEach(m=>m.classList.remove('show'));});
+
+// ---- Channel management actions ----
+async function adminDeleteChannel(chId,isPublic){
+  if(chId==='global'){toast('Cannot delete global-chat',true);return;}
+  if(!confirm('Delete this channel and ALL its messages? This cannot be undone.'))return;
+  try{
+    await supa.from('messages').delete().eq('channel_id',chId);
+    await supa.from('channels').delete().eq('id',chId);
+    // Remove locally
+    joinedChannels=joinedChannels.filter(c=>c.id!==chId);
+    lsSet(LS.JOINED_CHANNELS,joinedChannels);
+    delete channelMeta[chId];
+    cachedPublicChannels=cachedPublicChannels.filter(c=>c.id!==chId);
+    if(activeChannel===chId)switchChannel('global');
+    renderChannelList();
+    toast('Channel deleted');
+    renderAdminPanel();
+  }catch(e){toast('Failed: '+e.message,true);}
+}
+
+let renameChannelTargetId=null;
+function openRenameChannelModal(chId){
+  renameChannelTargetId=chId;
+  const meta=channelMeta[chId]||{};
+  el.renameChannelInput.value=meta.name||'';
+  el.renameChannelError.textContent='';
+  el.renameChannelModal.classList.add('show');
+  setTimeout(()=>el.renameChannelInput.focus(),100);
+}
+el.renameChannelClose.addEventListener('click',()=>el.renameChannelModal.classList.remove('show'));
+el.renameChannelCancel.addEventListener('click',()=>el.renameChannelModal.classList.remove('show'));
+el.renameChannelApply.addEventListener('click',async()=>{
+  const newName=(el.renameChannelInput.value||'').trim();
+  if(!newName){el.renameChannelError.textContent='Name cannot be empty';return;}
+  if(!/^[a-zA-Z0-9_\-\.]+$/.test(newName)){el.renameChannelError.textContent='Only letters, numbers, _ - .';return;}
+  try{
+    const{error}=await supa.from('channels').update({name:newName}).eq('id',renameChannelTargetId);
+    if(error)throw error;
+    if(channelMeta[renameChannelTargetId])channelMeta[renameChannelTargetId].name=newName;
+    const pub=cachedPublicChannels.find(c=>c.id===renameChannelTargetId);
+    if(pub)pub.name=newName;
+    const priv=joinedChannels.find(c=>c.id===renameChannelTargetId);
+    if(priv)priv.name=newName;
+    lsSet(LS.JOINED_CHANNELS,joinedChannels);
+    renderChannelList();
+    updateChatHeader();
+    el.renameChannelModal.classList.remove('show');
+    toast('Channel renamed to '+newName);
+    renderAdminPanel();
+  }catch(e){
+    el.renameChannelError.textContent='Failed: '+e.message;
+  }
+});
 
 // ============================================================
 // ADMIN ACTIONS
@@ -3615,9 +3868,7 @@ async function adminTimeoutUser(uid,minutes){
   const{error}=await supa.from('online_users').update({timeout_until:until}).eq('client_id',uid);
   if(error){toast('Timeout failed: '+error.message,true);throw error;}
   toast('⏱️ '+u.username+' timed out for '+minutes+' min');
-  try{
-    await sendMessageToSupabase('system',null,'⏱️ '+u.username+' was timed out by '+me.username+' for '+minutes+' minute'+(minutes===1?'':'s'),null);
-  }catch(e){}
+  try{await sendMessageToSupabase('system',null,'⏱️ '+u.username+' was timed out by '+me.username+' for '+minutes+' minute'+(minutes===1?'':'s'),null);}catch(e){}
 }
 async function adminRemoveTimeout(uid){
   if(!supa)return;
@@ -3724,10 +3975,7 @@ async function adminKickFromCall(uid){
   }
   if(!confirm('Signal this user to leave the current call?'))return;
   try{
-    await CallState.signalChannel.send({
-      type:'broadcast',event:'admin-kick',
-      payload:{target:uid,by:me.username}
-    });
+    await CallState.signalChannel.send({type:'broadcast',event:'admin-kick',payload:{target:uid,by:me.username}});
     toast('Kick signal sent');
   }catch(e){toast('Failed: '+e.message,true);}
 }
@@ -3740,6 +3988,7 @@ document.addEventListener('keydown',ev=>{
     if(CallState.active){leaveCall(true);return;}
     if(el.timeoutModal.classList.contains('show')){el.timeoutModal.classList.remove('show');return;}
     if(el.renameModal.classList.contains('show')){el.renameModal.classList.remove('show');return;}
+    if(el.renameChannelModal.classList.contains('show')){el.renameChannelModal.classList.remove('show');return;}
     if(el.broadcastModal.classList.contains('show')){el.broadcastModal.classList.remove('show');return;}
     if(el.lightbox.classList.contains('show')){closeLightbox();return;}
     if(el.snakeModal.classList.contains('show')){closeSnakeModal();return;}
@@ -3810,12 +4059,15 @@ document.addEventListener('visibilitychange',()=>{
 
   if(identitySet&&me.username){
     try{await registerOnlineUser();}catch(e){console.warn('re-register failed',e);}
+    try{await upsertKnownUser();}catch(e){console.warn('known user',e);}
     setTimeout(showNotifBanner,1500);
   }
 
   try{await loadChannelMessages();}catch(e){console.error(e);}
   try{await loadChannelSettings();}catch(e){console.error(e);}
   try{await refreshOnlineUsers();}catch(e){console.error(e);}
+  try{await refreshKnownUsers();}catch(e){console.error(e);}
+  try{await refreshPublicChannels();}catch(e){console.error(e);}
   try{subscribeRealtime();}catch(e){console.error(e);}
   try{subscribeLiveBroadcast(activeChannel);}catch(e){console.error('live broadcast',e);}
   try{setupInviteChannel();}catch(e){console.error('invite channel',e);}
@@ -3825,6 +4077,7 @@ document.addEventListener('visibilitychange',()=>{
   renderAnnouncement();
   renderPinned();
   updateLockNotice();
+  renderChannelList();
 
   if(!identitySet){
     const div=document.createElement('div');
