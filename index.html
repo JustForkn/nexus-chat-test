@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Discord · Nexus Chat</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 127.14 96.36'%3E%3Cpath fill='%235865F2' d='M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 127.14 96.36'%3E%3Cpath fill='%235865F2' d='M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77.7,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
@@ -128,6 +128,10 @@ a:hover{text-decoration:underline}
 .msg.grouped .msg-avatar-col{visibility:hidden}
 .msg.new-highlight{animation:newMsgPulse 2s ease}
 .msg.pinned-highlight{animation:pinnedFlash 3s ease}
+.msg.pending .msg-text,.msg.pending .msg-file,.msg.pending .msg-username{opacity:.55}
+.msg.pending::after{content:'sending…';position:absolute;right:60px;top:8px;font-size:10px;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase}
+.msg.failed .msg-text,.msg.failed .msg-file,.msg.failed .msg-username{opacity:.6}
+.msg.failed::after{content:'⚠ failed';position:absolute;right:60px;top:8px;font-size:10px;color:var(--red);letter-spacing:.04em;text-transform:uppercase}
 @keyframes newMsgPulse{0%{background:rgba(88,101,242,0.22);}100%{background:transparent;}}
 @keyframes pinnedFlash{0%{background:rgba(240,178,50,0.3);}100%{background:transparent;}}
 @keyframes msgFade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
@@ -965,7 +969,8 @@ const LS={
   NOTIF_DISMISSED:'nexus_notif_dismissed_v3',
   SNAKE_BEST:'nexus_snake_best_v3',
   ADMIN_AUTH:'nexus_admin_auth_v3',
-  ADMIN_PINNED_HIDDEN:'nexus_pin_hidden_v3'
+  ADMIN_PINNED_HIDDEN:'nexus_pin_hidden_v3',
+  CHANNEL_UNREAD:'nexus_channel_unread_v3'
 };
 function lsGet(k,fb){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb;}catch(e){return fb;}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
@@ -1015,12 +1020,23 @@ let realtimeStatus='connecting';
 let realtimeLastMessageAt=0;
 let pollInterval=null;
 let pollBackoff=4000;
-const POLL_MIN=2000;
+const POLL_MIN=1000;
 const POLL_MAX=15000;
 let realtimeReconnectAttempts=0;
 
-// Unread per channel (so we can badge channels in the sidebar)
-let channelUnread=lsGet('nexus_channel_unread_v3',{});
+// Channel unread markers
+let channelUnread=lsGet(LS.CHANNEL_UNREAD,{});
+
+// ============================================================
+// LIVE BROADCAST (the instant delivery layer)
+// This is a separate broadcast-only channel that fans out every
+// insert/update/delete within ~50ms. Postgres_changes + polling
+// remain as redundant backups. Dedup by message id means no double
+// rendering when both fire.
+// ============================================================
+let liveBroadcastChannel=null;
+let liveBroadcastRoom=null;
+let liveBroadcastConnected=false;
 
 // ============================================================
 // UTILS
@@ -1033,6 +1049,14 @@ function codepointLength(s){return [...s].length;}
 function fmtDate(d){if(!d)return '—';return new Date(d).toLocaleString();}
 function rankLabel(r){return {owner:'Owner',admin:'Admin',mod:'Mod',vip:'VIP',member:'Member'}[r||'member']||'Member';}
 function rankBadge(r){if(!r||r==='member')return '';return '<span class="rank-badge rank-'+r+'">'+rankLabel(r)+'</span>';}
+function newUuid(){
+  if(crypto.randomUUID)return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{
+    const r=Math.random()*16|0;
+    const v=c==='x'?r:(r&0x3|0x8);
+    return v.toString(16);
+  });
+}
 
 // ============================================================
 // LINKIFY
@@ -1126,13 +1150,13 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)clearUnrea
 function markChannelRead(channelId){
   if(channelUnread[channelId]){
     delete channelUnread[channelId];
-    lsSet('nexus_channel_unread_v3',channelUnread);
+    lsSet(LS.CHANNEL_UNREAD,channelUnread);
     renderChannelList();
   }
 }
 function markChannelUnread(channelId){
   channelUnread[channelId]=true;
-  lsSet('nexus_channel_unread_v3',channelUnread);
+  lsSet(LS.CHANNEL_UNREAD,channelUnread);
   renderChannelList();
 }
 
@@ -1148,40 +1172,46 @@ function updateConnectionUI(){
   dot.classList.remove('reconnecting','offline');
   indicator.classList.remove('rt-ok','rt-bad');
 
-  if(realtimeConnected&&realtimeStatus==='SUBSCRIBED'){
+  const fullyLive=realtimeConnected&&liveBroadcastConnected;
+
+  if(fullyLive){
     dot.style.background='var(--green)';
     banner.classList.remove('show','ok');
     indicator.classList.add('rt-ok');
-    indicator.title='Realtime: connected';
+    indicator.title='Instant delivery active';
+  }else if(realtimeConnected||liveBroadcastConnected){
+    dot.style.background='var(--green)';
+    banner.classList.remove('show','ok');
+    indicator.classList.add('rt-ok');
+    indicator.title='Partial realtime — fallback active';
   }else if(realtimeStatus==='CHANNEL_ERROR'||realtimeStatus==='TIMED_OUT'||realtimeStatus==='CLOSED'){
     dot.style.background='var(--yellow)';
     dot.classList.add('reconnecting');
     banner.classList.add('show');
     banner.classList.remove('ok');
-    el.connText.textContent='Realtime disconnected — using polling fallback. New messages still arrive every few seconds.';
+    el.connText.textContent='Reconnecting — messages still arrive within a second via fallback.';
     indicator.classList.add('rt-bad');
-    indicator.title='Realtime: degraded (polling)';
+    indicator.title='Reconnecting…';
   }else{
     dot.style.background='var(--yellow)';
     dot.classList.add('reconnecting');
     indicator.classList.add('rt-bad');
-    indicator.title='Realtime: '+realtimeStatus;
+    indicator.title='Connecting…';
   }
 
-  // Update user panel status text
   if(identitySet){
-    el.userPanelStatus.textContent=realtimeConnected?'Online':'Reconnecting';
+    el.userPanelStatus.textContent=fullyLive?'Online':(realtimeConnected||liveBroadcastConnected?'Online':'Reconnecting');
   }else{
     el.userPanelStatus.textContent='Offline';
   }
 }
 
-// Click the indicator to force reconnect
 if(el.realtimeIndicator){
   el.realtimeIndicator.addEventListener('click',()=>{
     toast('Reconnecting realtime…','info');
     realtimeReconnectAttempts=0;
     subscribeRealtime();
+    subscribeLiveBroadcast(activeChannel);
   });
 }
 
@@ -1393,6 +1423,138 @@ function buildEmojiPicker(){
 }
 
 // ============================================================
+// CACHED MESSAGE UPSERT (single source of truth for merging)
+// ============================================================
+function upsertCachedMessage(row, options){
+  if(!row||!row.id)return {changed:false,isNew:false};
+  options=options||{};
+  const idx=cachedMessages.findIndex(m=>m.id===row.id);
+  if(idx>=0){
+    // Preserve nothing — server row is truth, but keep _pending if we haven't sent yet
+    const prev=cachedMessages[idx];
+    const merged={...row};
+    if(prev._local_only&&!row.created_at)merged._local_only=true;
+    if(prev._pending)merged._pending=true;
+    if(prev._failed)merged._failed=true;
+    const same=JSON.stringify(prev)===JSON.stringify(merged);
+    if(same)return {changed:false,isNew:false};
+    cachedMessages[idx]=merged;
+    return {changed:true,isNew:false};
+  }
+  cachedMessages.push(row);
+  return {changed:true,isNew:true};
+}
+
+// ============================================================
+// LIVE BROADCAST (instant layer)
+// ============================================================
+function subscribeLiveBroadcast(channelId){
+  if(!supa)return;
+  // Tear down old
+  if(liveBroadcastChannel){
+    try{supa.removeChannel(liveBroadcastChannel);}catch(e){}
+    liveBroadcastChannel=null;
+  }
+  liveBroadcastConnected=false;
+
+  const roomName='nexus-live-'+channelId;
+  liveBroadcastRoom=roomName;
+  const ch=supa.channel(roomName,{config:{broadcast:{self:false}}});
+
+  ch.on('broadcast',{event:'msg'},({payload})=>{
+    try{
+      if(!payload||!payload.message)return;
+      const row=payload.message;
+      if(row.channel_id!==activeChannel)return;
+      realtimeLastMessageAt=Date.now();
+
+      const{changed,isNew}=upsertCachedMessage(row);
+      if(!changed)return;
+
+      if(isNew){
+        cachedMessages.sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
+        if(cachedMessages.length>200)cachedMessages=cachedMessages.slice(-200);
+      }
+      renderMessages(isNew?row.id:null);
+      renderPinned();
+
+      if(isNew){
+        const isFromOther=row.username!==me.username&&row.username!=='system';
+        if(isFromOther){
+          playBeep();
+          if(!document.hasFocus()){
+            const chName=channelMeta[activeChannel]?.name||'global-chat';
+            const body=row.text?row.text:(row.file_name?'📎 '+row.file_name:'sent a message');
+            showDesktopNotification(row.username+' · #'+chName,body,row.pfp_data_url);
+            incrementUnread();
+            markChannelUnread(activeChannel);
+          }
+        }
+      }
+    }catch(e){console.error('[Nexus] live msg handler',e);}
+  });
+
+  ch.on('broadcast',{event:'update'},({payload})=>{
+    try{
+      if(!payload||!payload.message)return;
+      const row=payload.message;
+      if(row.channel_id!==activeChannel)return;
+      realtimeLastMessageAt=Date.now();
+      const{changed}=upsertCachedMessage(row);
+      if(changed){renderMessages();renderPinned();}
+    }catch(e){console.error('[Nexus] live update handler',e);}
+  });
+
+  ch.on('broadcast',{event:'delete'},({payload})=>{
+    try{
+      if(!payload||!payload.id)return;
+      realtimeLastMessageAt=Date.now();
+      const before=cachedMessages.length;
+      cachedMessages=cachedMessages.filter(m=>m.id!==payload.id);
+      if(cachedMessages.length!==before){
+        renderMessages();
+        renderPinned();
+      }
+    }catch(e){console.error('[Nexus] live delete handler',e);}
+  });
+
+  ch.subscribe((status)=>{
+    if(status==='SUBSCRIBED'){
+      liveBroadcastConnected=true;
+      updateConnectionUI();
+      console.log('[Nexus] live broadcast active for',roomName);
+    }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED'){
+      liveBroadcastConnected=false;
+      updateConnectionUI();
+    }
+  });
+
+  liveBroadcastChannel=ch;
+}
+
+function broadcastMessageLive(row){
+  if(!liveBroadcastChannel||!liveBroadcastConnected)return;
+  liveBroadcastChannel.send({
+    type:'broadcast',event:'msg',
+    payload:{message:row}
+  }).catch(()=>{});
+}
+function broadcastUpdateLive(row){
+  if(!liveBroadcastChannel||!liveBroadcastConnected)return;
+  liveBroadcastChannel.send({
+    type:'broadcast',event:'update',
+    payload:{message:row}
+  }).catch(()=>{});
+}
+function broadcastDeleteLive(id){
+  if(!liveBroadcastChannel||!liveBroadcastConnected)return;
+  liveBroadcastChannel.send({
+    type:'broadcast',event:'delete',
+    payload:{id:id}
+  }).catch(()=>{});
+}
+
+// ============================================================
 // CHANNELS
 // ============================================================
 function renderChannelList(){
@@ -1451,7 +1613,8 @@ async function switchChannel(id){
   renderPinned();
   renderMessages();
   updateLockNotice();
-  // Restart polling immediately for the new channel
+  // Re-subscribe live broadcast to the new channel room
+  subscribeLiveBroadcast(activeChannel);
   if(typeof startPollingFallback==='function'){
     try{startPollingFallback();}catch(e){}
   }
@@ -1863,7 +2026,6 @@ function renderMyAvatars(){
   }else{
     el.serverAvatar.style.display='none';el.serverInitial.style.display='';
   }
-
   el.userPanelAvatar.innerHTML='';
   const w=document.createElement('div');
   w.className=frameClass(me.frame);w.style.width='100%';w.style.height='100%';
@@ -1967,30 +2129,136 @@ async function isUsernameTaken(username,excludeId){
   const target=username.toLowerCase();
   return(data||[]).some(u=>u.client_id!==excludeId&&String(u.username).toLowerCase()===target);
 }
-async function sendMessageToSupabase(username,pfp,text,file){
+
+// ============================================================
+// SEND MESSAGE — optimistic + live broadcast
+// ============================================================
+async function sendMessageToSupabase(username,pfp,text,file,opts){
   if(!supa)throw new Error('not connected');
+  opts=opts||{};
   const now=new Date().toISOString();
+  const id=opts.id||newUuid();
   const row={
+    id:id,
     username:username,
     pfp_data_url:pfp||null,
     text:text||'',
     frame:me.frame||'none',
     channel_id:activeChannel,
-    last_activity:now
+    last_activity:now,
+    created_at:now
   };
   if(file){row.file_data=file.data;row.file_name=file.name;row.file_type=file.type;row.file_size=file.size;}
   const{error}=await supa.from('messages').insert(row);
   if(error)throw error;
+  return row;
 }
+
+async function sendMessage(){
+  const text=(el.messageInput.value||'').trim();
+  if(!text&&!pendingFile)return;
+  if(!me.username){toast('Set a profile first',true);return;}
+  if(!supa){toast('Not connected',true);return;}
+  if(selfBanned()){toast('You are banned from this server',true);return;}
+  const to=selfTimedOut();
+  if(to){
+    const mins=Math.max(1,Math.ceil((to-Date.now())/60000));
+    toast('You are timed out for '+mins+' more minute'+(mins===1?'':'s'),true);
+    return;
+  }
+  if(cachedSettings&&cachedSettings.locked&&!isAdmin){toast('This channel is locked',true);return;}
+  if(cachedSettings&&cachedSettings.slow_mode>0&&!isAdmin){
+    const mine=cachedMessages.filter(m=>m.username===me.username&&!m._local_only);
+    const last=mine[mine.length-1];
+    if(last&&last.created_at){
+      const diff=(Date.now()-new Date(last.created_at).getTime())/1000;
+      if(diff<cachedSettings.slow_mode){
+        toast('Slow mode: wait '+Math.ceil(cachedSettings.slow_mode-diff)+'s',true);
+        return;
+      }
+    }
+  }
+
+  const fileToSend=pendingFile;
+  pendingFile=null;
+  const textToSend=text;
+
+  // ---- Optimistic local echo ----
+  const localId=newUuid();
+  const localRow={
+    id:localId,
+    username:me.username,
+    pfp_data_url:me.pfp||null,
+    text:textToSend||'',
+    frame:me.frame||'none',
+    channel_id:activeChannel,
+    created_at:new Date().toISOString(),
+    last_activity:new Date().toISOString(),
+    _pending:true,
+    _local_only:true
+  };
+  if(fileToSend){
+    localRow.file_data=fileToSend.data;
+    localRow.file_name=fileToSend.name;
+    localRow.file_type=fileToSend.type;
+    localRow.file_size=fileToSend.size;
+  }
+
+  cachedMessages.push(localRow);
+  if(cachedMessages.length>200)cachedMessages=cachedMessages.slice(-200);
+  renderMessages(localId);
+
+  // Clear composer immediately
+  el.messageInput.value='';
+  el.messageInput.style.height='auto';
+  el.messageInput.focus();
+
+  // ---- Fire off to server ----
+  try{
+    const savedRow=await sendMessageToSupabase(me.username,me.pfp,textToSend,fileToSend,{id:localId});
+
+    // Mark as delivered — keep same id, so it's the same cache entry
+    const idx=cachedMessages.findIndex(m=>m.id===localId);
+    if(idx>=0){
+      cachedMessages[idx]={...savedRow,_justSent:true};
+    }
+
+    // Broadcast to everyone else (including our own other tabs) instantly
+    broadcastMessageLive({...savedRow});
+
+    // Re-render to clear the "sending…" styling
+    renderMessages();
+
+    // Refresh our own online status
+    if(identitySet)registerOnlineUser().catch(console.error);
+  }catch(err){
+    console.error('send failed',err);
+    const idx=cachedMessages.findIndex(m=>m.id===localId);
+    if(idx>=0){
+      cachedMessages[idx]={...cachedMessages[idx],_pending:false,_failed:true};
+      renderMessages();
+    }
+    toast('Send failed: '+(err.message||err),true);
+  }
+}
+
+// ============================================================
+// DELETE (with broadcast for instant removal on other clients)
+// ============================================================
 async function deleteMessage(id){
   if(!supa)throw new Error('not connected');
-  // Optimistic removal — UI updates instantly
+
+  // Optimistic removal
   const before=cachedMessages.length;
   cachedMessages=cachedMessages.filter(m=>m.id!==id);
   if(cachedMessages.length!==before){
     renderMessages();
     renderPinned();
   }
+
+  // Broadcast delete for instant removal on other clients
+  broadcastDeleteLive(id);
+
   const{error}=await supa.from('messages').delete().eq('id',id);
   if(error){
     console.error('delete failed',error);
@@ -1999,6 +2267,10 @@ async function deleteMessage(id){
     throw error;
   }
 }
+
+// ============================================================
+// REACTIONS (with broadcast)
+// ============================================================
 async function toggleReaction(messageId,emoji,username){
   if(!supa)return;
   const msg=cachedMessages.find(m=>m.id===messageId);
@@ -2008,24 +2280,60 @@ async function toggleReaction(messageId,emoji,username){
   const idx=list.indexOf(username);
   if(idx>=0){list.splice(idx,1);if(list.length===0)delete reactions[emoji];else reactions[emoji]=list;}
   else{list.push(username);reactions[emoji]=list;}
+
+  const newActivity=new Date().toISOString();
+
+  // Optimistic local update
+  const i=cachedMessages.findIndex(m=>m.id===messageId);
+  if(i>=0){
+    cachedMessages[i]={...cachedMessages[i],reactions:reactions,last_activity:newActivity};
+    renderMessages();
+  }
+
   const{error}=await supa.from('messages').update({
     reactions:reactions,
-    last_activity:new Date().toISOString()
+    last_activity:newActivity
   }).eq('id',messageId);
   if(error)throw error;
+
+  // Broadcast the updated message for instant reaction sync
+  const updated=cachedMessages.find(m=>m.id===messageId);
+  if(updated)broadcastUpdateLive(updated);
 }
+
+// ============================================================
+// PIN TOGGLE (with broadcast)
+// ============================================================
 async function togglePin(msgId){
   if(!isAdmin){toast('Only admins can pin messages',true);return;}
   const msg=cachedMessages.find(m=>m.id===msgId);
   if(!msg)return;
   const newVal=!msg.pinned;
+
+  // Optimistic
+  const i=cachedMessages.findIndex(m=>m.id===msgId);
+  if(i>=0){
+    cachedMessages[i]={...cachedMessages[i],pinned:newVal,pinned_by:newVal?me.username:null};
+    renderMessages();
+    renderPinned();
+  }
+
   const{error}=await supa.from('messages').update({
     pinned:newVal,
     pinned_by:newVal?me.username:null
   }).eq('id',msgId);
   if(error)throw error;
+
+  // Broadcast
+  const updated=cachedMessages.find(m=>m.id===msgId);
+  if(updated)broadcastUpdateLive(updated);
+
   toast(newVal?'📌 Pinned':'Unpinned');
 }
+
+// ============================================================
+// LOAD MESSAGES
+// ============================================================
 async function loadChannelMessages(){
   if(!supa)return;
   const{data,error}=await supa.from('messages')
@@ -2057,7 +2365,7 @@ async function refreshOnlineUsers(){
 }
 
 // ============================================================
-// REALTIME (fixed + robust)
+// REALTIME (postgres_changes as backup to live broadcast)
 // ============================================================
 function subscribeRealtime(){
   if(!supa)return;
@@ -2070,13 +2378,9 @@ function subscribeRealtime(){
   realtimeStatus='connecting';
   realtimeConnected=false;
   updateConnectionUI();
-  console.log('[Nexus] subscribing to realtime as',channelName);
 
   channel=supa.channel(channelName,{
-    config:{
-      broadcast:{self:false},
-      presence:{key:''}
-    }
+    config:{broadcast:{self:false},presence:{key:''}}
   })
   .on('postgres_changes',{event:'*',schema:'public',table:'messages'},payload=>{
     try{
@@ -2084,7 +2388,6 @@ function subscribeRealtime(){
       const row=payload.new||payload.old;
       if(!row)return;
 
-      // DELETE first — payload may not include channel_id
       if(payload.eventType==='DELETE'){
         const before=cachedMessages.length;
         cachedMessages=cachedMessages.filter(m=>m.id!==row.id);
@@ -2098,12 +2401,15 @@ function subscribeRealtime(){
       if(row.channel_id!==activeChannel)return;
 
       if(payload.eventType==='INSERT'){
-        if(!cachedMessages.some(m=>m.id===row.id)){
-          cachedMessages.push(row);
-          if(cachedMessages.length>200)cachedMessages=cachedMessages.slice(-200);
+        const{changed,isNew}=upsertCachedMessage(row);
+        if(!changed)return;
+        cachedMessages.sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
+        if(cachedMessages.length>200)cachedMessages=cachedMessages.slice(-200);
+        renderMessages(isNew?row.id:null);
+        renderPinned();
+
+        if(isNew){
           const isFromOther=row.username!==me.username&&row.username!=='system';
-          renderMessages(row.id);
-          renderPinned();
           if(isFromOther){
             playBeep();
             if(!document.hasFocus()){
@@ -2116,10 +2422,8 @@ function subscribeRealtime(){
           }
         }
       }else if(payload.eventType==='UPDATE'){
-        const i=cachedMessages.findIndex(m=>m.id===row.id);
-        if(i>=0)cachedMessages[i]=row;else cachedMessages.push(row);
-        renderMessages();
-        renderPinned();
+        const{changed}=upsertCachedMessage(row);
+        if(changed){renderMessages();renderPinned();}
       }
     }catch(e){console.error('[Nexus] realtime handler error',e);}
   })
@@ -2138,8 +2442,6 @@ function subscribeRealtime(){
   })
   .subscribe((status,err)=>{
     realtimeStatus=status;
-    console.log('[Nexus] realtime status:',status,err?('· '+err.message):'');
-
     if(status==='SUBSCRIBED'){
       realtimeConnected=true;
       realtimeReconnectAttempts=0;
@@ -2152,7 +2454,6 @@ function subscribeRealtime(){
       const delay=Math.min(15000,2000*Math.pow(1.5,Math.min(realtimeReconnectAttempts,5)));
       setTimeout(()=>{
         if(!realtimeConnected&&supa){
-          console.log('[Nexus] attempting realtime reconnect (#'+realtimeReconnectAttempts+')…');
           subscribeRealtime();
         }
       },delay+Math.random()*1500);
@@ -2161,13 +2462,13 @@ function subscribeRealtime(){
 }
 
 // ============================================================
-// POLLING FALLBACK — guarantees new messages appear
+// POLLING FALLBACK — last-resort safety net
 // ============================================================
 async function catchUpMissedMessages(){
   if(!supa||!activeChannel)return;
   try{
-    const lastMsg=cachedMessages[cachedMessages.length-1];
-    const since=lastMsg?lastMsg.created_at:new Date(Date.now()-2*60*1000).toISOString();
+    const lastReal=cachedMessages.filter(m=>!m._local_only).pop();
+    const since=lastReal?lastReal.created_at:new Date(Date.now()-2*60*1000).toISOString();
 
     const{data,error}=await supa
       .from('messages')
@@ -2177,24 +2478,14 @@ async function catchUpMissedMessages(){
       .order('created_at',{ascending:true})
       .limit(200);
 
-    if(error){console.warn('[Nexus] catchup err',error);return;}
-    if(!data||data.length===0)return;
+    if(error||!data)return;
 
     let changed=false;
     let newestId=null;
 
     data.forEach(row=>{
-      const idx=cachedMessages.findIndex(m=>m.id===row.id);
-      if(idx>=0){
-        if(JSON.stringify(cachedMessages[idx])!==JSON.stringify(row)){
-          cachedMessages[idx]=row;
-          changed=true;
-        }
-      }else{
-        cachedMessages.push(row);
-        changed=true;
-        newestId=row.id;
-      }
+      const{changed:c,isNew}=upsertCachedMessage(row);
+      if(c){changed=true;if(isNew)newestId=row.id;}
     });
 
     if(changed){
@@ -2203,22 +2494,19 @@ async function catchUpMissedMessages(){
       renderMessages(newestId);
       renderPinned();
     }
-  }catch(e){
-    console.warn('[Nexus] catchup exception',e);
-  }
+  }catch(e){}
 }
 
 function startPollingFallback(){
   if(pollInterval)clearInterval(pollInterval);
 
   const pollTick=async()=>{
-    // Skip if realtime just delivered something in the last 2s
-    if(realtimeConnected&&Date.now()-realtimeLastMessageAt<2000)return;
+    if((realtimeConnected||liveBroadcastConnected)&&Date.now()-realtimeLastMessageAt<1500)return;
     if(!supa||!activeChannel)return;
 
     try{
-      const lastMsg=cachedMessages[cachedMessages.length-1];
-      const since=lastMsg?lastMsg.created_at:new Date(Date.now()-60000).toISOString();
+      const lastReal=cachedMessages.filter(m=>!m._local_only).pop();
+      const since=lastReal?lastReal.created_at:new Date(Date.now()-60000).toISOString();
 
       const{data,error}=await supa
         .from('messages')
@@ -2234,26 +2522,21 @@ function startPollingFallback(){
       let newestId=null;
 
       data.forEach(row=>{
-        const idx=cachedMessages.findIndex(m=>m.id===row.id);
-        if(idx>=0){
-          if(JSON.stringify(cachedMessages[idx])!==JSON.stringify(row)){
-            cachedMessages[idx]=row;
-            changed=true;
-          }
-        }else{
-          cachedMessages.push(row);
+        const{changed:c,isNew}=upsertCachedMessage(row);
+        if(c){
           changed=true;
-          newestId=row.id;
-
-          if(row.username!==me.username&&row.username!=='system'){
-            const isFresh=(Date.now()-new Date(row.created_at).getTime())<60000;
-            if(isFresh&&!document.hasFocus()){
-              playBeep();
-              const chName=channelMeta[activeChannel]?.name||'global-chat';
-              const body=row.text?row.text:(row.file_name?'📎 '+row.file_name:'sent a message');
-              showDesktopNotification(row.username+' · #'+chName,body,row.pfp_data_url);
-              incrementUnread();
-              markChannelUnread(activeChannel);
+          if(isNew){
+            newestId=row.id;
+            if(row.username!==me.username&&row.username!=='system'){
+              const isFresh=(Date.now()-new Date(row.created_at).getTime())<60000;
+              if(isFresh&&!document.hasFocus()){
+                playBeep();
+                const chName=channelMeta[activeChannel]?.name||'global-chat';
+                const body=row.text?row.text:(row.file_name?'📎 '+row.file_name:'sent a message');
+                showDesktopNotification(row.username+' · #'+chName,body,row.pfp_data_url);
+                incrementUnread();
+                markChannelUnread(activeChannel);
+              }
             }
           }
         }
@@ -2265,23 +2548,22 @@ function startPollingFallback(){
         renderMessages(newestId);
         renderPinned();
       }
-    }catch(e){
-      console.warn('[Nexus] poll error',e);
-    }
+    }catch(e){}
   };
 
   pollTick();
   pollInterval=setInterval(pollTick,pollBackoff);
 
-  // Adaptive: poll harder when realtime is degraded
+  // Adaptive interval: fast when both realtime layers are down
   setInterval(()=>{
-    const desired=realtimeConnected?8000:3000;
-    if(Math.abs(desired-pollBackoff)>500){
+    const bothDown=!realtimeConnected&&!liveBroadcastConnected;
+    const desired=bothDown?1000:(realtimeConnected&&liveBroadcastConnected?10000:3000);
+    if(Math.abs(desired-pollBackoff)>300){
       pollBackoff=desired;
       clearInterval(pollInterval);
       pollInterval=setInterval(pollTick,pollBackoff);
     }
-  },5000);
+  },3000);
 }
 
 // ============================================================
@@ -2358,16 +2640,20 @@ function renderMessages(highlightId){
       reactionsHtml+='</div>';
     }
 
-    const canDelete=own||isAdmin;
+    const canDelete=(own&&!m._pending)||isAdmin;
     const canPin=isAdmin;
-    const actionBar='<div class="msg-actions">'+
+    const actionBar=(m._pending||m._failed)?'':'<div class="msg-actions">'+
       '<button class="action-btn" data-action="react" data-msg-id="'+m.id+'" title="Add reaction">😊</button>'+
       '<button class="action-btn" data-action="copy" data-msg-id="'+m.id+'" title="Copy text">📋</button>'+
       (canPin?'<button class="action-btn'+(m.pinned?' pin-active':'')+'" data-action="pin" data-msg-id="'+m.id+'" title="'+(m.pinned?'Unpin':'Pin')+'">📌</button>':'')+
       (canDelete?'<button class="action-btn danger" data-action="delete" data-msg-id="'+m.id+'" title="Delete">🗑️</button>':'')+
     '</div>';
 
-    html+='<div class="msg'+(grouped?' grouped':'')+(highlightId&&m.id===highlightId?' new-highlight':'')+'" data-msg-id="'+m.id+'">'+
+    let extraCls='';
+    if(m._pending)extraCls+=' pending';
+    else if(m._failed)extraCls+=' failed';
+
+    html+='<div class="msg'+(grouped?' grouped':'')+extraCls+(highlightId&&m.id===highlightId?' new-highlight':'')+'" data-msg-id="'+m.id+'">'+
       '<div class="msg-avatar-col"><div class="msg-avatar">'+avatarHtml+'</div></div>'+
       '<div class="msg-body">'+
         (!grouped?'<div class="msg-header">'+
@@ -2981,42 +3267,6 @@ async function leaveCall(showToast){
 }
 
 // ============================================================
-// SEND MESSAGE
-// ============================================================
-async function sendMessage(){
-  const text=(el.messageInput.value||'').trim();
-  if(!text&&!pendingFile)return;
-  if(!me.username){toast('Set a profile first',true);return;}
-  if(!supa){toast('Not connected',true);return;}
-  if(selfBanned()){toast('You are banned from this server',true);return;}
-  const to=selfTimedOut();
-  if(to){
-    const mins=Math.max(1,Math.ceil((to-Date.now())/60000));
-    toast('You are timed out for '+mins+' more minute'+(mins===1?'':'s'),true);
-    return;
-  }
-  if(cachedSettings&&cachedSettings.locked&&!isAdmin){toast('This channel is locked',true);return;}
-  if(cachedSettings&&cachedSettings.slow_mode>0&&!isAdmin){
-    const mine=cachedMessages.filter(m=>m.username===me.username);
-    const last=mine[mine.length-1];
-    if(last&&last.created_at){
-      const diff=(Date.now()-new Date(last.created_at).getTime())/1000;
-      if(diff<cachedSettings.slow_mode){
-        toast('Slow mode: wait '+Math.ceil(cachedSettings.slow_mode-diff)+'s',true);
-        return;
-      }
-    }
-  }
-  const fileToSend=pendingFile;
-  pendingFile=null;
-  await sendMessageToSupabase(me.username,me.pfp,text,fileToSend);
-  el.messageInput.value='';
-  el.messageInput.style.height='auto';
-  el.messageInput.focus();
-  if(identitySet)registerOnlineUser().catch(console.error);
-}
-
-// ============================================================
 // HEARTBEAT / EXPIRY
 // ============================================================
 function startHeartbeat(){
@@ -3199,7 +3449,7 @@ function renderAdminPanel(){
       '<button class="admin-btn ghost" id="adminForceResub">📡 Force Realtime Resubscribe</button>'+
     '</div>'+
     '<div style="font-size:11px;color:var(--text-muted);line-height:1.6;margin-top:8px;">'+
-      '<strong>Realtime status:</strong> '+(realtimeConnected?'Connected':'Degraded (polling fallback active)')+
+      '<strong>Realtime:</strong> '+((realtimeConnected?'✓':'✗')+' pg_changes · '+(liveBroadcastConnected?'✓':'✗')+' live broadcast')+
     '</div>'+
   '</div>';
 
@@ -3264,7 +3514,7 @@ function renderAdminPanel(){
   $('adminKickAll').addEventListener('click',async()=>{
     if(!confirm('End every active call on the server?'))return;
     if(CallState.active){leaveCall(false);toast('Your call ended');}
-    toast('Signal broadcast; other clients will end their own calls if in the same channel');
+    toast('Signal broadcast; other clients will end their own calls');
   });
   $('adminCleanStale').addEventListener('click',async()=>{
     try{
@@ -3289,6 +3539,7 @@ function renderAdminPanel(){
   $('adminForceResub').addEventListener('click',()=>{
     realtimeReconnectAttempts=0;
     subscribeRealtime();
+    subscribeLiveBroadcast(activeChannel);
     toast('Realtime resubscribing…','info');
   });
 
@@ -3526,7 +3777,6 @@ document.addEventListener('visibilitychange',()=>{
     registerOnlineUser().catch(console.error);
     refreshOnlineUsers().catch(console.error);
     runExpiryCheck();
-    // Immediately catch up on anything missed while hidden
     catchUpMissedMessages().catch(()=>{});
   }
 });
@@ -3552,7 +3802,7 @@ document.addEventListener('visibilitychange',()=>{
   }
 
   try{
-    supa=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{realtime:{params:{eventsPerSecond:10}}});
+    supa=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{realtime:{params:{eventsPerSecond:20}}});
   }catch(e){
     el.messagesContainer.innerHTML='<div style="padding:32px;text-align:center;color:var(--red);">⚠ Init failed: '+escapeHtml(e.message)+'</div>';
     return;
@@ -3567,6 +3817,7 @@ document.addEventListener('visibilitychange',()=>{
   try{await loadChannelSettings();}catch(e){console.error(e);}
   try{await refreshOnlineUsers();}catch(e){console.error(e);}
   try{subscribeRealtime();}catch(e){console.error(e);}
+  try{subscribeLiveBroadcast(activeChannel);}catch(e){console.error('live broadcast',e);}
   try{setupInviteChannel();}catch(e){console.error('invite channel',e);}
   try{startPollingFallback();}catch(e){console.error('poll start',e);}
 
