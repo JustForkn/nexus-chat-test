@@ -57,6 +57,7 @@ a:hover{text-decoration:underline}
 .channel:hover .c-close{opacity:1}
 .channel .c-close:hover{color:var(--red)}
 .channel .c-lock-icon{font-size:11px;color:var(--yellow)}
+.channel .c-unread{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0}
 .user-panel{height:52px;background:var(--bg-panel);padding:0 8px;display:flex;align-items:center;gap:8px;flex-shrink:0}
 .user-panel-avatar{width:32px;height:32px;border-radius:50%;background:var(--blurple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;cursor:pointer;overflow:hidden;flex-shrink:0;position:relative}
 .user-panel-avatar img{width:100%;height:100%;object-fit:cover}
@@ -65,6 +66,8 @@ a:hover{text-decoration:underline}
 .user-panel-name{font-size:13px;font-weight:600;color:var(--text-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px}
 .user-panel-status{font-size:11px;color:#b5bac1;display:flex;align-items:center;gap:4px}
 .user-panel-status .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.user-panel-status .dot.reconnecting{background:var(--yellow);animation:pulse 1.2s ease infinite}
+.user-panel-status .dot.offline{background:var(--red)}
 .user-panel-settings{width:32px;height:32px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#b5bac1;font-size:18px}
 .user-panel-settings:hover{background:#35373c;color:var(--text)}
 .chat{flex:1;display:flex;flex-direction:column;background:var(--bg);min-width:0}
@@ -74,10 +77,13 @@ a:hover{text-decoration:underline}
 .chat-header-title{font-size:15px;font-weight:700;color:var(--text-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
 .chat-header-sub{font-size:12px;color:var(--text-muted);margin-left:8px;border-left:1px solid #3f4147;padding-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
 .chat-header-spacer{flex:1}
-.header-icon-btn{width:32px;height:32px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#b5bac1;font-size:18px}
+.header-icon-btn{width:32px;height:32px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#b5bac1;font-size:18px;position:relative}
 .header-icon-btn:hover{background:#35373c;color:var(--text)}
 .header-icon-btn.in-call{background:var(--green);color:#fff}
 .header-icon-btn.in-call:hover{background:#1e8a4a}
+.header-icon-btn.rt-ok::after{content:'';position:absolute;top:2px;right:2px;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 4px var(--green)}
+.header-icon-btn.rt-bad::after{content:'';position:absolute;top:2px;right:2px;width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 6px var(--yellow);animation:pulse 1.2s ease infinite}
+@keyframes pulse{0%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.85);}100%{opacity:1;transform:scale(1);}}
 .header-avatar-btn{width:32px;height:32px;border-radius:50%;background:var(--blurple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;overflow:hidden;margin-left:4px;cursor:pointer}
 .header-avatar-btn:hover{opacity:.85}
 .header-avatar-btn img{width:100%;height:100%;object-fit:cover}
@@ -89,6 +95,13 @@ a:hover{text-decoration:underline}
 .welcome h2{font-size:32px;font-weight:800;color:var(--text-bright);margin-top:8px}
 .welcome p{color:#b5bac1;font-size:16px}
 
+/* Connection banner */
+.conn-banner{background:linear-gradient(90deg,rgba(240,178,50,.15),rgba(240,178,50,.08));border:1px solid rgba(240,178,50,.3);border-radius:8px;padding:8px 14px;margin:8px 16px 4px;font-size:12px;color:var(--yellow);display:none;align-items:center;gap:8px;animation:msgFade .3s ease}
+.conn-banner.show{display:flex}
+.conn-banner .conn-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);animation:pulse 1.2s ease infinite}
+.conn-banner.ok{background:linear-gradient(90deg,rgba(35,165,90,.15),rgba(35,165,90,.08));border-color:rgba(35,165,90,.3);color:var(--green)}
+.conn-banner.ok .conn-dot{background:var(--green);animation:none}
+
 /* Announcement banner */
 .announcement-banner{background:linear-gradient(90deg,rgba(88,101,242,.18),rgba(139,61,252,.18));border:1px solid var(--blurple);border-radius:8px;padding:12px 16px;margin:10px 16px 4px;font-size:14px;color:var(--text-bright);display:flex;align-items:flex-start;gap:12px;animation:msgFade .3s ease}
 .announcement-banner .ann-icon{font-size:20px;flex-shrink:0;line-height:1.2}
@@ -99,7 +112,7 @@ a:hover{text-decoration:underline}
 .announcement-banner .ann-dismiss{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:2px 4px}
 .announcement-banner .ann-dismiss:hover{color:var(--text)}
 
-/* Pinned messages */
+/* Pinned */
 .pinned-bar{background:linear-gradient(90deg,rgba(240,178,50,.12),transparent);border-left:3px solid var(--yellow);padding:8px 14px;margin:6px 16px;border-radius:6px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
 .pinned-bar:hover{background:linear-gradient(90deg,rgba(240,178,50,.2),rgba(240,178,50,.05))}
 .pinned-bar .pin-icon{color:var(--yellow);font-size:15px;flex-shrink:0}
@@ -214,8 +227,6 @@ a:hover{text-decoration:underline}
 .rank-mod{background:#23a55a;color:#fff}
 .rank-vip{background:#eb459e;color:#fff}
 .rank-member{display:none}
-
-/* Timeout indicator */
 .timeout-indicator{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--red);background:rgba(242,63,67,.15);padding:2px 6px;border-radius:3px;font-weight:600;line-height:1;height:15px;flex-shrink:0}
 .warn-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--yellow);background:rgba(240,178,50,.15);padding:2px 6px;border-radius:3px;font-weight:600;line-height:1;height:15px;flex-shrink:0}
 
@@ -381,7 +392,6 @@ a:hover{text-decoration:underline}
 .call-tile.camera-off video{visibility:hidden}
 .call-tile-name{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.7);color:#fff;font-size:12px;font-weight:600;padding:5px 10px;border-radius:6px;backdrop-filter:blur(8px);display:flex;align-items:center;gap:6px;max-width:calc(100% - 20px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .call-tile-name .muted-icon{color:var(--red);font-size:13px}
-.call-tile-status{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.7);color:#fff;font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px;backdrop-filter:blur(8px);letter-spacing:.03em}
 .call-tile-offline{background:linear-gradient(135deg,#141418,#1e1e24);color:rgba(255,255,255,.5);flex-direction:column;gap:10px}
 .call-tile-offline-avatar{width:72px;height:72px;border-radius:50%;background:var(--blurple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:600;overflow:hidden}
 .call-tile-offline-avatar img{width:100%;height:100%;object-fit:cover}
@@ -404,9 +414,7 @@ a:hover{text-decoration:underline}
 .call-info-strip{padding:10px 22px;background:rgba(255,255,255,.03);color:rgba(255,255,255,.5);font-size:12px;text-align:center;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0}
 .call-info-strip kbd{background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;font-family:'SF Mono',monospace;font-size:11px}
 
-/* ============================================================
-   ADMIN PANEL
-   ============================================================ */
+/* Admin Panel */
 .admin-panel{display:flex;flex-direction:column;gap:16px}
 .admin-panel-header{display:flex;align-items:center;gap:12px;padding:14px;background:linear-gradient(135deg,rgba(242,63,67,.15),rgba(139,61,252,.15));border:1px solid var(--red);border-radius:8px}
 .admin-panel-header .ap-icon{font-size:28px}
@@ -465,8 +473,6 @@ a:hover{text-decoration:underline}
 .admin-toast-preview{background:var(--bg-alt2);border-radius:6px;padding:10px 14px;font-size:13px;color:var(--text-bright);border-left:3px solid var(--blurple);margin-top:8px;display:none}
 .admin-toast-preview.show{display:block}
 @media (max-width:600px){.admin-stats{grid-template-columns:repeat(2,1fr)}}
-
-/* Rank dropdown */
 .rank-dropdown{position:relative;display:inline-block}
 .rank-btn{padding:5px 10px;font-size:11px;font-weight:600;border-radius:4px;background:#3f4147;color:var(--text);display:inline-flex;align-items:center;gap:5px}
 .rank-btn:hover{background:#4e5058}
@@ -511,7 +517,7 @@ a:hover{text-decoration:underline}
       <div class="user-panel-avatar" id="userPanelAvatar" title="Profile settings">?</div>
       <div class="user-panel-info" id="userPanelInfo">
         <div class="user-panel-name" id="userPanelName">Not set</div>
-        <div class="user-panel-status"><span class="dot"></span><span id="userPanelStatus">Offline</span></div>
+        <div class="user-panel-status"><span class="dot" id="connectionDot"></span><span id="userPanelStatus">Offline</span></div>
       </div>
       <div class="user-panel-settings" id="settingsBtn" title="Settings">⚙</div>
     </div>
@@ -523,9 +529,15 @@ a:hover{text-decoration:underline}
       <span class="chat-header-title" id="chatHeaderTitle">global-chat</span>
       <span class="chat-header-sub" id="chatHeaderSub"></span>
       <div class="chat-header-spacer"></div>
+      <button class="header-icon-btn" id="realtimeIndicator" title="Realtime connection status">📡</button>
       <button class="header-icon-btn" id="startGroupCallBtn" title="Start group call in this channel">📹</button>
       <button class="header-icon-btn" id="memberToggle" title="Toggle members">👥</button>
       <div class="header-avatar-btn" id="headerAvatar" title="Profile settings">?</div>
+    </div>
+
+    <div class="conn-banner" id="connBanner">
+      <span class="conn-dot"></span>
+      <span id="connText">Reconnecting…</span>
     </div>
 
     <div id="announcementArea"></div>
@@ -567,7 +579,7 @@ a:hover{text-decoration:underline}
   </div>
 </div>
 
-<!-- INCOMING CALL BANNER -->
+<!-- INCOMING CALL -->
 <div class="incoming-call" id="incomingCall">
   <div class="incoming-call-header">
     <div class="incoming-call-avatar" id="incomingCallAvatar">?</div>
@@ -603,7 +615,7 @@ a:hover{text-decoration:underline}
   </div>
 </div>
 
-<!-- SETTINGS / PROFILE MODAL -->
+<!-- SETTINGS MODAL -->
 <div class="modal-backdrop" id="profileModal">
   <div class="modal wide">
     <div class="modal-header">
@@ -659,9 +671,7 @@ a:hover{text-decoration:underline}
           <button class="btn-secondary" id="resetTheme" style="flex:1;background:var(--bg-alt);border-radius:4px;">Reset to default</button>
         </div>
       </div>
-      <div id="tabAdmin" style="display:none;">
-        <!-- Populated by JS -->
-      </div>
+      <div id="tabAdmin" style="display:none;"></div>
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" id="profileCancel">Cancel</button>
@@ -702,7 +712,7 @@ a:hover{text-decoration:underline}
   </div>
 </div>
 
-<!-- RENAME USER MODAL -->
+<!-- RENAME MODAL -->
 <div class="modal-backdrop" id="renameModal">
   <div class="modal small">
     <div class="modal-header">
@@ -871,7 +881,7 @@ a:hover{text-decoration:underline}
 const SUPABASE_URL = 'https://nkwpvclvhmrwbofuwsqs.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_YEfvLJKOctQ50DVe8MZbbQ_Oc3_lcrA';
 // ================================================================
-//   🔒 ADMIN PASSWORD (change this to your own secret)
+//   🔒 ADMIN PASSWORD
 // ================================================================
 const ADMIN_PASSWORD = '6171399';
 // ================================================================
@@ -888,9 +898,13 @@ const el={
   serverAvatar:$('serverAvatar'),serverInitial:$('serverInitial'),
   channelList:$('channelList'),
   userPanelAvatar:$('userPanelAvatar'),userPanelInfo:$('userPanelInfo'),
-  userPanelName:$('userPanelName'),userPanelStatus:$('userPanelStatus'),settingsBtn:$('settingsBtn'),
+  userPanelName:$('userPanelName'),userPanelStatus:$('userPanelStatus'),
+  connectionDot:$('connectionDot'),
+  settingsBtn:$('settingsBtn'),
   chatHeaderIcon:$('chatHeaderIcon'),chatHeaderTitle:$('chatHeaderTitle'),chatHeaderSub:$('chatHeaderSub'),
   headerAvatar:$('headerAvatar'),memberToggle:$('memberToggle'),startGroupCallBtn:$('startGroupCallBtn'),
+  realtimeIndicator:$('realtimeIndicator'),
+  connBanner:$('connBanner'),connText:$('connText'),
   announcementArea:$('announcementArea'),pinnedArea:$('pinnedArea'),
   messagesContainer:$('messagesContainer'),
   composerLockNotice:$('composerLockNotice'),composerLockText:$('composerLockText'),composerInner:$('composerInner'),
@@ -940,7 +954,7 @@ const el={
 };
 
 // ============================================================
-// LS / STATE
+// LS KEYS / HELPERS
 // ============================================================
 const LS={
   CLIENT_ID:'nexus_client_id_v3',
@@ -956,11 +970,22 @@ const LS={
 function lsGet(k,fb){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb;}catch(e){return fb;}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
+// ============================================================
+// STATE
+// ============================================================
 let clientId=lsGet(LS.CLIENT_ID,null);
-if(!clientId){clientId=(crypto.randomUUID?crypto.randomUUID():'c_'+Math.random().toString(36).slice(2)+Date.now());lsSet(LS.CLIENT_ID,clientId);}
+if(!clientId){
+  clientId=(crypto.randomUUID?crypto.randomUUID():'c_'+Math.random().toString(36).slice(2)+Date.now());
+  lsSet(LS.CLIENT_ID,clientId);
+}
 
 const savedProfile=lsGet(LS.PROFILE,{});
-const me={username:savedProfile.username||null,pfp:savedProfile.pfp||null,frame:savedProfile.frame||'none',clientId:clientId};
+const me={
+  username:savedProfile.username||null,
+  pfp:savedProfile.pfp||null,
+  frame:savedProfile.frame||'none',
+  clientId:clientId
+};
 
 let joinedChannels=lsGet(LS.JOINED_CHANNELS,[]);
 let activeChannel=lsGet(LS.ACTIVE_CHANNEL,'global');
@@ -968,20 +993,34 @@ let channelMeta={global:{id:'global',name:'global-chat',isPublic:true}};
 joinedChannels.forEach(c=>{channelMeta[c.id]={id:c.id,name:c.name,key:c.key,isPublic:false};});
 const theme=lsGet(LS.THEME,null);
 
-let supa=null,channel=null;
+let supa=null;
+let channel=null;
 let identitySet=!!me.username;
-let heartbeatTimer=null,expireTimer=null;
+let heartbeatTimer=null;
+let expireTimer=null;
 let cachedMessages=[];
 let cachedUsers={};
-let cachedSettings=null; // channel_settings for active channel
+let cachedSettings=null;
 let pendingFile=null;
 let editingSnapshot=null;
 let openEmojiPopup=null;
 let unreadCount=0;
 const baseTitle=document.title;
 
-// Admin state
-let isAdmin = lsGet(LS.ADMIN_AUTH+'::'+clientId, false) === true;
+let isAdmin=lsGet(LS.ADMIN_AUTH+'::'+clientId,false)===true;
+
+// Realtime health
+let realtimeConnected=false;
+let realtimeStatus='connecting';
+let realtimeLastMessageAt=0;
+let pollInterval=null;
+let pollBackoff=4000;
+const POLL_MIN=2000;
+const POLL_MAX=15000;
+let realtimeReconnectAttempts=0;
+
+// Unread per channel (so we can badge channels in the sidebar)
+let channelUnread=lsGet('nexus_channel_unread_v3',{});
 
 // ============================================================
 // UTILS
@@ -992,14 +1031,8 @@ function formatSize(b){if(!b)return '0 B';const u=['B','KB','MB','GB'];let i=0;w
 function toast(msg,type){const t=document.createElement('div');t.className='toast'+(type?' '+type:'');t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2500);}
 function codepointLength(s){return [...s].length;}
 function fmtDate(d){if(!d)return '—';return new Date(d).toLocaleString();}
-
 function rankLabel(r){return {owner:'Owner',admin:'Admin',mod:'Mod',vip:'VIP',member:'Member'}[r||'member']||'Member';}
 function rankBadge(r){if(!r||r==='member')return '';return '<span class="rank-badge rank-'+r+'">'+rankLabel(r)+'</span>';}
-
-function getEffectiveNickname(user){
-  if(!user)return 'Unknown';
-  return user.force_nick || user.username || 'Unknown';
-}
 
 // ============================================================
 // LINKIFY
@@ -1089,6 +1122,68 @@ function incrementUnread(){unreadCount++;document.title='('+unreadCount+') '+bas
 function clearUnread(){if(unreadCount===0)return;unreadCount=0;document.title=baseTitle;}
 window.addEventListener('focus',clearUnread);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)clearUnread();});
+
+function markChannelRead(channelId){
+  if(channelUnread[channelId]){
+    delete channelUnread[channelId];
+    lsSet('nexus_channel_unread_v3',channelUnread);
+    renderChannelList();
+  }
+}
+function markChannelUnread(channelId){
+  channelUnread[channelId]=true;
+  lsSet('nexus_channel_unread_v3',channelUnread);
+  renderChannelList();
+}
+
+// ============================================================
+// CONNECTION STATUS UI
+// ============================================================
+function updateConnectionUI(){
+  const dot=el.connectionDot;
+  const banner=el.connBanner;
+  const indicator=el.realtimeIndicator;
+  if(!dot||!banner)return;
+
+  dot.classList.remove('reconnecting','offline');
+  indicator.classList.remove('rt-ok','rt-bad');
+
+  if(realtimeConnected&&realtimeStatus==='SUBSCRIBED'){
+    dot.style.background='var(--green)';
+    banner.classList.remove('show','ok');
+    indicator.classList.add('rt-ok');
+    indicator.title='Realtime: connected';
+  }else if(realtimeStatus==='CHANNEL_ERROR'||realtimeStatus==='TIMED_OUT'||realtimeStatus==='CLOSED'){
+    dot.style.background='var(--yellow)';
+    dot.classList.add('reconnecting');
+    banner.classList.add('show');
+    banner.classList.remove('ok');
+    el.connText.textContent='Realtime disconnected — using polling fallback. New messages still arrive every few seconds.';
+    indicator.classList.add('rt-bad');
+    indicator.title='Realtime: degraded (polling)';
+  }else{
+    dot.style.background='var(--yellow)';
+    dot.classList.add('reconnecting');
+    indicator.classList.add('rt-bad');
+    indicator.title='Realtime: '+realtimeStatus;
+  }
+
+  // Update user panel status text
+  if(identitySet){
+    el.userPanelStatus.textContent=realtimeConnected?'Online':'Reconnecting';
+  }else{
+    el.userPanelStatus.textContent='Offline';
+  }
+}
+
+// Click the indicator to force reconnect
+if(el.realtimeIndicator){
+  el.realtimeIndicator.addEventListener('click',()=>{
+    toast('Reconnecting realtime…','info');
+    realtimeReconnectAttempts=0;
+    subscribeRealtime();
+  });
+}
 
 // ============================================================
 // SNAKE
@@ -1186,29 +1281,49 @@ el.serverHome.addEventListener('click',()=>{
 // THEME
 // ============================================================
 const DEFAULT_THEME={bg:'#313338',bgAlt:'#2b2d31',bgPanel:'#232428',text:'#dbdee1',textMuted:'#949ba4',textBright:'#f2f3f5',accent:'#5865f2'};
-const BG_PRESETS=[['#313338','#2b2d31','#232428'],['#0f0f0f','#1a1a1a','#252525'],['#1a1030','#2a1a4a','#3d2a5a'],['#0d1b2a','#1b263b','#2c3e50'],['#1a0e0e','#2a1a1a','#3d2a2a'],['#0a1f0a','#152f15','#1f4a1f']];
-function applyTheme(t){const r=document.documentElement.style;
+const BG_PRESETS=[
+  ['#313338','#2b2d31','#232428'],['#0f0f0f','#1a1a1a','#252525'],['#1a1030','#2a1a4a','#3d2a5a'],
+  ['#0d1b2a','#1b263b','#2c3e50'],['#1a0e0e','#2a1a1a','#3d2a2a'],['#0a1f0a','#152f15','#1f4a1f']
+];
+function applyTheme(t){
+  const r=document.documentElement.style;
   r.setProperty('--bg',t.bg);r.setProperty('--bg-alt',t.bgAlt);r.setProperty('--bg-panel',t.bgPanel);
   r.setProperty('--text',t.text);r.setProperty('--text-muted',t.textMuted);r.setProperty('--text-bright',t.textBright);
-  r.setProperty('--blurple',t.accent);r.setProperty('--blurple-hover',shadeColor(t.accent,-15));}
-function shadeColor(hex,p){let r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
-  r=Math.max(0,Math.min(255,r+Math.round(r*p/100)));g=Math.max(0,Math.min(255,g+Math.round(g*p/100)));b=Math.max(0,Math.min(255,b+Math.round(b*p/100)));
-  return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');}
+  r.setProperty('--blurple',t.accent);r.setProperty('--blurple-hover',shadeColor(t.accent,-15));
+}
+function shadeColor(hex,p){
+  let r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  r=Math.max(0,Math.min(255,r+Math.round(r*p/100)));
+  g=Math.max(0,Math.min(255,g+Math.round(g*p/100)));
+  b=Math.max(0,Math.min(255,b+Math.round(b*p/100)));
+  return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
 function isValidHex(h){return /^#[0-9a-fA-F]{6}$/.test(h);}
 let currentTheme=theme||{...DEFAULT_THEME};applyTheme(currentTheme);
+
 function buildBgPresets(){
   el.bgPresets.innerHTML=BG_PRESETS.map((p,i)=>`<div class="color-preset" data-preset="${i}" style="background:linear-gradient(135deg,${p[0]} 0%,${p[0]} 33%,${p[1]} 33%,${p[1]} 66%,${p[2]} 66%,${p[2]} 100%);" title="${p[0]} / ${p[1]} / ${p[2]}"></div>`).join('');
-  el.bgPresets.querySelectorAll('.color-preset').forEach(btn=>{btn.addEventListener('click',()=>{
-    const p=BG_PRESETS[+btn.dataset.preset];
-    el.colorBg.value=p[0];el.hexBg.value=p[0].toUpperCase();
-    el.colorBgAlt.value=p[1];el.hexBgAlt.value=p[1].toUpperCase();
-    el.colorBgPanel.value=p[2];el.hexBgPanel.value=p[2].toUpperCase();});});}
+  el.bgPresets.querySelectorAll('.color-preset').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const p=BG_PRESETS[+btn.dataset.preset];
+      el.colorBg.value=p[0];el.hexBg.value=p[0].toUpperCase();
+      el.colorBgAlt.value=p[1];el.hexBgAlt.value=p[1].toUpperCase();
+      el.colorBgPanel.value=p[2];el.hexBgPanel.value=p[2].toUpperCase();
+    });
+  });
+}
 function bindColorPair(picker,hexInput){
   picker.addEventListener('input',()=>{hexInput.value=picker.value.toUpperCase();});
-  hexInput.addEventListener('input',()=>{let v=hexInput.value.trim();if(v&&!v.startsWith('#'))v='#'+v;if(isValidHex(v))picker.value=v.toLowerCase();});}
+  hexInput.addEventListener('input',()=>{
+    let v=hexInput.value.trim();
+    if(v&&!v.startsWith('#'))v='#'+v;
+    if(isValidHex(v))picker.value=v.toLowerCase();
+  });
+}
 bindColorPair(el.colorBg,el.hexBg);bindColorPair(el.colorBgAlt,el.hexBgAlt);bindColorPair(el.colorBgPanel,el.hexBgPanel);
 bindColorPair(el.colorText,el.hexText);bindColorPair(el.colorTextMuted,el.hexTextMuted);
 bindColorPair(el.colorTextBright,el.hexTextBright);bindColorPair(el.colorAccent,el.hexAccent);
+
 function loadThemeIntoModalFrom(t){
   el.colorBg.value=t.bg;el.hexBg.value=t.bg.toUpperCase();
   el.colorBgAlt.value=t.bgAlt;el.hexBgAlt.value=t.bgAlt.toUpperCase();
@@ -1216,16 +1331,20 @@ function loadThemeIntoModalFrom(t){
   el.colorText.value=t.text;el.hexText.value=t.text.toUpperCase();
   el.colorTextMuted.value=t.textMuted;el.hexTextMuted.value=t.textMuted.toUpperCase();
   el.colorTextBright.value=t.textBright;el.hexTextBright.value=t.textBright.toUpperCase();
-  el.colorAccent.value=t.accent;el.hexAccent.value=t.accent.toUpperCase();}
+  el.colorAccent.value=t.accent;el.hexAccent.value=t.accent.toUpperCase();
+}
 function loadThemeIntoModal(){loadThemeIntoModalFrom(currentTheme);}
-function themeFromModal(){return{
-  bg:isValidHex(el.hexBg.value)?el.hexBg.value.toLowerCase():currentTheme.bg,
-  bgAlt:isValidHex(el.hexBgAlt.value)?el.hexBgAlt.value.toLowerCase():currentTheme.bgAlt,
-  bgPanel:isValidHex(el.hexBgPanel.value)?el.hexBgPanel.value.toLowerCase():currentTheme.bgPanel,
-  text:isValidHex(el.hexText.value)?el.hexText.value.toLowerCase():currentTheme.text,
-  textMuted:isValidHex(el.hexTextMuted.value)?el.hexTextMuted.value.toLowerCase():currentTheme.textMuted,
-  textBright:isValidHex(el.hexTextBright.value)?el.hexTextBright.value.toLowerCase():currentTheme.textBright,
-  accent:isValidHex(el.hexAccent.value)?el.hexAccent.value.toLowerCase():currentTheme.accent};}
+function themeFromModal(){
+  return {
+    bg:isValidHex(el.hexBg.value)?el.hexBg.value.toLowerCase():currentTheme.bg,
+    bgAlt:isValidHex(el.hexBgAlt.value)?el.hexBgAlt.value.toLowerCase():currentTheme.bgAlt,
+    bgPanel:isValidHex(el.hexBgPanel.value)?el.hexBgPanel.value.toLowerCase():currentTheme.bgPanel,
+    text:isValidHex(el.hexText.value)?el.hexText.value.toLowerCase():currentTheme.text,
+    textMuted:isValidHex(el.hexTextMuted.value)?el.hexTextMuted.value.toLowerCase():currentTheme.textMuted,
+    textBright:isValidHex(el.hexTextBright.value)?el.hexTextBright.value.toLowerCase():currentTheme.textBright,
+    accent:isValidHex(el.hexAccent.value)?el.hexAccent.value.toLowerCase():currentTheme.accent
+  };
+}
 if(el.resetTheme)el.resetTheme.addEventListener('click',()=>{loadThemeIntoModalFrom(DEFAULT_THEME);});
 
 // ============================================================
@@ -1238,8 +1357,10 @@ const FRAMES=[
   {id:'toxic',label:'Toxic'},{id:'sunset',label:'Sunset'}
 ];
 function frameClass(id){return id&&id!=='none'?'frame-wrapper frame-'+id:'frame-wrapper';}
-function wrapAvatar(inner,frame){const cls=frameClass(frame);
-  return '<div class="'+cls+'" style="width:100%;height:100%;"><div class="frame-inner">'+inner+'</div></div>';}
+function wrapAvatar(inner,frame){
+  const cls=frameClass(frame);
+  return '<div class="'+cls+'" style="width:100%;height:100%;"><div class="frame-inner">'+inner+'</div></div>';
+}
 
 // ============================================================
 // EMOJI PICKER
@@ -1267,7 +1388,8 @@ function buildEmojiPicker(){
     const emoji=btn.dataset.emoji;const input=el.messageInput;
     const start=input.selectionStart,end=input.selectionEnd,val=input.value;
     input.value=val.slice(0,start)+emoji+val.slice(end);
-    input.selectionStart=input.selectionEnd=start+emoji.length;input.focus();});
+    input.selectionStart=input.selectionEnd=start+emoji.length;input.focus();
+  });
 }
 
 // ============================================================
@@ -1276,28 +1398,52 @@ function buildEmojiPicker(){
 function renderChannelList(){
   let html='';
   html+='<div class="channel-category">Public Channels</div>';
-  html+=`<div class="channel ${activeChannel==='global'?'active':''}" data-channel="global"><span class="hash">#</span><span class="c-name">global-chat</span></div>`;
+  const globalActive=activeChannel==='global';
+  const globalUnread=!globalActive&&channelUnread['global'];
+  html+=`<div class="channel ${globalActive?'active':''}" data-channel="global"><span class="hash">#</span><span class="c-name">global-chat</span>${globalUnread?'<span class="c-unread"></span>':''}</div>`;
   html+='<div class="channel-category"><span>Private Channels</span><span class="add-btn" id="joinChannelBtn" title="Join with key">+</span></div>';
   if(joinedChannels.length===0){html+='<div style="padding:8px 12px;font-size:12px;color:var(--text-muted);">No private channels yet. Click + to join one, or use the button below.</div>';}
-  else{joinedChannels.forEach(c=>{
-    const active=activeChannel===c.id;
-    const lockIcon=cachedSettings&&cachedSettings.locked&&activeChannel===c.id?'<span class="c-lock-icon">🔒</span>':'';
-    html+=`<div class="channel ${active?'active':''}" data-channel="${c.id}"><span class="lock">🔒</span><span class="c-name">${escapeHtml(c.name)}</span>${lockIcon}<span class="c-close" data-close="${c.id}" title="Leave">✕</span></div>`;});}
+  else{
+    joinedChannels.forEach(c=>{
+      const active=activeChannel===c.id;
+      const lockIcon=cachedSettings&&cachedSettings.locked&&activeChannel===c.id?'<span class="c-lock-icon">🔒</span>':'';
+      const unread=!active&&channelUnread[c.id];
+      html+=`<div class="channel ${active?'active':''}" data-channel="${c.id}">
+        <span class="lock">🔒</span><span class="c-name">${escapeHtml(c.name)}</span>
+        ${unread?'<span class="c-unread"></span>':''}${lockIcon}
+        <span class="c-close" data-close="${c.id}" title="Leave">✕</span>
+      </div>`;
+    });
+  }
   html+=`<div style="padding:8px 12px 0;"><button class="btn-primary" id="createChannelBtn" style="width:100%;padding:8px;font-size:13px;">+ Create Private Channel</button></div>`;
   el.channelList.innerHTML=html;
+
   el.channelList.querySelectorAll('.channel[data-channel]').forEach(ch=>{
-    ch.addEventListener('click',ev=>{if(ev.target.classList.contains('c-close'))return;switchChannel(ch.dataset.channel);});});
+    ch.addEventListener('click',ev=>{
+      if(ev.target.classList.contains('c-close'))return;
+      switchChannel(ch.dataset.channel);
+    });
+  });
   el.channelList.querySelectorAll('.c-close').forEach(x=>{
-    x.addEventListener('click',ev=>{ev.stopPropagation();const id=ev.target.dataset.close;if(confirm('Leave this channel?'))leaveChannel(id);});});
+    x.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      const id=ev.target.dataset.close;
+      if(confirm('Leave this channel?'))leaveChannel(id);
+    });
+  });
   const cb=$('createChannelBtn');if(cb)cb.addEventListener('click',openCreateChannelModal);
   const jb=$('joinChannelBtn');if(jb)jb.addEventListener('click',openJoinChannelModal);
 }
 
 async function switchChannel(id){
   if(id===activeChannel)return;
-  activeChannel=id;lsSet(LS.ACTIVE_CHANNEL,id);
-  renderChannelList();updateChatHeader();
-  cachedMessages=[];cachedSettings=null;
+  activeChannel=id;
+  lsSet(LS.ACTIVE_CHANNEL,id);
+  markChannelRead(id);
+  renderChannelList();
+  updateChatHeader();
+  cachedMessages=[];
+  cachedSettings=null;
   el.messagesContainer.innerHTML='<div class="welcome"><div class="welcome-icon">#</div><h2>Loading...</h2></div>';
   try{await loadChannelMessages();}catch(e){console.error(e);}
   try{await loadChannelSettings();}catch(e){console.error(e);}
@@ -1305,25 +1451,40 @@ async function switchChannel(id){
   renderPinned();
   renderMessages();
   updateLockNotice();
+  // Restart polling immediately for the new channel
+  if(typeof startPollingFallback==='function'){
+    try{startPollingFallback();}catch(e){}
+  }
 }
 
 function updateChatHeader(){
   const meta=channelMeta[activeChannel]||{name:'global-chat',isPublic:true};
   el.chatHeaderTitle.textContent=meta.name;
-  if(meta.isPublic){el.chatHeaderIcon.className='hash';el.chatHeaderIcon.textContent='#';el.chatHeaderSub.textContent='';}
-  else{el.chatHeaderIcon.className='lock';el.chatHeaderIcon.textContent='🔒';el.chatHeaderSub.textContent='Private · click header for key';}
+  if(meta.isPublic){
+    el.chatHeaderIcon.className='hash';
+    el.chatHeaderIcon.textContent='#';
+    el.chatHeaderSub.textContent='';
+  }else{
+    el.chatHeaderIcon.className='lock';
+    el.chatHeaderIcon.textContent='🔒';
+    el.chatHeaderSub.textContent='Private · click header for key';
+  }
   el.messageInput.placeholder='Message '+(meta.isPublic?'#'+meta.name:meta.name);
 }
 el.chatHeaderTitle.addEventListener('click',()=>{const m=channelMeta[activeChannel];if(m&&!m.isPublic)openChannelInfoModal();});
 el.chatHeaderIcon.addEventListener('click',()=>{const m=channelMeta[activeChannel];if(m&&!m.isPublic)openChannelInfoModal();});
 
-function openCreateChannelModal(){if(!identitySet){toast('Set your profile first',true);return;}
-  el.newChannelName.value='';el.newChannelKey.value='';el.createChannelError.textContent='';el.createChannelModal.classList.add('show');}
+function openCreateChannelModal(){
+  if(!identitySet){toast('Set your profile first',true);return;}
+  el.newChannelName.value='';el.newChannelKey.value='';el.createChannelError.textContent='';
+  el.createChannelModal.classList.add('show');
+}
 function closeCreateChannelModal(){el.createChannelModal.classList.remove('show');}
 el.createChannelClose.addEventListener('click',closeCreateChannelModal);
 el.createChannelCancel.addEventListener('click',closeCreateChannelModal);
 el.createChannelSave.addEventListener('click',async()=>{
-  const name=(el.newChannelName.value||'').trim();const key=(el.newChannelKey.value||'').trim();
+  const name=(el.newChannelName.value||'').trim();
+  const key=(el.newChannelKey.value||'').trim();
   el.createChannelError.textContent='';
   if(!name){el.createChannelError.textContent='Channel name required';return;}
   if(!/^[a-zA-Z0-9_\-\.]+$/.test(name)){el.createChannelError.textContent='Name: letters, numbers, _ - . only';return;}
@@ -1334,24 +1495,33 @@ el.createChannelSave.addEventListener('click',async()=>{
     const{data:existing,error:qerr}=await supa.from('channels').select('id,name').ilike('channel_key',key);
     if(qerr)throw qerr;
     if(existing&&existing.length>0){el.createChannelError.textContent='That key is already in use. Pick another.';throw new Error('key taken');}
-    const{data:inserted,error}=await supa.from('channels').insert({name:name,channel_key:key,created_by:me.username}).select().single();
+    const{data:inserted,error}=await supa.from('channels').insert({
+      name:name,channel_key:key,created_by:me.username
+    }).select().single();
     if(error)throw error;
     const ch={id:inserted.id,name:inserted.name,key:key};
     joinedChannels.push(ch);lsSet(LS.JOINED_CHANNELS,joinedChannels);
     channelMeta[ch.id]={id:ch.id,name:ch.name,key:ch.key,isPublic:false};
     await sendMessageToSupabase('system',null,'Channel created by '+me.username,null);
     closeCreateChannelModal();switchChannel(ch.id);toast('Channel created! Key: '+key,'info');
-  }catch(e){if(e.message!=='key taken')el.createChannelError.textContent='Failed: '+e.message;}
-  finally{el.createChannelSave.disabled=false;el.createChannelSave.textContent='Create';}
+  }catch(e){
+    if(e.message!=='key taken')el.createChannelError.textContent='Failed: '+e.message;
+  }finally{
+    el.createChannelSave.disabled=false;el.createChannelSave.textContent='Create';
+  }
 });
 
-function openJoinChannelModal(){if(!identitySet){toast('Set your profile first',true);return;}
-  el.joinChannelKey.value='';el.joinChannelError.textContent='';el.joinChannelModal.classList.add('show');}
+function openJoinChannelModal(){
+  if(!identitySet){toast('Set your profile first',true);return;}
+  el.joinChannelKey.value='';el.joinChannelError.textContent='';
+  el.joinChannelModal.classList.add('show');
+}
 function closeJoinChannelModal(){el.joinChannelModal.classList.remove('show');}
 el.joinChannelClose.addEventListener('click',closeJoinChannelModal);
 el.joinChannelCancel.addEventListener('click',closeJoinChannelModal);
 el.joinChannelSave.addEventListener('click',async()=>{
-  const key=(el.joinChannelKey.value||'').trim();el.joinChannelError.textContent='';
+  const key=(el.joinChannelKey.value||'').trim();
+  el.joinChannelError.textContent='';
   if(!key){el.joinChannelError.textContent='Enter the private key';return;}
   el.joinChannelSave.disabled=true;el.joinChannelSave.textContent='Joining...';
   try{
@@ -1365,26 +1535,41 @@ el.joinChannelSave.addEventListener('click',async()=>{
     channelMeta[ch.id]={id:ch.id,name:ch.name,key:ch.channel_key,isPublic:false};
     await sendMessageToSupabase('system',null,me.username+' joined the channel',null);
     closeJoinChannelModal();switchChannel(ch.id);toast('Joined '+ch.name,'info');
-  }catch(e){el.joinChannelError.textContent='Failed: '+e.message;}
-  finally{el.joinChannelSave.disabled=false;el.joinChannelSave.textContent='Join';}
+  }catch(e){
+    el.joinChannelError.textContent='Failed: '+e.message;
+  }finally{
+    el.joinChannelSave.disabled=false;el.joinChannelSave.textContent='Join';
+  }
 });
 
 function leaveChannel(id){
-  joinedChannels=joinedChannels.filter(c=>c.id!==id);lsSet(LS.JOINED_CHANNELS,joinedChannels);
+  joinedChannels=joinedChannels.filter(c=>c.id!==id);
+  lsSet(LS.JOINED_CHANNELS,joinedChannels);
   delete channelMeta[id];
   if(activeChannel===id)switchChannel('global');else renderChannelList();
   toast('Left channel');
 }
-function openChannelInfoModal(){const meta=channelMeta[activeChannel];if(!meta||meta.isPublic)return;
-  el.channelInfoName.textContent=meta.name;el.channelInfoKey.textContent=meta.key;el.channelInfoModal.classList.add('show');}
+function openChannelInfoModal(){
+  const meta=channelMeta[activeChannel];
+  if(!meta||meta.isPublic)return;
+  el.channelInfoName.textContent=meta.name;
+  el.channelInfoKey.textContent=meta.key;
+  el.channelInfoModal.classList.add('show');
+}
 el.channelInfoClose.addEventListener('click',()=>el.channelInfoModal.classList.remove('show'));
 el.channelInfoDone.addEventListener('click',()=>el.channelInfoModal.classList.remove('show'));
-el.channelInfoCopy.addEventListener('click',()=>{navigator.clipboard.writeText(el.channelInfoKey.textContent).then(()=>toast('Key copied'));});
-el.channelInfoLeave.addEventListener('click',()=>{if(!confirm('Leave this channel?'))return;const id=activeChannel;
-  el.channelInfoModal.classList.remove('show');leaveChannel(id);});
+el.channelInfoCopy.addEventListener('click',()=>{
+  navigator.clipboard.writeText(el.channelInfoKey.textContent).then(()=>toast('Key copied'));
+});
+el.channelInfoLeave.addEventListener('click',()=>{
+  if(!confirm('Leave this channel?'))return;
+  const id=activeChannel;
+  el.channelInfoModal.classList.remove('show');
+  leaveChannel(id);
+});
 
 // ============================================================
-// CHANNEL SETTINGS (lock, slow mode, announcement)
+// CHANNEL SETTINGS
 // ============================================================
 async function loadChannelSettings(){
   if(!supa)return;
@@ -1392,7 +1577,10 @@ async function loadChannelSettings(){
     const{data,error}=await supa.from('channel_settings').select('*').eq('channel_id',activeChannel).maybeSingle();
     if(error&&error.code!=='PGRST116')throw error;
     cachedSettings=data||{channel_id:activeChannel,slow_mode:0,locked:false,announcement:null};
-  }catch(e){console.warn('settings load',e);cachedSettings={channel_id:activeChannel,slow_mode:0,locked:false,announcement:null};}
+  }catch(e){
+    console.warn('settings load',e);
+    cachedSettings={channel_id:activeChannel,slow_mode:0,locked:false,announcement:null};
+  }
 }
 async function saveChannelSettings(patch){
   if(!supa)return;
@@ -1406,7 +1594,7 @@ async function saveChannelSettings(patch){
 }
 
 // ============================================================
-// ANNOUNCEMENT BANNER
+// ANNOUNCEMENT
 // ============================================================
 function renderAnnouncement(){
   if(!el.announcementArea)return;
@@ -1426,16 +1614,18 @@ function renderAnnouncement(){
       '<button class="ann-dismiss" data-hide="'+escapeHtml(hiddenKey)+'" title="Hide for me">✕</button>'+
     '</div>';
   const btn=el.announcementArea.querySelector('.ann-dismiss');
-  if(btn){btn.addEventListener('click',()=>{
-    const h=lsGet(LS.ADMIN_PINNED_HIDDEN,{});
-    h[btn.dataset.hide]=true;
-    lsSet(LS.ADMIN_PINNED_HIDDEN,h);
-    renderAnnouncement();
-  });}
+  if(btn){
+    btn.addEventListener('click',()=>{
+      const h=lsGet(LS.ADMIN_PINNED_HIDDEN,{});
+      h[btn.dataset.hide]=true;
+      lsSet(LS.ADMIN_PINNED_HIDDEN,h);
+      renderAnnouncement();
+    });
+  }
 }
 
 // ============================================================
-// PINNED MESSAGES BAR
+// PINNED MESSAGES
 // ============================================================
 function renderPinned(){
   if(!el.pinnedArea)return;
@@ -1462,8 +1652,19 @@ function renderPinned(){
 }
 
 // ============================================================
-// LOCK NOTICE + COMPOSER STATE
+// LOCK / TIMEOUT / BAN CHECKS
 // ============================================================
+function selfTimedOut(){
+  const meUser=cachedUsers[me.clientId];
+  if(!meUser||!meUser.timeout_until)return null;
+  const until=new Date(meUser.timeout_until);
+  if(until.getTime()<=Date.now())return null;
+  return until;
+}
+function selfBanned(){
+  const meUser=cachedUsers[me.clientId];
+  return !!(meUser&&meUser.banned);
+}
 function updateLockNotice(){
   const s=cachedSettings;
   const locked=s&&s.locked;
@@ -1506,17 +1707,6 @@ function updateLockNotice(){
   el.composerInner.classList.remove('locked');
   if(identitySet){el.messageInput.disabled=false;el.sendBtn.style.color='';}
 }
-function selfTimedOut(){
-  const meUser=cachedUsers[me.clientId];
-  if(!meUser||!meUser.timeout_until)return null;
-  const until=new Date(meUser.timeout_until);
-  if(until.getTime()<=Date.now())return null;
-  return until;
-}
-function selfBanned(){
-  const meUser=cachedUsers[me.clientId];
-  return !!(meUser&&meUser.banned);
-}
 
 // ============================================================
 // PROFILE MODAL
@@ -1524,15 +1714,22 @@ function selfBanned(){
 function openProfileModal(){
   if(!identitySet){editingSnapshot={username:'',pfp:null,frame:'none'};el.profileSave.textContent='Create Profile';}
   else{editingSnapshot={username:me.username,pfp:me.pfp,frame:me.frame};el.profileSave.textContent='Save Changes';}
-  el.profileError.textContent='';switchTab('profile');renderProfileModal();loadThemeIntoModal();el.profileModal.classList.add('show');
+  el.profileError.textContent='';
+  switchTab('profile');
+  renderProfileModal();
+  loadThemeIntoModal();
+  el.profileModal.classList.add('show');
 }
-function closeProfileModal(){el.profileModal.classList.remove('show');editingSnapshot=null;el.profileError.textContent='';}
+function closeProfileModal(){
+  el.profileModal.classList.remove('show');
+  editingSnapshot=null;
+  el.profileError.textContent='';
+}
 function switchTab(name){
   document.querySelectorAll('.modal-tab').forEach(t=>{t.classList.toggle('active',t.dataset.tab===name);});
   el.tabProfile.style.display=name==='profile'?'':'none';
   el.tabAppearance.style.display=name==='appearance'?'':'none';
   el.tabAdmin.style.display=name==='admin'?'':'none';
-  // Show/hide footer save button (admin tab has its own buttons)
   el.profileSave.style.display=name==='admin'?'none':'';
   if(name==='admin')renderAdminPanel();
 }
@@ -1540,12 +1737,22 @@ document.querySelectorAll('.modal-tab').forEach(t=>{t.addEventListener('click',(
 
 function renderProfileModal(){
   if(!editingSnapshot)return;
-  const wrap=document.createElement('div');wrap.className=frameClass(editingSnapshot.frame);wrap.style.width='100%';wrap.style.height='100%';
-  const inner=document.createElement('div');inner.className='frame-inner';
-  if(editingSnapshot.pfp){const img=document.createElement('img');img.src=editingSnapshot.pfp;inner.appendChild(img);}
-  else{inner.textContent=initials(editingSnapshot.username);}
-  wrap.appendChild(inner);el.profileAvatarPreview.innerHTML='';el.profileAvatarPreview.appendChild(wrap);
+  const wrap=document.createElement('div');
+  wrap.className=frameClass(editingSnapshot.frame);
+  wrap.style.width='100%';wrap.style.height='100%';
+  const inner=document.createElement('div');
+  inner.className='frame-inner';
+  if(editingSnapshot.pfp){
+    const img=document.createElement('img');img.src=editingSnapshot.pfp;inner.appendChild(img);
+  }else{
+    inner.textContent=initials(editingSnapshot.username);
+  }
+  wrap.appendChild(inner);
+  el.profileAvatarPreview.innerHTML='';
+  el.profileAvatarPreview.appendChild(wrap);
+
   el.profileUsernameInput.value=editingSnapshot.username||'';
+
   let html='';
   FRAMES.forEach(f=>{
     const sel=editingSnapshot.frame===f.id?' selected':'';
@@ -1554,52 +1761,94 @@ function renderProfileModal(){
         '<div class="'+frameClass(f.id)+'" style="width:100%;height:100%;">'+
           '<div class="frame-inner" style="font-size:14px;font-weight:600;">'+
             (editingSnapshot.pfp?'<img src="'+editingSnapshot.pfp+'" style="width:100%;height:100%;object-fit:cover;">':initials(editingSnapshot.username))+
-          '</div></div></div>'+
-      '<div class="frame-option-label">'+f.label+'</div></div>';
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="frame-option-label">'+f.label+'</div>'+
+    '</div>';
   });
   el.frameOptions.innerHTML=html;
   el.frameOptions.querySelectorAll('.frame-option').forEach(opt=>{
-    opt.addEventListener('click',()=>{editingSnapshot.frame=opt.dataset.frame;renderProfileModal();});});
+    opt.addEventListener('click',()=>{
+      editingSnapshot.frame=opt.dataset.frame;
+      renderProfileModal();
+    });
+  });
 }
 
 async function saveProfile(){
-  if(!editingSnapshot)return;el.profileError.textContent='';
+  if(!editingSnapshot)return;
+  el.profileError.textContent='';
+
   const newUsername=(el.profileUsernameInput.value||'').trim();
   const cpLen=codepointLength(newUsername);
   if(!newUsername){el.profileError.textContent='Username cannot be empty';return;}
   if(cpLen<2){el.profileError.textContent='At least 2 characters';return;}
   if(cpLen>60){el.profileError.textContent='Maximum 60 characters';return;}
   if(/[\u0000-\u001F\u007F]/.test(newUsername)){el.profileError.textContent='No control characters allowed';return;}
+
   if(!identitySet||newUsername.toLowerCase()!==(me.username||'').toLowerCase()){
-    try{const taken=await isUsernameTaken(newUsername,me.clientId);if(taken){el.profileError.textContent='Username already taken';return;}}
-    catch(e){el.profileError.textContent='Could not check username: '+e.message;return;}}
-  const newTheme=themeFromModal();currentTheme=newTheme;lsSet(LS.THEME,newTheme);applyTheme(newTheme);
+    try{
+      const taken=await isUsernameTaken(newUsername,me.clientId);
+      if(taken){el.profileError.textContent='Username already taken';return;}
+    }catch(e){el.profileError.textContent='Could not check username: '+e.message;return;}
+  }
+
+  const newTheme=themeFromModal();
+  currentTheme=newTheme;
+  lsSet(LS.THEME,newTheme);
+  applyTheme(newTheme);
+
   const wasIdentitySet=identitySet;
-  me.username=newUsername;me.pfp=editingSnapshot.pfp;me.frame=editingSnapshot.frame;identitySet=true;
+  me.username=newUsername;
+  me.pfp=editingSnapshot.pfp;
+  me.frame=editingSnapshot.frame;
+  identitySet=true;
   lsSet(LS.PROFILE,{username:me.username,pfp:me.pfp,frame:me.frame});
+
   try{
-    await registerOnlineUser();renderMyAvatars();updateChatHeader();
+    await registerOnlineUser();
+    renderMyAvatars();
+    updateChatHeader();
+
     if(!wasIdentitySet){
-      el.messageInput.disabled=false;el.sendBtn.style.color='';
+      el.messageInput.disabled=false;
+      el.sendBtn.style.color='';
       await sendMessageToSupabase('system',null,me.username+' joined the chat',null);
-      toast('Welcome, '+me.username+'! 🎉');setTimeout(showNotifBanner,800);
-    }else{toast('Profile updated ✓');}
+      toast('Welcome, '+me.username+'! 🎉');
+      setTimeout(showNotifBanner,800);
+    }else{
+      toast('Profile updated ✓');
+    }
     closeProfileModal();
-  }catch(e){el.profileError.textContent='Save failed: '+e.message;}
+  }catch(e){
+    el.profileError.textContent='Save failed: '+e.message;
+  }
 }
 el.profileClose.addEventListener('click',closeProfileModal);
 el.profileCancel.addEventListener('click',closeProfileModal);
 el.profileSave.addEventListener('click',saveProfile);
 el.profileAvatarPreview.addEventListener('click',()=>el.pfpFileInput.click());
-el.profileRemovePfp.addEventListener('click',()=>{if(!editingSnapshot)return;editingSnapshot.pfp=null;renderProfileModal();});
+el.profileRemovePfp.addEventListener('click',()=>{
+  if(!editingSnapshot)return;
+  editingSnapshot.pfp=null;
+  renderProfileModal();
+});
+
 el.pfpFileInput.addEventListener('change',ev=>{
-  const file=ev.target.files&&ev.target.files[0];if(!file)return;
+  const file=ev.target.files&&ev.target.files[0];
+  if(!file)return;
   if(file.size>500000){toast('Profile picture max 500KB',true);el.pfpFileInput.value='';return;}
   const r=new FileReader();
-  r.onload=e=>{const url=e.target.result;if(url.length>800000){toast('Too large after encoding',true);return;}
-    if(editingSnapshot){editingSnapshot.pfp=url;renderProfileModal();}};
-  r.readAsDataURL(file);el.pfpFileInput.value='';
+  r.onload=e=>{
+    const url=e.target.result;
+    if(url.length>800000){toast('Too large after encoding',true);return;}
+    if(editingSnapshot){editingSnapshot.pfp=url;renderProfileModal();}
+  };
+  r.readAsDataURL(file);
+  el.pfpFileInput.value='';
 });
+
 el.settingsBtn.addEventListener('click',openProfileModal);
 el.userPanelAvatar.addEventListener('click',openProfileModal);
 el.userPanelInfo.addEventListener('click',openProfileModal);
@@ -1609,20 +1858,28 @@ el.headerAvatar.addEventListener('click',openProfileModal);
 // AVATARS
 // ============================================================
 function renderMyAvatars(){
-  if(me.pfp){el.serverAvatar.src=me.pfp;el.serverAvatar.style.display='';el.serverInitial.style.display='none';}
-  else{el.serverAvatar.style.display='none';el.serverInitial.style.display='';}
+  if(me.pfp){
+    el.serverAvatar.src=me.pfp;el.serverAvatar.style.display='';el.serverInitial.style.display='none';
+  }else{
+    el.serverAvatar.style.display='none';el.serverInitial.style.display='';
+  }
+
   el.userPanelAvatar.innerHTML='';
-  const w=document.createElement('div');w.className=frameClass(me.frame);w.style.width='100%';w.style.height='100%';
+  const w=document.createElement('div');
+  w.className=frameClass(me.frame);w.style.width='100%';w.style.height='100%';
   const i=document.createElement('div');i.className='frame-inner';
   if(me.pfp){const img=document.createElement('img');img.src=me.pfp;i.appendChild(img);}else{i.textContent=initials(me.username);}
   w.appendChild(i);el.userPanelAvatar.appendChild(w);
+
   el.headerAvatar.innerHTML='';
-  const hw=document.createElement('div');hw.className=frameClass(me.frame);hw.style.width='100%';hw.style.height='100%';
+  const hw=document.createElement('div');
+  hw.className=frameClass(me.frame);hw.style.width='100%';hw.style.height='100%';
   const hi=document.createElement('div');hi.className='frame-inner';
   if(me.pfp){const img=document.createElement('img');img.src=me.pfp;hi.appendChild(img);}else{hi.textContent=initials(me.username);}
   hw.appendChild(hi);el.headerAvatar.appendChild(hw);
+
   el.userPanelName.innerHTML=escapeHtml(me.username||'Not set')+rankBadge((cachedUsers[me.clientId]||{}).rank);
-  el.userPanelStatus.textContent=identitySet?'Online':'Offline';
+  updateConnectionUI();
 }
 
 // ============================================================
@@ -1635,35 +1892,54 @@ el.attachBtn.addEventListener('click',()=>{
   el.fileUploadInput.click();
 });
 el.fileUploadInput.addEventListener('change',ev=>{
-  const file=ev.target.files&&ev.target.files[0];if(!file)return;
+  const file=ev.target.files&&ev.target.files[0];
+  if(!file)return;
   if(file.size>10*1024*1024){toast('File too large (max 10MB)',true);el.fileUploadInput.value='';return;}
   if(file.size>2*1024*1024){toast('Large file — may take a moment','info');}
   const r=new FileReader();
-  r.onload=e=>{pendingFile={data:e.target.result,name:file.name,type:file.type,size:file.size};
-    toast('📎 '+file.name+' attached');el.messageInput.focus();};
+  r.onload=e=>{
+    pendingFile={data:e.target.result,name:file.name,type:file.type,size:file.size};
+    toast('📎 '+file.name+' attached');
+    el.messageInput.focus();
+  };
   r.onerror=()=>toast('Failed to read file',true);
-  r.readAsDataURL(file);el.fileUploadInput.value='';
+  r.readAsDataURL(file);
+  el.fileUploadInput.value='';
 });
-function doSend(){sendMessage().catch(err=>{console.error(err);toast('Send failed: '+(err.message||err),true);});}
+
+function doSend(){
+  sendMessage().catch(err=>{console.error(err);toast('Send failed: '+(err.message||err),true);});
+}
 el.sendBtn.addEventListener('click',doSend);
-el.messageInput.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault();doSend();}});
-el.messageInput.addEventListener('input',()=>{el.messageInput.style.height='auto';el.messageInput.style.height=Math.min(el.messageInput.scrollHeight,200)+'px';});
-el.emojiBtn.addEventListener('click',ev=>{ev.stopPropagation();el.emojiPicker.classList.toggle('show');});
+el.messageInput.addEventListener('keydown',ev=>{
+  if(ev.key==='Enter'&&!ev.shiftKey){ev.preventDefault();doSend();}
+});
+el.messageInput.addEventListener('input',()=>{
+  el.messageInput.style.height='auto';
+  el.messageInput.style.height=Math.min(el.messageInput.scrollHeight,200)+'px';
+});
+
+el.emojiBtn.addEventListener('click',ev=>{
+  ev.stopPropagation();
+  el.emojiPicker.classList.toggle('show');
+});
 el.emojiPickerClose.addEventListener('click',()=>el.emojiPicker.classList.remove('show'));
 document.addEventListener('click',ev=>{
   if(!el.emojiPicker.classList.contains('show'))return;
   if(el.emojiPicker.contains(ev.target))return;
   if(ev.target===el.emojiBtn)return;
-  el.emojiPicker.classList.remove('show');});
-el.memberToggle.addEventListener('click',()=>{el.membersSidebar.style.display=el.membersSidebar.style.display==='none'?'':'none';});
+  el.emojiPicker.classList.remove('show');
+});
+
+el.memberToggle.addEventListener('click',()=>{
+  el.membersSidebar.style.display=el.membersSidebar.style.display==='none'?'':'none';
+});
 
 // ============================================================
 // SUPABASE OPS
 // ============================================================
 async function registerOnlineUser(){
   if(!supa||!me.username)return;
-  // Don't overwrite admin-assigned fields (rank, timeout, banned, warnings)
-  // We upsert only the fields we own.
   const existing=cachedUsers[me.clientId]||{};
   const row={
     client_id:me.clientId,
@@ -1680,7 +1956,10 @@ async function registerOnlineUser(){
   const{error}=await supa.from('online_users').upsert(row,{onConflict:'client_id'});
   if(error)throw error;
 }
-async function unregisterOnlineUser(){if(!supa)return;try{await supa.from('online_users').delete().eq('client_id',me.clientId);}catch(e){}}
+async function unregisterOnlineUser(){
+  if(!supa)return;
+  try{await supa.from('online_users').delete().eq('client_id',me.clientId);}catch(e){}
+}
 async function isUsernameTaken(username,excludeId){
   if(!supa)return false;
   const{data,error}=await supa.from('online_users').select('client_id, username');
@@ -1691,21 +1970,21 @@ async function isUsernameTaken(username,excludeId){
 async function sendMessageToSupabase(username,pfp,text,file){
   if(!supa)throw new Error('not connected');
   const now=new Date().toISOString();
-  const row={username:username,pfp_data_url:pfp||null,text:text||'',frame:me.frame||'none',channel_id:activeChannel,last_activity:now};
+  const row={
+    username:username,
+    pfp_data_url:pfp||null,
+    text:text||'',
+    frame:me.frame||'none',
+    channel_id:activeChannel,
+    last_activity:now
+  };
   if(file){row.file_data=file.data;row.file_name=file.name;row.file_type=file.type;row.file_size=file.size;}
   const{error}=await supa.from('messages').insert(row);
   if(error)throw error;
 }
-
-// ============================================================
-// DELETE MESSAGE (FIXED)
-// - Optimistic removal so the UI updates instantly
-// - Realtime DELETE no longer requires channel_id in payload
-// - Works for own messages AND admin-delete
-// ============================================================
 async function deleteMessage(id){
   if(!supa)throw new Error('not connected');
-  // Optimistic: remove locally first so the UI is instant
+  // Optimistic removal — UI updates instantly
   const before=cachedMessages.length;
   cachedMessages=cachedMessages.filter(m=>m.id!==id);
   if(cachedMessages.length!==before){
@@ -1714,100 +1993,295 @@ async function deleteMessage(id){
   }
   const{error}=await supa.from('messages').delete().eq('id',id);
   if(error){
-    // Roll back: refetch on error
     console.error('delete failed',error);
     try{await loadChannelMessages();}catch(e){}
     renderMessages();
     throw error;
   }
 }
-
 async function toggleReaction(messageId,emoji,username){
   if(!supa)return;
-  const msg=cachedMessages.find(m=>m.id===messageId);if(!msg)return;
+  const msg=cachedMessages.find(m=>m.id===messageId);
+  if(!msg)return;
   const reactions=msg.reactions&&typeof msg.reactions==='object'?{...msg.reactions}:{};
   const list=Array.isArray(reactions[emoji])?[...reactions[emoji]]:[];
   const idx=list.indexOf(username);
   if(idx>=0){list.splice(idx,1);if(list.length===0)delete reactions[emoji];else reactions[emoji]=list;}
   else{list.push(username);reactions[emoji]=list;}
-  const{error}=await supa.from('messages').update({reactions:reactions,last_activity:new Date().toISOString()}).eq('id',messageId);
+  const{error}=await supa.from('messages').update({
+    reactions:reactions,
+    last_activity:new Date().toISOString()
+  }).eq('id',messageId);
   if(error)throw error;
+}
+async function togglePin(msgId){
+  if(!isAdmin){toast('Only admins can pin messages',true);return;}
+  const msg=cachedMessages.find(m=>m.id===msgId);
+  if(!msg)return;
+  const newVal=!msg.pinned;
+  const{error}=await supa.from('messages').update({
+    pinned:newVal,
+    pinned_by:newVal?me.username:null
+  }).eq('id',msgId);
+  if(error)throw error;
+  toast(newVal?'📌 Pinned':'Unpinned');
 }
 async function loadChannelMessages(){
   if(!supa)return;
-  const{data,error}=await supa.from('messages').select('*').eq('channel_id',activeChannel).order('created_at',{ascending:true}).limit(200);
+  const{data,error}=await supa.from('messages')
+    .select('*')
+    .eq('channel_id',activeChannel)
+    .order('created_at',{ascending:true})
+    .limit(200);
   if(error)throw error;
   cachedMessages=data||[];
 }
+
 async function refreshOnlineUsers(){
   if(!supa)return;
-  try{const cutoff=new Date(Date.now()-45000).toISOString();await supa.from('online_users').delete().lt('last_seen',cutoff);}catch(e){}
+  try{
+    const cutoff=new Date(Date.now()-45000).toISOString();
+    await supa.from('online_users').delete().lt('last_seen',cutoff);
+  }catch(e){}
   try{
     const{data,error}=await supa.from('online_users').select('*');
     if(error)throw error;
-    cachedUsers={};(data||[]).forEach(u=>{cachedUsers[u.client_id]=u;});
-    renderMembers();renderMessages();renderMyAvatars();updateLockNotice();
+    cachedUsers={};
+    (data||[]).forEach(u=>{cachedUsers[u.client_id]=u;});
+    renderMembers();
+    renderMessages();
+    renderMyAvatars();
+    updateLockNotice();
     if(isAdmin)renderAdminPanel();
   }catch(e){console.error(e);}
 }
 
 // ============================================================
-// REALTIME
+// REALTIME (fixed + robust)
 // ============================================================
 function subscribeRealtime(){
   if(!supa)return;
-  if(channel){try{supa.removeChannel(channel);}catch(e){}}
-  channel=supa.channel('nexus-v6')
-    .on('postgres_changes',{event:'*',schema:'public',table:'messages'},payload=>{
-      try{
-        const row=payload.new||payload.old;
-        if(!row)return;
-        // Handle DELETE FIRST (no channel_id check — old payload may be partial)
-        if(payload.eventType==='DELETE'){
-          cachedMessages=cachedMessages.filter(m=>m.id!==row.id);
+  if(channel){
+    try{supa.removeChannel(channel);}catch(e){}
+    channel=null;
+  }
+
+  const channelName='nexus-rt-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);
+  realtimeStatus='connecting';
+  realtimeConnected=false;
+  updateConnectionUI();
+  console.log('[Nexus] subscribing to realtime as',channelName);
+
+  channel=supa.channel(channelName,{
+    config:{
+      broadcast:{self:false},
+      presence:{key:''}
+    }
+  })
+  .on('postgres_changes',{event:'*',schema:'public',table:'messages'},payload=>{
+    try{
+      realtimeLastMessageAt=Date.now();
+      const row=payload.new||payload.old;
+      if(!row)return;
+
+      // DELETE first — payload may not include channel_id
+      if(payload.eventType==='DELETE'){
+        const before=cachedMessages.length;
+        cachedMessages=cachedMessages.filter(m=>m.id!==row.id);
+        if(cachedMessages.length!==before){
           renderMessages();
           renderPinned();
-          return;
         }
-        // For INSERT/UPDATE, filter by active channel
-        if(row.channel_id!==activeChannel)return;
-        if(payload.eventType==='INSERT'){
-          if(!cachedMessages.some(m=>m.id===row.id)){
-            cachedMessages.push(row);
-            if(cachedMessages.length>200)cachedMessages=cachedMessages.slice(-200);
-            const isFromOther=row.username!==me.username&&row.username!=='system';
-            renderMessages(row.id);
-            renderPinned();
-            if(isFromOther){
-              playBeep();
-              if(!document.hasFocus()){
-                const channelName=channelMeta[activeChannel]?.name||'global-chat';
-                const body=row.text?row.text:(row.file_name?'📎 '+row.file_name:'sent a message');
-                showDesktopNotification(row.username+' · #'+channelName,body,row.pfp_data_url);
-                incrementUnread();
-              }
+        return;
+      }
+
+      if(row.channel_id!==activeChannel)return;
+
+      if(payload.eventType==='INSERT'){
+        if(!cachedMessages.some(m=>m.id===row.id)){
+          cachedMessages.push(row);
+          if(cachedMessages.length>200)cachedMessages=cachedMessages.slice(-200);
+          const isFromOther=row.username!==me.username&&row.username!=='system';
+          renderMessages(row.id);
+          renderPinned();
+          if(isFromOther){
+            playBeep();
+            if(!document.hasFocus()){
+              const chName=channelMeta[activeChannel]?.name||'global-chat';
+              const body=row.text?row.text:(row.file_name?'📎 '+row.file_name:'sent a message');
+              showDesktopNotification(row.username+' · #'+chName,body,row.pfp_data_url);
+              incrementUnread();
+              markChannelUnread(activeChannel);
             }
           }
-        }else if(payload.eventType==='UPDATE'){
-          const i=cachedMessages.findIndex(m=>m.id===row.id);
-          if(i>=0)cachedMessages[i]=row;else cachedMessages.push(row);
-          renderMessages();
-          renderPinned();
         }
-      }catch(e){console.error(e);}
-    })
-    .on('postgres_changes',{event:'*',schema:'public',table:'online_users'},()=>{refreshOnlineUsers().catch(console.error);})
-    .on('postgres_changes',{event:'*',schema:'public',table:'channel_settings'},payload=>{
-      try{
-        const row=payload.new||payload.old;
-        if(!row||row.channel_id!==activeChannel)return;
-        cachedSettings=row;
-        updateLockNotice();
-        renderAnnouncement();
-        renderChannelList();
-      }catch(e){console.error(e);}
-    })
-    .subscribe();
+      }else if(payload.eventType==='UPDATE'){
+        const i=cachedMessages.findIndex(m=>m.id===row.id);
+        if(i>=0)cachedMessages[i]=row;else cachedMessages.push(row);
+        renderMessages();
+        renderPinned();
+      }
+    }catch(e){console.error('[Nexus] realtime handler error',e);}
+  })
+  .on('postgres_changes',{event:'*',schema:'public',table:'online_users'},()=>{
+    refreshOnlineUsers().catch(console.error);
+  })
+  .on('postgres_changes',{event:'*',schema:'public',table:'channel_settings'},payload=>{
+    try{
+      const row=payload.new||payload.old;
+      if(!row||row.channel_id!==activeChannel)return;
+      cachedSettings=row;
+      updateLockNotice();
+      renderAnnouncement();
+      renderChannelList();
+    }catch(e){console.error(e);}
+  })
+  .subscribe((status,err)=>{
+    realtimeStatus=status;
+    console.log('[Nexus] realtime status:',status,err?('· '+err.message):'');
+
+    if(status==='SUBSCRIBED'){
+      realtimeConnected=true;
+      realtimeReconnectAttempts=0;
+      updateConnectionUI();
+      catchUpMissedMessages().catch(()=>{});
+    }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED'){
+      realtimeConnected=false;
+      updateConnectionUI();
+      realtimeReconnectAttempts++;
+      const delay=Math.min(15000,2000*Math.pow(1.5,Math.min(realtimeReconnectAttempts,5)));
+      setTimeout(()=>{
+        if(!realtimeConnected&&supa){
+          console.log('[Nexus] attempting realtime reconnect (#'+realtimeReconnectAttempts+')…');
+          subscribeRealtime();
+        }
+      },delay+Math.random()*1500);
+    }
+  });
+}
+
+// ============================================================
+// POLLING FALLBACK — guarantees new messages appear
+// ============================================================
+async function catchUpMissedMessages(){
+  if(!supa||!activeChannel)return;
+  try{
+    const lastMsg=cachedMessages[cachedMessages.length-1];
+    const since=lastMsg?lastMsg.created_at:new Date(Date.now()-2*60*1000).toISOString();
+
+    const{data,error}=await supa
+      .from('messages')
+      .select('*')
+      .eq('channel_id',activeChannel)
+      .gte('created_at',since)
+      .order('created_at',{ascending:true})
+      .limit(200);
+
+    if(error){console.warn('[Nexus] catchup err',error);return;}
+    if(!data||data.length===0)return;
+
+    let changed=false;
+    let newestId=null;
+
+    data.forEach(row=>{
+      const idx=cachedMessages.findIndex(m=>m.id===row.id);
+      if(idx>=0){
+        if(JSON.stringify(cachedMessages[idx])!==JSON.stringify(row)){
+          cachedMessages[idx]=row;
+          changed=true;
+        }
+      }else{
+        cachedMessages.push(row);
+        changed=true;
+        newestId=row.id;
+      }
+    });
+
+    if(changed){
+      cachedMessages.sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
+      if(cachedMessages.length>200)cachedMessages=cachedMessages.slice(-200);
+      renderMessages(newestId);
+      renderPinned();
+    }
+  }catch(e){
+    console.warn('[Nexus] catchup exception',e);
+  }
+}
+
+function startPollingFallback(){
+  if(pollInterval)clearInterval(pollInterval);
+
+  const pollTick=async()=>{
+    // Skip if realtime just delivered something in the last 2s
+    if(realtimeConnected&&Date.now()-realtimeLastMessageAt<2000)return;
+    if(!supa||!activeChannel)return;
+
+    try{
+      const lastMsg=cachedMessages[cachedMessages.length-1];
+      const since=lastMsg?lastMsg.created_at:new Date(Date.now()-60000).toISOString();
+
+      const{data,error}=await supa
+        .from('messages')
+        .select('*')
+        .eq('channel_id',activeChannel)
+        .gte('created_at',since)
+        .order('created_at',{ascending:true})
+        .limit(100);
+
+      if(error||!data)return;
+
+      let changed=false;
+      let newestId=null;
+
+      data.forEach(row=>{
+        const idx=cachedMessages.findIndex(m=>m.id===row.id);
+        if(idx>=0){
+          if(JSON.stringify(cachedMessages[idx])!==JSON.stringify(row)){
+            cachedMessages[idx]=row;
+            changed=true;
+          }
+        }else{
+          cachedMessages.push(row);
+          changed=true;
+          newestId=row.id;
+
+          if(row.username!==me.username&&row.username!=='system'){
+            const isFresh=(Date.now()-new Date(row.created_at).getTime())<60000;
+            if(isFresh&&!document.hasFocus()){
+              playBeep();
+              const chName=channelMeta[activeChannel]?.name||'global-chat';
+              const body=row.text?row.text:(row.file_name?'📎 '+row.file_name:'sent a message');
+              showDesktopNotification(row.username+' · #'+chName,body,row.pfp_data_url);
+              incrementUnread();
+              markChannelUnread(activeChannel);
+            }
+          }
+        }
+      });
+
+      if(changed){
+        cachedMessages.sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
+        if(cachedMessages.length>200)cachedMessages=cachedMessages.slice(-200);
+        renderMessages(newestId);
+        renderPinned();
+      }
+    }catch(e){
+      console.warn('[Nexus] poll error',e);
+    }
+  };
+
+  pollTick();
+  pollInterval=setInterval(pollTick,pollBackoff);
+
+  // Adaptive: poll harder when realtime is degraded
+  setInterval(()=>{
+    const desired=realtimeConnected?8000:3000;
+    if(Math.abs(desired-pollBackoff)>500){
+      pollBackoff=desired;
+      clearInterval(pollInterval);
+      pollInterval=setInterval(pollTick,pollBackoff);
+    }
+  },5000);
 }
 
 // ============================================================
@@ -1815,6 +2289,7 @@ function subscribeRealtime(){
 // ============================================================
 function renderMessages(highlightId){
   const msgs=cachedMessages||[];
+
   if(msgs.length===0){
     const meta=channelMeta[activeChannel]||{name:'global-chat',isPublic:true};
     el.messagesContainer.innerHTML='<div class="welcome"><div class="welcome-icon">'+(meta.isPublic?'#':'🔒')+'</div>'+
@@ -1822,15 +2297,22 @@ function renderMessages(highlightId){
       '<p>'+(meta.isPublic?'This is the start of the channel. Say hi 👋':'This is a private channel. Share the key to invite others. Messages auto-delete after 30 min of inactivity.')+'</p></div>';
     return;
   }
+
   let html='';let lastTime=0;
+
   msgs.forEach((m,i)=>{
-    if(m.username==='system'){html+='<div style="padding:8px 16px;color:var(--text-muted);font-size:13px;text-align:center;">'+escapeHtml(m.text)+'</div>';lastTime=0;return;}
+    if(m.username==='system'){
+      html+='<div style="padding:8px 16px;color:var(--text-muted);font-size:13px;text-align:center;">'+escapeHtml(m.text)+'</div>';
+      lastTime=0;
+      return;
+    }
+
     const own=me.username&&m.username===me.username;
-    const prev=msgs[i-1];const msgTime=m.created_at?new Date(m.created_at).getTime():0;
+    const prev=msgs[i-1];
+    const msgTime=m.created_at?new Date(m.created_at).getTime():0;
     const grouped=prev&&prev.username===m.username&&prev.username!=='system'&&(msgTime-lastTime)<5*60*1000;
 
-    // Look up user data for rank/timeout/nick
-    let userData=Object.values(cachedUsers).find(x=>x&&x.username===m.username);
+    const userData=Object.values(cachedUsers).find(x=>x&&x.username===m.username);
     let displayName=m.username;
     if(userData&&userData.force_nick)displayName=userData.force_nick;
     const rank=userData?userData.rank:'member';
@@ -1839,7 +2321,10 @@ function renderMessages(highlightId){
 
     let pfp=m.pfp_data_url,frame=m.frame;
     if(!pfp||!frame||frame==='none'){
-      if(userData){if(!pfp)pfp=userData.pfp_data_url;if((!frame||frame==='none')&&userData.frame)frame=userData.frame;}
+      if(userData){
+        if(!pfp)pfp=userData.pfp_data_url;
+        if((!frame||frame==='none')&&userData.frame)frame=userData.frame;
+      }
     }
     const avInner=pfp?'<img src="'+pfp+'" alt="" onerror="this.style.display=\'none\'">':initials(displayName);
     const avatarHtml=wrapAvatar(avInner,frame);
@@ -1847,22 +2332,32 @@ function renderMessages(highlightId){
 
     let fileHtml='';
     if(m.file_data&&m.file_type){
-      if(m.file_type.startsWith('image/')){fileHtml='<div class="msg-file"><img src="'+m.file_data+'" alt="'+escapeHtml(m.file_name)+'" data-lightbox="1" loading="lazy"></div>';}
-      else{fileHtml='<div class="msg-file"><a class="file-card" href="'+m.file_data+'" download="'+escapeHtml(m.file_name)+'">'+
-        '<div class="file-icon">📎</div><div class="file-info"><div class="file-name">'+escapeHtml(m.file_name)+'</div>'+
-        '<div class="file-size">'+formatSize(m.file_size)+'</div></div></a></div>';}
+      if(m.file_type.startsWith('image/')){
+        fileHtml='<div class="msg-file"><img src="'+m.file_data+'" alt="'+escapeHtml(m.file_name)+'" data-lightbox="1" loading="lazy"></div>';
+      }else{
+        fileHtml='<div class="msg-file"><a class="file-card" href="'+m.file_data+'" download="'+escapeHtml(m.file_name)+'">'+
+          '<div class="file-icon">📎</div>'+
+          '<div class="file-info"><div class="file-name">'+escapeHtml(m.file_name)+'</div>'+
+          '<div class="file-size">'+formatSize(m.file_size)+'</div></div>'+
+        '</a></div>';
+      }
     }
 
     let reactionsHtml='';
     const reactions=m.reactions&&typeof m.reactions==='object'?m.reactions:{};
     const entries=Object.entries(reactions).filter(([_,u])=>Array.isArray(u)&&u.length>0);
-    if(entries.length>0){reactionsHtml='<div class="msg-reactions">';
-      entries.forEach(([emoji,users])=>{const mine=me.username&&users.includes(me.username);
+    if(entries.length>0){
+      reactionsHtml='<div class="msg-reactions">';
+      entries.forEach(([emoji,users])=>{
+        const mine=me.username&&users.includes(me.username);
         reactionsHtml+='<div class="reaction'+(mine?' mine':'')+'" data-msg-id="'+m.id+'" data-emoji="'+emoji+'">'+
-          '<span class="emoji">'+emoji+'</span><span class="count">'+users.length+'</span></div>';});
-      reactionsHtml+='</div>';}
+          '<span class="emoji">'+emoji+'</span>'+
+          '<span class="count">'+users.length+'</span>'+
+        '</div>';
+      });
+      reactionsHtml+='</div>';
+    }
 
-    // Action bar — admin can delete/pin ANY message; users can only delete/pin their own (pin only for admins though)
     const canDelete=own||isAdmin;
     const canPin=isAdmin;
     const actionBar='<div class="msg-actions">'+
@@ -1879,43 +2374,53 @@ function renderMessages(highlightId){
           '<span class="msg-username">'+rankBadge(rank)+escapeHtml(displayName)+(m.pinned?' <span style="color:var(--yellow);font-size:11px;" title="Pinned">📌</span>':'')+'</span>'+
           (timedOut?'<span class="timeout-indicator" title="Timed out until '+fmtDate(userData.timeout_until)+'">⏱️ timed out</span>':'')+
           (warnings>0?'<span class="warn-badge" title="'+warnings+' warning'+(warnings===1?'':'s')+'">⚠️ '+warnings+'</span>':'')+
-          '<span class="msg-time">'+t+'</span></div>':'')+
+          '<span class="msg-time">'+t+'</span>'+
+        '</div>':'')+
         (m.text?'<div class="msg-text">'+renderMessageText(m.text)+'</div>':'')+
-        fileHtml+reactionsHtml+'</div>'+actionBar+'</div>';
+        fileHtml+reactionsHtml+
+      '</div>'+actionBar+
+    '</div>';
+
     lastTime=msgTime;
   });
+
   el.messagesContainer.innerHTML=html;
 
   el.messagesContainer.querySelectorAll('.action-btn').forEach(btn=>{
-    btn.addEventListener('click',ev=>{ev.stopPropagation();const a=btn.dataset.action,id=btn.dataset.msgId;
+    btn.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      const a=btn.dataset.action,id=btn.dataset.msgId;
       if(a==='react')openQuickReaction(btn,id);
-      else if(a==='copy'){const m=cachedMessages.find(x=>x.id===id);if(m&&m.text)navigator.clipboard.writeText(m.text).then(()=>toast('Copied'));}
-      else if(a==='pin'){togglePin(id).catch(e=>toast('Pin failed: '+e.message,true));}
-      else if(a==='delete'){if(confirm('Delete this message?'))deleteMessage(id).catch(e=>toast('Delete failed: '+e.message,true));}});
+      else if(a==='copy'){
+        const m=cachedMessages.find(x=>x.id===id);
+        if(m&&m.text)navigator.clipboard.writeText(m.text).then(()=>toast('Copied'));
+      }else if(a==='pin'){
+        togglePin(id).catch(e=>toast('Pin failed: '+e.message,true));
+      }else if(a==='delete'){
+        if(confirm('Delete this message?'))deleteMessage(id).catch(e=>toast('Delete failed: '+e.message,true));
+      }
+    });
   });
+
   el.messagesContainer.querySelectorAll('.reaction').forEach(r=>{
-    r.addEventListener('click',ev=>{ev.stopPropagation();if(!me.username)return;
-      toggleReaction(r.dataset.msgId,r.dataset.emoji,me.username).catch(e=>toast('Reaction failed: '+e.message,true));});
+    r.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      if(!me.username)return;
+      toggleReaction(r.dataset.msgId,r.dataset.emoji,me.username).catch(e=>toast('Reaction failed: '+e.message,true));
+    });
   });
+
   el.messagesContainer.querySelectorAll('img[data-lightbox]').forEach(img=>{
-    img.addEventListener('click',()=>{const parent=img.closest('.msg');const msgId=parent?parent.dataset.msgId:'';
-      const m=cachedMessages.find(x=>x.id===msgId);openLightbox(img.src,m?m.file_name:'image');});
+    img.addEventListener('click',()=>{
+      const parent=img.closest('.msg');
+      const msgId=parent?parent.dataset.msgId:'';
+      const m=cachedMessages.find(x=>x.id===msgId);
+      openLightbox(img.src,m?m.file_name:'image');
+    });
   });
+
   const nearBottom=(el.messagesContainer.scrollHeight-el.messagesContainer.scrollTop-el.messagesContainer.clientHeight)<80;
   if(nearBottom||highlightId)el.messagesContainer.scrollTop=el.messagesContainer.scrollHeight;
-}
-
-async function togglePin(msgId){
-  if(!isAdmin){toast('Only admins can pin messages',true);return;}
-  const msg=cachedMessages.find(m=>m.id===msgId);
-  if(!msg)return;
-  const newVal=!msg.pinned;
-  const{error}=await supa.from('messages').update({
-    pinned:newVal,
-    pinned_by:newVal?me.username:null
-  }).eq('id',msgId);
-  if(error)throw error;
-  toast(newVal?'📌 Pinned':'Unpinned');
 }
 
 // ============================================================
@@ -1925,14 +2430,28 @@ const QUICK_EMOJIS=['👍','❤️','😂','😮','😢','🎉','🔥','👀'];
 function openQuickReaction(btn,msgId){
   if(openEmojiPopup){openEmojiPopup.remove();openEmojiPopup=null;}
   const pop=document.createElement('div');pop.className='emoji-popup';
-  QUICK_EMOJIS.forEach(e=>{const b=document.createElement('button');b.type='button';b.textContent=e;
-    b.addEventListener('click',ev=>{ev.stopPropagation();if(!me.username){toast('Set a username first',true);return;}
-      toggleReaction(msgId,e,me.username).catch(err=>toast('Failed: '+err.message,true));pop.remove();openEmojiPopup=null;});
-    pop.appendChild(b);});
+  QUICK_EMOJIS.forEach(e=>{
+    const b=document.createElement('button');
+    b.type='button';b.textContent=e;
+    b.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      if(!me.username){toast('Set a username first',true);return;}
+      toggleReaction(msgId,e,me.username).catch(err=>toast('Failed: '+err.message,true));
+      pop.remove();openEmojiPopup=null;
+    });
+    pop.appendChild(b);
+  });
   const rect=btn.getBoundingClientRect();
-  pop.style.top=(rect.top-44)+'px';pop.style.left=Math.max(10,rect.left-220)+'px';
-  document.body.appendChild(pop);openEmojiPopup=pop;
-  setTimeout(()=>{const close=ev=>{if(!pop.contains(ev.target)){pop.remove();openEmojiPopup=null;document.removeEventListener('click',close);}};document.addEventListener('click',close);},0);
+  pop.style.top=(rect.top-44)+'px';
+  pop.style.left=Math.max(10,rect.left-220)+'px';
+  document.body.appendChild(pop);
+  openEmojiPopup=pop;
+  setTimeout(()=>{
+    const close=ev=>{
+      if(!pop.contains(ev.target)){pop.remove();openEmojiPopup=null;document.removeEventListener('click',close);}
+    };
+    document.addEventListener('click',close);
+  },0);
 }
 
 // ============================================================
@@ -1942,7 +2461,10 @@ function renderMembers(){
   const users=Object.values(cachedUsers).filter(u=>u&&u.username);
   users.sort((a,b)=>a.username.localeCompare(b.username));
   el.membersCount.textContent='Online — '+users.length;
-  if(users.length===0){el.membersList.innerHTML='<div style="padding:12px 8px;color:var(--text-muted);font-size:13px;">No one online</div>';return;}
+  if(users.length===0){
+    el.membersList.innerHTML='<div style="padding:12px 8px;color:var(--text-muted);font-size:13px;">No one online</div>';
+    return;
+  }
   el.membersList.innerHTML=users.map(u=>{
     const isSelf=u.client_id===me.clientId;
     const inner=u.pfp_data_url?'<img src="'+u.pfp_data_url+'" alt="" onerror="this.style.display=\'none\'">':initials(u.username);
@@ -1962,6 +2484,7 @@ function renderMembers(){
       (!isSelf?'<button class="member-call-btn" data-call-peer="'+u.client_id+'" data-call-name="'+escapeHtml(u.username)+'" title="Video call '+escapeHtml(u.username)+'">📞</button>':'')+
     '</div>';
   }).join('');
+
   el.membersList.querySelectorAll('.member-call-btn').forEach(btn=>{
     btn.addEventListener('click',ev=>{
       ev.stopPropagation();
@@ -1976,13 +2499,13 @@ function renderMembers(){
 }
 
 // ============================================================
-// ============================================================
-//                     VIDEO CALLING
-// ============================================================
+// VIDEO CALLING
 // ============================================================
 const ICE_CONFIG={iceServers:[
-  {urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},
-  {urls:'stun:stun2.l.google.com:19302'},{urls:'stun:stun3.l.google.com:19302'}
+  {urls:'stun:stun.l.google.com:19302'},
+  {urls:'stun:stun1.l.google.com:19302'},
+  {urls:'stun:stun2.l.google.com:19302'},
+  {urls:'stun:stun3.l.google.com:19302'}
 ]};
 
 const CallState={
@@ -1996,7 +2519,8 @@ const CallState={
 function startRingtone(){
   stopRingtone();
   try{
-    const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+    const Ctx=window.AudioContext||window.webkitAudioContext;
+    if(!Ctx)return;
     CallState.ringCtx=new Ctx();
     const playChirp=()=>{
       if(!CallState.ringCtx)return;
@@ -2068,14 +2592,21 @@ function handleIncomingInvite(invite){
 function dismissIncomingCall(){el.incomingCall.classList.remove('show');stopRingtone();}
 
 el.incomingCallDecline.addEventListener('click',()=>{
-  const inv=CallState.pendingInvite;dismissIncomingCall();
-  if(inv&&CallState.inviteChannel){CallState.inviteChannel.send({type:'broadcast',event:'dm-decline',payload:{from:me.clientId,to:inv.fromPeerId,roomId:inv.roomId}}).catch(()=>{});}
-  CallState.pendingInvite=null;toast('Call declined');
+  const inv=CallState.pendingInvite;
+  dismissIncomingCall();
+  if(inv&&CallState.inviteChannel){
+    CallState.inviteChannel.send({type:'broadcast',event:'dm-decline',payload:{from:me.clientId,to:inv.fromPeerId,roomId:inv.roomId}}).catch(()=>{});
+  }
+  CallState.pendingInvite=null;
+  toast('Call declined');
 });
 el.incomingCallAccept.addEventListener('click',async()=>{
-  const inv=CallState.pendingInvite;if(!inv){dismissIncomingCall();return;}
-  dismissIncomingCall();CallState.pendingInvite=null;
-  try{await joinCallRoom(inv.roomId,inv.isGroup);}catch(e){console.error(e);toast('Could not join call: '+e.message,true);}
+  const inv=CallState.pendingInvite;
+  if(!inv){dismissIncomingCall();return;}
+  dismissIncomingCall();
+  CallState.pendingInvite=null;
+  try{await joinCallRoom(inv.roomId,inv.isGroup);}
+  catch(e){console.error(e);toast('Could not join call: '+e.message,true);}
 });
 
 async function startDMCall(peerId,peerName){
@@ -2086,7 +2617,10 @@ async function startDMCall(peerId,peerName){
   try{await joinCallRoom(roomId,false,peerId,peerName);}
   catch(e){console.error(e);toast('Call failed: '+e.message,true);return;}
   if(CallState.inviteChannel){
-    CallState.inviteChannel.send({type:'broadcast',event:'dm-invite',payload:{from:me.clientId,fromName:me.username,fromPfp:me.pfp,to:peerId,roomId:roomId}}).catch(()=>{});
+    CallState.inviteChannel.send({
+      type:'broadcast',event:'dm-invite',
+      payload:{from:me.clientId,fromName:me.username,fromPfp:me.pfp,to:peerId,roomId:roomId}
+    }).catch(()=>{});
   }
 }
 
@@ -2100,7 +2634,10 @@ el.startGroupCallBtn.addEventListener('click',async()=>{
   try{await joinCallRoom(roomId,true);}
   catch(e){console.error(e);toast('Could not start call: '+e.message,true);return;}
   if(CallState.inviteChannel){
-    CallState.inviteChannel.send({type:'broadcast',event:'group-invite',payload:{from:me.clientId,fromName:me.username,fromPfp:me.pfp,channelId:activeChannel,roomId:roomId}}).catch(()=>{});
+    CallState.inviteChannel.send({
+      type:'broadcast',event:'group-invite',
+      payload:{from:me.clientId,fromName:me.username,fromPfp:me.pfp,channelId:activeChannel,roomId:roomId}
+    }).catch(()=>{});
   }
   toast('Group call started in #'+chanName,'info');
 });
@@ -2108,10 +2645,19 @@ el.startGroupCallBtn.addEventListener('click',async()=>{
 async function joinCallRoom(roomId,isGroup,expectedPeerId,expectedPeerName){
   let stream;
   try{stream=await getLocalMedia();}
-  catch(e){console.warn('video failed, trying audio only',e);stream=await getAudioOnlyMedia();if(!stream)throw new Error('No camera or microphone available.');CallState.cameraOn=false;}
+  catch(e){
+    console.warn('video failed, trying audio only',e);
+    stream=await getAudioOnlyMedia();
+    if(!stream)throw new Error('No camera or microphone available.');
+    CallState.cameraOn=false;
+  }
   if(!stream)throw new Error('No media stream');
-  CallState.active=true;CallState.roomId=roomId;CallState.isGroup=isGroup;
-  CallState.localStream=stream;CallState.peers=new Map();
+
+  CallState.active=true;
+  CallState.roomId=roomId;
+  CallState.isGroup=isGroup;
+  CallState.localStream=stream;
+  CallState.peers=new Map();
   CallState.cameraOn=stream.getVideoTracks().length>0&&stream.getVideoTracks()[0].enabled;
   CallState.micOn=stream.getAudioTracks().length>0&&stream.getAudioTracks()[0].enabled;
   CallState.startTime=Date.now();
@@ -2119,9 +2665,12 @@ async function joinCallRoom(roomId,isGroup,expectedPeerId,expectedPeerName){
   el.callOverlay.classList.add('show');
   el.startGroupCallBtn.classList.add('in-call');
   el.callTopbarIcon.textContent=isGroup?'📹':'📞';
-  el.callTopbarTitle.textContent=isGroup?'Group Call · #'+(channelMeta[activeChannel]?.name||'channel'):'Call with '+(expectedPeerName||'someone');
+  el.callTopbarTitle.textContent=isGroup
+    ?'Group Call · #'+(channelMeta[activeChannel]?.name||'channel')
+    :'Call with '+(expectedPeerName||'someone');
   el.callTopbarSub.textContent='Connecting…';
-  updateCtrlButtons();updateCallTimerDisplay();
+  updateCtrlButtons();
+  updateCallTimerDisplay();
   CallState.timerInterval=setInterval(()=>{updateCallTimerDisplay();},1000);
   renderCallGrid();
   await connectSignalChannel(roomId);
@@ -2130,8 +2679,10 @@ async function joinCallRoom(roomId,isGroup,expectedPeerId,expectedPeerName){
 async function connectSignalChannel(roomId){
   if(!supa)throw new Error('not connected');
   if(CallState.signalChannel){try{supa.removeChannel(CallState.signalChannel);}catch(e){}}
+
   const ch=supa.channel('call-'+roomId,{config:{broadcast:{self:false}}});
   CallState.signalChannel=ch;
+
   ch.on('broadcast',{event:'join'},({payload})=>{
     if(!payload||payload.peerId===me.clientId)return;
     if(!CallState.active||CallState.roomId!==roomId)return;
@@ -2158,7 +2709,8 @@ async function connectSignalChannel(roomId){
     if(!payload||payload.peerId===me.clientId)return;
     const peer=CallState.peers.get(payload.peerId);
     if(!peer)return;
-    peer.cameraOn=payload.cameraOn;peer.micOn=payload.micOn;
+    peer.cameraOn=payload.cameraOn;
+    peer.micOn=payload.micOn;
     renderCallGrid();
   });
   ch.on('broadcast',{event:'admin-kick'},({payload})=>{
@@ -2166,11 +2718,15 @@ async function connectSignalChannel(roomId){
     toast('You were removed from the call by an admin',true);
     leaveCall(false);
   });
+
   await new Promise((resolve)=>{
     ch.subscribe(async(status)=>{
       if(status==='SUBSCRIBED'){
         resolve();
-        await ch.send({type:'broadcast',event:'join',payload:{peerId:me.clientId,username:me.username,pfp:me.pfp,frame:me.frame}}).catch(e=>console.warn('join broadcast failed',e));
+        await ch.send({
+          type:'broadcast',event:'join',
+          payload:{peerId:me.clientId,username:me.username,pfp:me.pfp,frame:me.frame}
+        }).catch(e=>console.warn('join broadcast failed',e));
         el.callTopbarSub.textContent='Waiting for others…';
       }
     });
@@ -2179,54 +2735,101 @@ async function connectSignalChannel(roomId){
 
 function createPeerConnection(peerId){
   const pc=new RTCPeerConnection(ICE_CONFIG);
+
   CallState.localStream.getTracks().forEach(track=>{pc.addTrack(track,CallState.localStream);});
+
   const remoteStream=new MediaStream();
+
   pc.ontrack=(ev)=>{
-    ev.streams[0].getTracks().forEach(t=>{if(!remoteStream.getTracks().includes(t))remoteStream.addTrack(t);});
+    ev.streams[0].getTracks().forEach(t=>{
+      if(!remoteStream.getTracks().includes(t))remoteStream.addTrack(t);
+    });
     const peer=CallState.peers.get(peerId);
     if(peer){peer.stream=remoteStream;renderCallGrid();}
   };
+
   pc.onicecandidate=(ev)=>{
     if(ev.candidate&&CallState.signalChannel){
-      CallState.signalChannel.send({type:'broadcast',event:'ice',payload:{from:me.clientId,to:peerId,candidate:ev.candidate.toJSON()}}).catch(()=>{});
+      CallState.signalChannel.send({
+        type:'broadcast',event:'ice',
+        payload:{from:me.clientId,to:peerId,candidate:ev.candidate.toJSON()}
+      }).catch(()=>{});
     }
   };
+
   pc.onconnectionstatechange=()=>{
     if(pc.connectionState==='connected')updateCallTopbar();
     else if(pc.connectionState==='failed'||pc.connectionState==='closed')removePeer(peerId);
   };
+
   return {pc,remoteStream};
 }
+
 async function createOfferToPeer(peerId,username,pfp,frame){
   if(CallState.peers.has(peerId))return;
+
   const{pc,remoteStream}=createPeerConnection(peerId);
-  CallState.peers.set(peerId,{pc:pc,stream:remoteStream,username:username||'Unknown',pfp:pfp||null,frame:frame||'none',cameraOn:true,micOn:true});
+
+  CallState.peers.set(peerId,{
+    pc:pc,stream:remoteStream,
+    username:username||'Unknown',pfp:pfp||null,frame:frame||'none',
+    cameraOn:true,micOn:true
+  });
   renderCallGrid();
-  const offer=await pc.createOffer();await pc.setLocalDescription(offer);
-  CallState.signalChannel.send({type:'broadcast',event:'offer',payload:{from:me.clientId,to:peerId,sdp:{type:pc.localDescription.type,sdp:pc.localDescription.sdp}}}).catch(e=>console.warn('offer send failed',e));
+
+  const offer=await pc.createOffer();
+  await pc.setLocalDescription(offer);
+
+  CallState.signalChannel.send({
+    type:'broadcast',event:'offer',
+    payload:{from:me.clientId,to:peerId,sdp:{type:pc.localDescription.type,sdp:pc.localDescription.sdp}}
+  }).catch(e=>console.warn('offer send failed',e));
 }
+
 async function handleOffer(payload){
   const{from,sdp}=payload;
   if(CallState.peers.has(from))return;
+
   const{pc,remoteStream}=createPeerConnection(from);
-  CallState.peers.set(from,{pc:pc,stream:remoteStream,username:'Unknown',pfp:null,frame:'none',cameraOn:true,micOn:true});
+  CallState.peers.set(from,{
+    pc:pc,stream:remoteStream,
+    username:'Unknown',pfp:null,frame:'none',
+    cameraOn:true,micOn:true
+  });
   renderCallGrid();
+
   await pc.setRemoteDescription(new RTCSessionDescription(sdp));
-  const answer=await pc.createAnswer();await pc.setLocalDescription(answer);
-  CallState.signalChannel.send({type:'broadcast',event:'answer',payload:{from:me.clientId,to:from,sdp:{type:pc.localDescription.type,sdp:pc.localDescription.sdp}}}).catch(e=>console.warn('answer send failed',e));
+  const answer=await pc.createAnswer();
+  await pc.setLocalDescription(answer);
+
+  CallState.signalChannel.send({
+    type:'broadcast',event:'answer',
+    payload:{from:me.clientId,to:from,sdp:{type:pc.localDescription.type,sdp:pc.localDescription.sdp}}
+  }).catch(e=>console.warn('answer send failed',e));
 }
+
 async function handleAnswer(payload){
-  const peer=CallState.peers.get(payload.from);if(!peer)return;
-  if(peer.pc.signalingState==='have-local-offer'){await peer.pc.setRemoteDescription(new RTCSessionDescription(payload.sdp));}
+  const peer=CallState.peers.get(payload.from);
+  if(!peer)return;
+  if(peer.pc.signalingState==='have-local-offer'){
+    await peer.pc.setRemoteDescription(new RTCSessionDescription(payload.sdp));
+  }
 }
+
 async function handleIce(payload){
-  const peer=CallState.peers.get(payload.from);if(!peer)return;
-  try{await peer.pc.addIceCandidate(new RTCIceCandidate(payload.candidate));}catch(e){console.warn('addIceCandidate err',e);}
+  const peer=CallState.peers.get(payload.from);
+  if(!peer)return;
+  try{await peer.pc.addIceCandidate(new RTCIceCandidate(payload.candidate));}
+  catch(e){console.warn('addIceCandidate err',e);}
 }
+
 function removePeer(peerId){
-  const peer=CallState.peers.get(peerId);if(!peer)return;
+  const peer=CallState.peers.get(peerId);
+  if(!peer)return;
   try{peer.pc.close();}catch(e){}
-  CallState.peers.delete(peerId);renderCallGrid();updateCallTopbar();
+  CallState.peers.delete(peerId);
+  renderCallGrid();
+  updateCallTopbar();
 }
 
 function renderCallGrid(){
@@ -2234,35 +2837,58 @@ function renderCallGrid(){
   const peers=Array.from(CallState.peers.entries());
   const total=1+peers.length;
   grid.dataset.count=String(Math.min(total,9));
+
   let html='';
+
   const localLabel=me.username||'You';
   html+='<div class="call-tile call-tile-mirror'+(CallState.cameraOn?'':' camera-off')+'" data-peer-id="self">'+
     '<video id="localVideo" autoplay playsinline muted></video>'+
-    '<div class="call-tile-name">'+escapeHtml(localLabel)+(CallState.micOn?'':' <span class="muted-icon">🔇</span>')+'</div></div>';
+    '<div class="call-tile-name">'+escapeHtml(localLabel)+(CallState.micOn?'':' <span class="muted-icon">🔇</span>')+'</div>'+
+  '</div>';
+
   peers.forEach(([peerId,peer])=>{
     const inner=peer.pfp?'<img src="'+peer.pfp+'" alt="" onerror="this.style.display=\'none\'">':initials(peer.username);
     const showVideo=peer.stream&&peer.stream.getVideoTracks().length>0;
     html+='<div class="call-tile'+(showVideo?'':' call-tile-offline')+'" data-peer-id="'+peerId+'">'+
-      (showVideo?'<video autoplay playsinline></video>':'<div class="call-tile-offline-avatar">'+inner+'</div><div class="call-tile-offline-name">'+escapeHtml(peer.username)+'</div>')+
+      (showVideo?'<video autoplay playsinline></video>':
+        '<div class="call-tile-offline-avatar">'+inner+'</div><div class="call-tile-offline-name">'+escapeHtml(peer.username)+'</div>')+
       (showVideo?'<div class="call-tile-name">'+escapeHtml(peer.username)+(peer.micOn?'':' <span class="muted-icon">🔇</span>')+'</div>':'')+
     '</div>';
   });
+
   if(peers.length===0){
-    html+='<div class="call-tile call-tile-offline"><div class="call-empty"><div class="call-empty-icon">⏳</div>'+
-      '<div class="call-empty-text">Waiting for others to join…</div>'+
-      '<div class="call-empty-sub">'+(CallState.isGroup?'Everyone in this channel can join from their header.':'They will see an incoming call prompt on their screen.')+'</div></div></div>';
+    html+='<div class="call-tile call-tile-offline">'+
+      '<div class="call-empty">'+
+        '<div class="call-empty-icon">⏳</div>'+
+        '<div class="call-empty-text">Waiting for others to join…</div>'+
+        '<div class="call-empty-sub">'+(CallState.isGroup?'Everyone in this channel can join from their header.':'They will see an incoming call prompt on their screen.')+'</div>'+
+      '</div>'+
+    '</div>';
   }
+
   grid.innerHTML=html;
+
   const localVideo=document.getElementById('localVideo');
-  if(localVideo&&CallState.localStream){if(localVideo.srcObject!==CallState.localStream){localVideo.srcObject=CallState.localStream;localVideo.play().catch(e=>{});}}
+  if(localVideo&&CallState.localStream){
+    if(localVideo.srcObject!==CallState.localStream){
+      localVideo.srcObject=CallState.localStream;
+      localVideo.play().catch(e=>{});
+    }
+  }
+
   peers.forEach(([peerId,peer])=>{
     if(peer.stream&&peer.stream.getVideoTracks().length>0){
       const videoEl=grid.querySelector('.call-tile[data-peer-id="'+peerId+'"] video');
-      if(videoEl&&videoEl.srcObject!==peer.stream){videoEl.srcObject=peer.stream;videoEl.play().catch(e=>{});}
+      if(videoEl&&videoEl.srcObject!==peer.stream){
+        videoEl.srcObject=peer.stream;
+        videoEl.play().catch(e=>{});
+      }
     }
   });
+
   updateCallTopbar();
 }
+
 function updateCallTopbar(){
   if(!CallState.active)return;
   const total=1+CallState.peers.size;
@@ -2271,6 +2897,7 @@ function updateCallTopbar(){
   else if(connected<CallState.peers.size)el.callTopbarSub.textContent='Connecting… ('+connected+'/'+CallState.peers.size+')';
   else el.callTopbarSub.textContent=total+' in call · connected';
 }
+
 function updateCallTimerDisplay(){
   if(!CallState.active)return;
   const elapsed=Math.floor((Date.now()-CallState.startTime)/1000);
@@ -2278,46 +2905,83 @@ function updateCallTimerDisplay(){
   const s=String(elapsed%60).padStart(2,'0');
   el.callTimer.textContent=m+':'+s;
 }
+
 function updateCtrlButtons(){
-  if(CallState.micOn){el.ctrlMic.classList.remove('off');el.ctrlMic.innerHTML='🎤<span class="ctrl-label">Mic</span>';}
-  else{el.ctrlMic.classList.add('off');el.ctrlMic.innerHTML='🔇<span class="ctrl-label">Muted</span>';}
-  if(CallState.cameraOn){el.ctrlCam.classList.remove('off');el.ctrlCam.innerHTML='📹<span class="ctrl-label">Camera</span>';}
-  else{el.ctrlCam.classList.add('off');el.ctrlCam.innerHTML='📷<span class="ctrl-label">Camera Off</span>';}
+  if(CallState.micOn){
+    el.ctrlMic.classList.remove('off');
+    el.ctrlMic.innerHTML='🎤<span class="ctrl-label">Mic</span>';
+  }else{
+    el.ctrlMic.classList.add('off');
+    el.ctrlMic.innerHTML='🔇<span class="ctrl-label">Muted</span>';
+  }
+  if(CallState.cameraOn){
+    el.ctrlCam.classList.remove('off');
+    el.ctrlCam.innerHTML='📹<span class="ctrl-label">Camera</span>';
+  }else{
+    el.ctrlCam.classList.add('off');
+    el.ctrlCam.innerHTML='📷<span class="ctrl-label">Camera Off</span>';
+  }
 }
+
 el.ctrlMic.addEventListener('click',()=>{
   if(!CallState.localStream)return;
   CallState.micOn=!CallState.micOn;
   CallState.localStream.getAudioTracks().forEach(t=>{t.enabled=CallState.micOn;});
-  updateCtrlButtons();renderCallGrid();broadcastMediaState();
+  updateCtrlButtons();
+  renderCallGrid();
+  broadcastMediaState();
 });
+
 el.ctrlCam.addEventListener('click',()=>{
   if(!CallState.localStream)return;
   const videoTracks=CallState.localStream.getVideoTracks();
   if(videoTracks.length===0){toast('No camera available',true);return;}
   CallState.cameraOn=!CallState.cameraOn;
   videoTracks.forEach(t=>{t.enabled=CallState.cameraOn;});
-  updateCtrlButtons();renderCallGrid();broadcastMediaState();
+  updateCtrlButtons();
+  renderCallGrid();
+  broadcastMediaState();
 });
+
 el.ctrlEnd.addEventListener('click',()=>leaveCall(true));
+
 function broadcastMediaState(){
   if(!CallState.signalChannel)return;
-  CallState.signalChannel.send({type:'broadcast',event:'media-state',payload:{peerId:me.clientId,cameraOn:CallState.cameraOn,micOn:CallState.micOn}}).catch(()=>{});
+  CallState.signalChannel.send({
+    type:'broadcast',event:'media-state',
+    payload:{peerId:me.clientId,cameraOn:CallState.cameraOn,micOn:CallState.micOn}
+  }).catch(()=>{});
 }
+
 async function leaveCall(showToast){
   if(!CallState.active)return;
-  if(CallState.signalChannel){try{await CallState.signalChannel.send({type:'broadcast',event:'leave',payload:{peerId:me.clientId}});}catch(e){}}
+  if(CallState.signalChannel){
+    try{await CallState.signalChannel.send({type:'broadcast',event:'leave',payload:{peerId:me.clientId}});}
+    catch(e){}
+  }
   CallState.peers.forEach((peer)=>{try{peer.pc.close();}catch(e){}});
   CallState.peers.clear();
-  if(CallState.localStream){CallState.localStream.getTracks().forEach(t=>{try{t.stop();}catch(e){}});CallState.localStream=null;}
-  if(CallState.signalChannel){try{supa.removeChannel(CallState.signalChannel);}catch(e){}CallState.signalChannel=null;}
+  if(CallState.localStream){
+    CallState.localStream.getTracks().forEach(t=>{try{t.stop();}catch(e){}});
+    CallState.localStream=null;
+  }
+  if(CallState.signalChannel){
+    try{supa.removeChannel(CallState.signalChannel);}catch(e){}
+    CallState.signalChannel=null;
+  }
   if(CallState.timerInterval){clearInterval(CallState.timerInterval);CallState.timerInterval=null;}
-  CallState.active=false;CallState.roomId=null;CallState.isGroup=false;CallState.startTime=0;
-  el.callOverlay.classList.remove('show');el.startGroupCallBtn.classList.remove('in-call');el.callGrid.innerHTML='';
+  CallState.active=false;
+  CallState.roomId=null;
+  CallState.isGroup=false;
+  CallState.startTime=0;
+  el.callOverlay.classList.remove('show');
+  el.startGroupCallBtn.classList.remove('in-call');
+  el.callGrid.innerHTML='';
   if(showToast)toast('Call ended');
 }
 
 // ============================================================
-// SEND MESSAGE (with timeout/lock/ban checks)
+// SEND MESSAGE
 // ============================================================
 async function sendMessage(){
   const text=(el.messageInput.value||'').trim();
@@ -2326,24 +2990,34 @@ async function sendMessage(){
   if(!supa){toast('Not connected',true);return;}
   if(selfBanned()){toast('You are banned from this server',true);return;}
   const to=selfTimedOut();
-  if(to){const mins=Math.max(1,Math.ceil((to-Date.now())/60000));toast('You are timed out for '+mins+' more minute'+(mins===1?'':'s'),true);return;}
+  if(to){
+    const mins=Math.max(1,Math.ceil((to-Date.now())/60000));
+    toast('You are timed out for '+mins+' more minute'+(mins===1?'':'s'),true);
+    return;
+  }
   if(cachedSettings&&cachedSettings.locked&&!isAdmin){toast('This channel is locked',true);return;}
   if(cachedSettings&&cachedSettings.slow_mode>0&&!isAdmin){
     const mine=cachedMessages.filter(m=>m.username===me.username);
     const last=mine[mine.length-1];
     if(last&&last.created_at){
       const diff=(Date.now()-new Date(last.created_at).getTime())/1000;
-      if(diff<cachedSettings.slow_mode){toast('Slow mode: wait '+Math.ceil(cachedSettings.slow_mode-diff)+'s',true);return;}
+      if(diff<cachedSettings.slow_mode){
+        toast('Slow mode: wait '+Math.ceil(cachedSettings.slow_mode-diff)+'s',true);
+        return;
+      }
     }
   }
-  const fileToSend=pendingFile;pendingFile=null;
+  const fileToSend=pendingFile;
+  pendingFile=null;
   await sendMessageToSupabase(me.username,me.pfp,text,fileToSend);
-  el.messageInput.value='';el.messageInput.style.height='auto';el.messageInput.focus();
+  el.messageInput.value='';
+  el.messageInput.style.height='auto';
+  el.messageInput.focus();
   if(identitySet)registerOnlineUser().catch(console.error);
 }
 
 // ============================================================
-// HEARTBEAT
+// HEARTBEAT / EXPIRY
 // ============================================================
 function startHeartbeat(){
   if(heartbeatTimer)clearInterval(heartbeatTimer);
@@ -2356,25 +3030,26 @@ function startHeartbeat(){
   if(expireTimer)clearInterval(expireTimer);
   expireTimer=setInterval(()=>{runExpiryCheck();},60000);
 }
+
 async function runExpiryCheck(){
   if(!supa)return;
   try{
     const cutoff=new Date(Date.now()-30*60*1000).toISOString();
     const{data,error}=await supa.from('messages').select('id,last_activity').lt('last_activity',cutoff);
     if(error)return;
-    if(data&&data.length>0){const ids=data.map(m=>m.id);await supa.from('messages').delete().in('id',ids);}
+    if(data&&data.length>0){
+      const ids=data.map(m=>m.id);
+      await supa.from('messages').delete().in('id',ids);
+    }
   }catch(e){}
 }
 
 // ============================================================
-// ============================================================
-//                     ADMIN PANEL
-// ============================================================
+// ADMIN PANEL
 // ============================================================
 function renderAdminPanel(){
   const c=el.tabAdmin;
   if(!isAdmin){
-    // Password gate
     c.innerHTML=
       '<div class="password-gate">'+
         '<div class="password-gate-icon">🔐</div>'+
@@ -2408,7 +3083,6 @@ function renderAdminPanel(){
     return;
   }
 
-  // Authenticated admin view
   const users=Object.values(cachedUsers).filter(u=>u&&u.username);
   users.sort((a,b)=>a.username.localeCompare(b.username));
   const timedOutCount=users.filter(u=>u.timeout_until&&new Date(u.timeout_until)>new Date()).length;
@@ -2418,7 +3092,6 @@ function renderAdminPanel(){
   let html='';
   html+='<div class="admin-panel">';
 
-  // Header
   html+='<div class="admin-panel-header">'+
     '<div class="ap-icon">⚡</div>'+
     '<div class="ap-info">'+
@@ -2428,7 +3101,6 @@ function renderAdminPanel(){
     '<button class="ap-logout" id="adminLogout">Sign out</button>'+
   '</div>';
 
-  // Stats
   html+='<div class="admin-stats">'+
     '<div class="admin-stat blurple"><div class="stat-value">'+users.length+'</div><div class="stat-label">Online</div></div>'+
     '<div class="admin-stat red"><div class="stat-value">'+timedOutCount+'</div><div class="stat-label">Timed out</div></div>'+
@@ -2436,7 +3108,6 @@ function renderAdminPanel(){
     '<div class="admin-stat green"><div class="stat-value">'+bannedCount+'</div><div class="stat-label">Banned</div></div>'+
   '</div>';
 
-  // Server controls
   html+='<div class="admin-section">'+
     '<h4>🌐 Server Controls</h4>'+
     '<div class="admin-row">'+
@@ -2463,7 +3134,6 @@ function renderAdminPanel(){
     '</div>'+
   '</div>';
 
-  // Users list
   html+='<div class="admin-section">'+
     '<h4>👥 Users <span class="ap-count">'+users.length+'</span></h4>';
   if(users.length===0){html+='<div class="admin-empty">No users online</div>';}
@@ -2508,9 +3178,8 @@ function renderAdminPanel(){
       '</div>';
     });
   }
-  html+='</div>'; // end users section
+  html+='</div>';
 
-  // Recent activity placeholder
   html+='<div class="admin-section">'+
     '<h4>📋 Bulk Actions</h4>'+
     '<div class="admin-row">'+
@@ -2521,29 +3190,28 @@ function renderAdminPanel(){
     '</div>'+
   '</div>';
 
-  // Timeout self-diagnostic
   html+='<div class="admin-section">'+
     '<h4>🧹 Maintenance</h4>'+
     '<div class="admin-row">'+
       '<button class="admin-btn ghost" id="adminCleanStale">🔄 Clean Stale Users</button>'+
       '<button class="admin-btn ghost" id="adminRunExpiry">⏳ Force Expire Messages</button>'+
       '<button class="admin-btn ghost" id="adminReloadAll">🔃 Reload All Data</button>'+
+      '<button class="admin-btn ghost" id="adminForceResub">📡 Force Realtime Resubscribe</button>'+
     '</div>'+
     '<div style="font-size:11px;color:var(--text-muted);line-height:1.6;margin-top:8px;">'+
-      '<strong>Admin features enabled:</strong> Timeouts, Ranks (Owner/Admin/Mod/VIP), Delete any message, Ban, Warn, Force rename, Kick from call, Purge channel, Purge all, Lock channel, Slow mode, Pin messages, Unpin all, Broadcast announcements, Clear announcement, Bulk timeout/warn/ban clear, End all calls, Clean stale users, Force expire, Reload data.'+
+      '<strong>Realtime status:</strong> '+(realtimeConnected?'Connected':'Degraded (polling fallback active)')+
     '</div>'+
   '</div>';
 
-  html+='</div>'; // end admin-panel
+  html+='</div>';
   c.innerHTML=html;
 
-  // Wire up everything
   $('adminLogout').addEventListener('click',()=>{
     isAdmin=false;
     lsSet(LS.ADMIN_AUTH+'::'+clientId,false);
     toast('Admin signed out');
     renderAdminPanel();
-    renderMessages(); // refresh delete buttons
+    renderMessages();
   });
 
   $('adminBroadcastOpen').addEventListener('click',openBroadcastModal);
@@ -2566,7 +3234,7 @@ function renderAdminPanel(){
   });
   $('adminPurgeAll').addEventListener('click',async()=>{
     if(!confirm('Delete ALL messages in EVERY channel? This cannot be undone.'))return;
-    if(!confirm('Are you absolutely sure? This wipes the entire server history.'))return;
+    if(!confirm('Are you absolutely sure?'))return;
     try{await supa.from('messages').delete().neq('id','00000000-0000-0000-0000-000000000000');toast('💥 Server wiped');}
     catch(e){toast('Purge failed: '+e.message,true);}
   });
@@ -2594,22 +3262,36 @@ function renderAdminPanel(){
     catch(e){toast('Failed: '+e.message,true);}
   });
   $('adminKickAll').addEventListener('click',async()=>{
-    if(!confirm('End every active call on the server? (Only affects this browser\'s ability to signal — peers must also drop.)'))return;
+    if(!confirm('End every active call on the server?'))return;
     if(CallState.active){leaveCall(false);toast('Your call ended');}
-    // Broadcast to all call signal channels we can guess
-    toast('Sent kick signal; other clients will end their own calls if in the same channel');
+    toast('Signal broadcast; other clients will end their own calls if in the same channel');
   });
   $('adminCleanStale').addEventListener('click',async()=>{
-    try{const cutoff=new Date(Date.now()-45000).toISOString();await supa.from('online_users').delete().lt('last_seen',cutoff);toast('Stale users removed');}
-    catch(e){toast('Failed: '+e.message,true);}
+    try{
+      const cutoff=new Date(Date.now()-45000).toISOString();
+      await supa.from('online_users').delete().lt('last_seen',cutoff);
+      toast('Stale users removed');
+    }catch(e){toast('Failed: '+e.message,true);}
   });
   $('adminRunExpiry').addEventListener('click',async()=>{await runExpiryCheck();toast('Expiry check complete');});
   $('adminReloadAll').addEventListener('click',async()=>{
-    try{await loadChannelMessages();await refreshOnlineUsers();await loadChannelSettings();renderMessages();renderPinned();renderAnnouncement();updateLockNotice();toast('Data reloaded');}
-    catch(e){toast('Reload failed: '+e.message,true);}
+    try{
+      await loadChannelMessages();
+      await refreshOnlineUsers();
+      await loadChannelSettings();
+      renderMessages();
+      renderPinned();
+      renderAnnouncement();
+      updateLockNotice();
+      toast('Data reloaded');
+    }catch(e){toast('Reload failed: '+e.message,true);}
+  });
+  $('adminForceResub').addEventListener('click',()=>{
+    realtimeReconnectAttempts=0;
+    subscribeRealtime();
+    toast('Realtime resubscribing…','info');
   });
 
-  // Per-user actions
   c.querySelectorAll('[data-act="timeout"]').forEach(btn=>btn.addEventListener('click',()=>openTimeoutModal(btn.dataset.uid)));
   c.querySelectorAll('[data-act="warn"]').forEach(btn=>btn.addEventListener('click',()=>adminWarnUser(btn.dataset.uid)));
   c.querySelectorAll('[data-act="ban"]').forEach(btn=>btn.addEventListener('click',()=>adminBanUser(btn.dataset.uid)));
@@ -2618,7 +3300,6 @@ function renderAdminPanel(){
   c.querySelectorAll('[data-act="rename"]').forEach(btn=>btn.addEventListener('click',()=>openRenameModal(btn.dataset.uid)));
   c.querySelectorAll('[data-act="kickcall"]').forEach(btn=>btn.addEventListener('click',()=>adminKickFromCall(btn.dataset.uid)));
 
-  // Rank dropdown toggles
   c.querySelectorAll('[data-rank-toggle]').forEach(btn=>{
     btn.addEventListener('click',(ev)=>{
       ev.stopPropagation();
@@ -2640,7 +3321,6 @@ function renderAdminPanel(){
   });
 }
 
-// Click outside rank menu to close
 document.addEventListener('click',()=>{document.querySelectorAll('.rank-menu.show').forEach(m=>m.classList.remove('show'));});
 
 // ============================================================
@@ -2648,7 +3328,8 @@ document.addEventListener('click',()=>{document.querySelectorAll('.rank-menu.sho
 // ============================================================
 let timeoutTargetUid=null;
 function openTimeoutModal(uid){
-  const u=cachedUsers[uid];if(!u)return;
+  const u=cachedUsers[uid];
+  if(!u)return;
   timeoutTargetUid=uid;
   el.timeoutTargetName.textContent=u.username;
   el.timeoutCustomInput.value='';
@@ -2677,51 +3358,52 @@ el.timeoutRemove.addEventListener('click',async()=>{
 
 async function adminTimeoutUser(uid,minutes){
   if(!supa)return;
-  const u=cachedUsers[uid];if(!u){toast('User not found',true);return;}
+  const u=cachedUsers[uid];
+  if(!u){toast('User not found',true);return;}
   const until=new Date(Date.now()+minutes*60000).toISOString();
   const{error}=await supa.from('online_users').update({timeout_until:until}).eq('client_id',uid);
   if(error){toast('Timeout failed: '+error.message,true);throw error;}
   toast('⏱️ '+u.username+' timed out for '+minutes+' min');
-  // Broadcast a system message
-  try{await sendMessageToSupabase('system',null,'⏱️ '+u.username+' was timed out by '+me.username+' for '+minutes+' minute'+(minutes===1?'':'s'),null);}catch(e){}
+  try{
+    await sendMessageToSupabase('system',null,'⏱️ '+u.username+' was timed out by '+me.username+' for '+minutes+' minute'+(minutes===1?'':'s'),null);
+  }catch(e){}
 }
-
 async function adminRemoveTimeout(uid){
   if(!supa)return;
-  const u=cachedUsers[uid];if(!u)return;
+  const u=cachedUsers[uid];
+  if(!u)return;
   const{error}=await supa.from('online_users').update({timeout_until:null}).eq('client_id',uid);
   if(error){toast('Failed: '+error.message,true);throw error;}
   toast('✅ Timeout removed for '+u.username);
 }
-
 async function adminWarnUser(uid){
   if(!supa)return;
-  const u=cachedUsers[uid];if(!u)return;
+  const u=cachedUsers[uid];
+  if(!u)return;
   const next=(u.warnings||0)+1;
   const{error}=await supa.from('online_users').update({warnings:next}).eq('client_id',uid);
   if(error){toast('Failed: '+error.message,true);throw error;}
   toast('⚠️ '+u.username+' now has '+next+' warning'+(next===1?'':'s'));
   try{await sendMessageToSupabase('system',null,'⚠️ '+u.username+' was warned by '+me.username+' (total: '+next+')',null);}catch(e){}
 }
-
 async function adminBanUser(uid){
   if(!supa)return;
-  const u=cachedUsers[uid];if(!u)return;
-  if(!confirm('Ban '+u.username+'? They will not be able to send messages.'))return;
+  const u=cachedUsers[uid];
+  if(!u)return;
+  if(!confirm('Ban '+u.username+'?'))return;
   const{error}=await supa.from('online_users').update({banned:true,timeout_until:null}).eq('client_id',uid);
   if(error){toast('Failed: '+error.message,true);throw error;}
   toast('🚫 '+u.username+' banned');
   try{await sendMessageToSupabase('system',null,'🚫 '+u.username+' was banned by '+me.username,null);}catch(e){}
 }
-
 async function adminUnbanUser(uid){
   if(!supa)return;
-  const u=cachedUsers[uid];if(!u)return;
+  const u=cachedUsers[uid];
+  if(!u)return;
   const{error}=await supa.from('online_users').update({banned:false}).eq('client_id',uid);
   if(error){toast('Failed: '+error.message,true);throw error;}
   toast('✔️ '+u.username+' unbanned');
 }
-
 async function adminSetRank(uid,rank){
   if(!supa)return;
   const{error}=await supa.from('online_users').update({rank:rank}).eq('client_id',uid);
@@ -2730,7 +3412,8 @@ async function adminSetRank(uid,rank){
 
 let renameTargetUid=null;
 function openRenameModal(uid){
-  const u=cachedUsers[uid];if(!u)return;
+  const u=cachedUsers[uid];
+  if(!u)return;
   renameTargetUid=uid;
   el.renameTargetName.textContent=u.username;
   el.renameInput.value=u.force_nick||u.username;
@@ -2742,7 +3425,8 @@ el.renameCancel.addEventListener('click',()=>el.renameModal.classList.remove('sh
 el.renameApply.addEventListener('click',async()=>{
   const newName=(el.renameInput.value||'').trim();
   if(!newName){el.renameError.textContent='Name cannot be empty';return;}
-  const u=cachedUsers[renameTargetUid];if(!u)return;
+  const u=cachedUsers[renameTargetUid];
+  if(!u)return;
   const{error}=await supa.from('online_users').update({force_nick:newName}).eq('client_id',renameTargetUid);
   if(error){el.renameError.textContent='Failed: '+error.message;return;}
   toast('✏️ Renamed '+u.username+' → '+newName);
@@ -2768,28 +3452,37 @@ el.broadcastApply.addEventListener('click',async()=>{
   if(!v){el.broadcastError.textContent='Announcement text cannot be empty';return;}
   try{
     await saveChannelSettings({announcement:v,announcement_at:new Date().toISOString()});
-    // Also post a system message
     try{await sendMessageToSupabase('system',null,'📢 ANNOUNCEMENT: '+v,null);}catch(e){}
     toast('📢 Announcement posted');
     el.broadcastModal.classList.remove('show');
   }catch(e){el.broadcastError.textContent='Failed: '+e.message;}
 });
 el.broadcastClear.addEventListener('click',async()=>{
-  try{await saveChannelSettings({announcement:null,announcement_at:null});toast('Announcement cleared');el.broadcastModal.classList.remove('show');renderAdminPanel();}
-  catch(e){el.broadcastError.textContent='Failed: '+e.message;}
+  try{
+    await saveChannelSettings({announcement:null,announcement_at:null});
+    toast('Announcement cleared');
+    el.broadcastModal.classList.remove('show');
+    renderAdminPanel();
+  }catch(e){el.broadcastError.textContent='Failed: '+e.message;}
 });
 
 async function adminKickFromCall(uid){
-  if(!CallState.signalChannel){toast('You are not in a call — the user will need to leave manually',true);return;}
+  if(!CallState.signalChannel){
+    toast('You are not in a call — user needs to leave manually',true);
+    return;
+  }
   if(!confirm('Signal this user to leave the current call?'))return;
   try{
-    await CallState.signalChannel.send({type:'broadcast',event:'admin-kick',payload:{target:uid,by:me.username}});
+    await CallState.signalChannel.send({
+      type:'broadcast',event:'admin-kick',
+      payload:{target:uid,by:me.username}
+    });
     toast('Kick signal sent');
   }catch(e){toast('Failed: '+e.message,true);}
 }
 
 // ============================================================
-// GLOBAL KEYBOARD HANDLERS
+// GLOBAL KEYBOARD
 // ============================================================
 document.addEventListener('keydown',ev=>{
   if(ev.key==='Escape'){
@@ -2806,14 +3499,12 @@ document.addEventListener('keydown',ev=>{
     if(openEmojiPopup){openEmojiPopup.remove();openEmojiPopup=null;return;}
     if(el.emojiPicker.classList.contains('show')){el.emojiPicker.classList.remove('show');return;}
   }
-  // Call shortcuts
   if(CallState.active){
     const tag=document.activeElement?.tagName;
     if(tag==='INPUT'||tag==='TEXTAREA')return;
     if(ev.key==='m'||ev.key==='M'){ev.preventDefault();el.ctrlMic.click();}
     else if(ev.key==='v'||ev.key==='V'){ev.preventDefault();el.ctrlCam.click();}
   }
-  // Snake
   if(el.snakeModal.classList.contains('show')){
     if(ev.key==='Enter'&&SnakeGame.gameOver){ev.preventDefault();SnakeGame.reset();SnakeGame.start();return;}
     SnakeGame.handleKey(ev);
@@ -2821,10 +3512,35 @@ document.addEventListener('keydown',ev=>{
 });
 
 // ============================================================
+// CLEANUP
+// ============================================================
+window.addEventListener('beforeunload',()=>{
+  try{unregisterOnlineUser();}catch(e){}
+  if(CallState.active){
+    try{CallState.signalChannel?.send({type:'broadcast',event:'leave',payload:{peerId:me.clientId}});}catch(e){}
+    CallState.localStream?.getTracks().forEach(t=>{try{t.stop();}catch(e){}});
+  }
+});
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden&&identitySet&&me.username){
+    registerOnlineUser().catch(console.error);
+    refreshOnlineUsers().catch(console.error);
+    runExpiryCheck();
+    // Immediately catch up on anything missed while hidden
+    catchUpMissedMessages().catch(()=>{});
+  }
+});
+
+// ============================================================
 // INIT
 // ============================================================
 (async function init(){
-  buildEmojiPicker();buildBgPresets();renderMyAvatars();renderChannelList();updateChatHeader();
+  buildEmojiPicker();
+  buildBgPresets();
+  renderMyAvatars();
+  renderChannelList();
+  updateChatHeader();
+  updateConnectionUI();
 
   if(SUPABASE_URL==='PASTE_YOUR_PROJECT_URL_HERE'||SUPABASE_KEY==='PASTE_YOUR_ANON_KEY_HERE'){
     el.messagesContainer.innerHTML='<div style="padding:32px;text-align:center;color:var(--red);">⚠ Paste your Supabase URL + anon key at the top of the script.</div>';
@@ -2834,6 +3550,7 @@ document.addEventListener('keydown',ev=>{
     el.messagesContainer.innerHTML='<div style="padding:32px;text-align:center;color:var(--red);">⚠ Supabase SDK failed to load. Check your connection.</div>';
     return;
   }
+
   try{
     supa=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{realtime:{params:{eventsPerSecond:10}}});
   }catch(e){
@@ -2851,6 +3568,7 @@ document.addEventListener('keydown',ev=>{
   try{await refreshOnlineUsers();}catch(e){console.error(e);}
   try{subscribeRealtime();}catch(e){console.error(e);}
   try{setupInviteChannel();}catch(e){console.error('invite channel',e);}
+  try{startPollingFallback();}catch(e){console.error('poll start',e);}
 
   runExpiryCheck();
   renderAnnouncement();
@@ -2858,9 +3576,11 @@ document.addEventListener('keydown',ev=>{
   updateLockNotice();
 
   if(!identitySet){
-    const div=document.createElement('div');div.id='setupPrompt';
+    const div=document.createElement('div');
+    div.id='setupPrompt';
     div.style.cssText='padding:24px;text-align:center;background:var(--bg-alt);margin:16px;border-radius:8px;border:1px solid var(--blurple);';
-    div.innerHTML='<div style="font-size:18px;font-weight:700;color:var(--text-bright);margin-bottom:8px;">👋 Welcome to Nexus Chat</div>'+
+    div.innerHTML=
+      '<div style="font-size:18px;font-weight:700;color:var(--text-bright);margin-bottom:8px;">👋 Welcome to Nexus Chat</div>'+
       '<div style="color:var(--text-muted);font-size:14px;margin-bottom:16px;">Set up your profile to join the conversation.</div>'+
       '<button id="setupStartBtn" style="background:var(--blurple);color:#fff;padding:10px 24px;border-radius:4px;font-weight:600;font-size:14px;cursor:pointer;">Set Up Profile</button>';
     el.messagesContainer.appendChild(div);
