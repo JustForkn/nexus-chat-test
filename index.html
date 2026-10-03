@@ -622,22 +622,35 @@ a:hover{text-decoration:underline}
 .user-profile-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;z-index:2200;backdrop-filter:blur(8px);animation:lightboxIn .2s ease}
 .user-profile-backdrop.show{display:flex}
 .user-profile-card{width:min(560px,94vw);max-height:92vh;background:var(--bg);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.08)}
-.user-profile-banner{height:140px;background:linear-gradient(135deg,#5865f2,#8b3dfc 50%,#eb459e);position:relative;flex-shrink:0;overflow:hidden}
+.user-profile-banner{height:120px;background:linear-gradient(135deg,#5865f2,#8b3dfc 50%,#eb459e);position:relative;flex-shrink:0;overflow:hidden}
 .user-profile-banner img{width:100%;height:100%;object-fit:cover;display:block}
 .user-profile-banner-placeholder{width:100%;height:100%;background:linear-gradient(135deg,var(--blurple),#8b3dfc 50%,#eb459e)}
-.user-profile-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;z-index:2;border:none}
+.user-profile-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;z-index:5;border:none}
 .user-profile-close:hover{background:rgba(0,0,0,.8)}
-.user-profile-body{padding:0 24px 24px;overflow-y:auto;flex:1;min-height:0}
-.user-profile-avatar-row{display:flex;align-items:flex-end;gap:14px;margin-top:-52px;margin-bottom:18px;position:relative;z-index:2}
-.user-profile-avatar{width:96px;height:96px;border-radius:50%;border:6px solid var(--bg);background:var(--blurple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;overflow:hidden;flex-shrink:0;box-shadow:0 4px 20px rgba(0,0,0,.4);box-sizing:border-box}
+.user-profile-body{padding:56px 24px 24px;overflow-y:auto;flex:1;min-height:0;position:relative}
+.user-profile-avatar-row{display:flex;align-items:flex-end;gap:16px;position:absolute;left:24px;right:24px;top:-48px;z-index:3;pointer-events:none}
+.user-profile-avatar-row > *{pointer-events:auto}
+.user-profile-avatar{width:92px;height:92px;border-radius:50%;border:5px solid var(--bg);background:var(--blurple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;overflow:hidden;flex-shrink:0;box-shadow:0 4px 16px rgba(0,0,0,.45);box-sizing:border-box}
 .user-profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
 .user-profile-avatar > div,
 .user-profile-avatar .frame-wrapper,
-.user-profile-avatar .frame-inner{width:100% !important;height:100% !important;border-radius:50%;box-sizing:border-box}
+.user-profile-avatar .frame-inner{width:100% !important;height:100% !important;border-radius:50% !important;box-sizing:border-box;overflow:hidden}
 .user-profile-avatar .frame-inner img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.user-profile-name-block{flex:1;min-width:0;padding-bottom:10px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px}
-.user-profile-name{font-size:22px;font-weight:800;color:var(--text-bright);word-break:break-word;display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:1.2}
+.user-profile-name-block{flex:1;min-width:0;padding-bottom:6px;padding-top:44px;display:flex;flex-direction:column;justify-content:flex-end;gap:3px}
+.user-profile-name{font-size:20px;font-weight:800;color:var(--text-bright);word-break:break-word;display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:1.25;max-width:100%}
 .user-profile-status-line{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px;line-height:1.3;margin-top:0}
+.msg-text .mention{background:rgba(88,101,242,.25);color:#c9cdfb;padding:0 4px;border-radius:3px;font-weight:600;cursor:pointer}
+.msg-text .mention.me{background:rgba(240,178,50,.3);color:#f0b232}
+.msg-text .bot-tag{background:var(--blurple);color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;text-transform:uppercase}
+.msg-text code,.msg-text .inline-code{background:var(--bg-alt2);padding:2px 5px;border-radius:4px;font-family:'SF Mono',monospace;font-size:13px}
+.msg-text pre.bot-code,.msg-text pre.code-block{background:var(--bg-alt2);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px 14px;margin:8px 0;overflow-x:auto;font-family:'SF Mono',monospace;font-size:12px;line-height:1.5;color:var(--text)}
+.msg-text pre.bot-code{border-left:3px solid var(--blurple)}
+.cmd-hint{position:absolute;bottom:100%;left:0;right:0;background:var(--bg-alt);border:1px solid rgba(0,0,0,.3);border-radius:8px 8px 0 0;max-height:200px;overflow-y:auto;display:none;z-index:20;box-shadow:0 -4px 16px rgba(0,0,0,.4)}
+.cmd-hint.show{display:block}
+.cmd-hint-item{padding:8px 14px;cursor:pointer;font-size:14px;color:var(--text);display:flex;gap:10px;align-items:center}
+.cmd-hint-item:hover,.cmd-hint-item.active{background:#35373c}
+.cmd-hint-item .cmd-name{font-weight:700;color:var(--blurple);font-family:'SF Mono',monospace}
+.cmd-hint-item .cmd-desc{color:var(--text-muted);font-size:12px}
 .user-profile-section{margin-top:18px}
 .user-profile-section h4{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:8px}
 .user-profile-bio{font-size:15px;line-height:1.55;color:var(--text);white-space:pre-wrap;word-break:break-word}
@@ -1508,21 +1521,42 @@ function dmRoomId(a,b){
 // ============================================================
 function renderMessageText(text){
   if(!text)return '';
-  const parts=[];let lastIndex=0;
-  const urlPattern=/(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
-  let match;
-  while((match=urlPattern.exec(text))!==null){
-    if(match.index>lastIndex)parts.push(escapeHtml(text.slice(lastIndex,match.index)));
-    let url=match[0];let trailing='';
-    const trailMatch=url.match(/[.,;:!?)\]}"'»]+$/);
-    if(trailMatch){trailing=trailMatch[0];url=url.slice(0,-trailing.length);}
+  // Extract fenced code blocks first so we don't mess with their contents
+  const blocks=[];
+  let work=String(text).replace(/```(\w*)\n?([\s\S]*?)```/g,function(_,lang,code){
+    const i=blocks.length;
+    const isBot=(lang||'').toLowerCase()==='bot';
+    blocks.push({lang:lang||'',code:code,isBot:isBot});
+    return '\u0000BLOCK'+i+'\u0000';
+  });
+  // Escape then restore links, mentions, inline code
+  let html=escapeHtml(work);
+  // Inline code
+  html=html.replace(/`([^`]+)`/g,'<code class="inline-code">$1</code>');
+  // URLs
+  html=html.replace(/(https?:\/\/[^\s<]+|www\.[^\s<]+)/gi,function(url){
+    let trailing='';
+    const m=url.match(/[.,;:!?)\]}]+$/);
+    if(m){trailing=m[0];url=url.slice(0,-trailing.length);}
     const href=url.startsWith('www.')?'http://'+url:url;
-    parts.push('<a href="'+escapeHtml(href)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(url)+'</a>');
-    if(trailing)parts.push(escapeHtml(trailing));
-    lastIndex=match.index+match[0].length;
-  }
-  if(lastIndex<text.length)parts.push(escapeHtml(text.slice(lastIndex)));
-  return parts.join('');
+    return '<a href="'+href+'" target="_blank" rel="noopener noreferrer">'+url+'</a>'+trailing;
+  });
+  // @mentions
+  html=html.replace(/@([\w.\-\u00C0-\u024F\u1E00-\u1EFF]+)/g,function(full,name){
+    const isMe=me.username&&name.toLowerCase()===String(me.username).toLowerCase();
+    return '<span class="mention'+(isMe?' me':'')+'" data-mention="'+escapeHtml(name)+'">@'+escapeHtml(name)+'</span>';
+  });
+  // Restore code blocks
+  html=html.replace(/\u0000BLOCK(\d+)\u0000/g,function(_,idx){
+    const b=blocks[parseInt(idx,10)];
+    if(!b)return '';
+    if(b.isBot){
+      return '<pre class="bot-code" data-bot-def="1"><code>'+escapeHtml(b.code.trim())+'</code></pre>';
+    }
+    const lang=b.lang?' data-lang="'+escapeHtml(b.lang)+'"':'';
+    return '<pre class="code-block"'+lang+'><code>'+escapeHtml(b.code.trim())+'</code></pre>';
+  });
+  return html;
 }
 
 // ============================================================
@@ -3453,12 +3487,392 @@ async function sendMessageToSupabase(username,pfp,text,file,opts){
   if(error)throw error;
   return row;
 }
+
+// ============================================================
+// CUSTOM BOTS (via ```bot code blocks) + SLASH COMMANDS
+// ============================================================
+// Bots are defined by posting a fenced code block with language "bot":
+// ```bot
+// name: MyBot
+// trigger: !hello
+// reply: Hello {user}! You said: {args}
+// ```
+// Supported fields: name, trigger (or on), reply (or response),
+//                   prefix, help, chance (0-100)
+// Placeholders: {user} {args} {channel} {server} {mention}
+// ============================================================
+
+const LS_BOTS='nexus_custom_bots_v1';
+let customBots=lsGet(LS_BOTS,[]);
+if(!Array.isArray(customBots))customBots=[];
+
+function saveCustomBots(){lsSet(LS_BOTS,customBots);}
+
+function parseBotDefinition(code){
+  const lines=String(code||'').split(/\r?\n/);
+  const bot={name:'CustomBot',trigger:'',reply:'',prefix:'!',help:'',chance:100,owner:me.username||'unknown',createdAt:new Date().toISOString()};
+  lines.forEach(line=>{
+    const m=line.match(/^\s*([a-zA-Z_]+)\s*:\s*(.*)$/);
+    if(!m)return;
+    const key=m[1].toLowerCase();
+    const val=m[2].trim();
+    if(key==='name')bot.name=val.slice(0,32)||'CustomBot';
+    else if(key==='trigger'||key==='on'||key==='command')bot.trigger=val;
+    else if(key==='reply'||key==='response'||key==='message')bot.reply=val;
+    else if(key==='prefix')bot.prefix=val;
+    else if(key==='help'||key==='description')bot.help=val;
+    else if(key==='chance'){const n=parseInt(val,10);if(!isNaN(n))bot.chance=Math.max(0,Math.min(100,n));}
+  });
+  if(!bot.trigger&&!bot.reply)return null;
+  if(!bot.trigger)bot.trigger='!ping';
+  if(!bot.reply)bot.reply='Hello {user}!';
+  return bot;
+}
+
+function registerBotFromCode(code){
+  const bot=parseBotDefinition(code);
+  if(!bot){toast('Invalid bot definition',true);return null;}
+  // Replace existing bot with same name by same owner
+  customBots=customBots.filter(b=>!(b.name.toLowerCase()===bot.name.toLowerCase()&&b.owner===bot.owner));
+  customBots.push(bot);
+  if(customBots.length>50)customBots=customBots.slice(-50);
+  saveCustomBots();
+  return bot;
+}
+
+function scanMessageForBotDefs(text){
+  if(!text)return [];
+  const registered=[];
+  const re=/```bot\n?([\s\S]*?)```/gi;
+  let m;
+  while((m=re.exec(text))!==null){
+    const bot=registerBotFromCode(m[1]);
+    if(bot)registered.push(bot);
+  }
+  return registered;
+}
+
+function fillBotTemplate(tpl,ctx){
+  return String(tpl||'')
+    .replace(/\{user\}/gi,ctx.user||'')
+    .replace(/\{args\}/gi,ctx.args||'')
+    .replace(/\{channel\}/gi,ctx.channel||'')
+    .replace(/\{server\}/gi,ctx.server||'')
+    .replace(/\{mention\}/gi,ctx.mention||'@'+ctx.user)
+    .replace(/\{random\}/gi,String(Math.floor(Math.random()*100)+1));
+}
+
+async function postBotReply(botName,text){
+  if(!supa||!activeChannel)return;
+  try{
+    await sendMessageToSupabase('🤖 '+botName,null,text,null);
+  }catch(e){console.warn('bot reply failed',e);}
+}
+
+function tryCustomBots(text){
+  if(!text||!customBots.length)return false;
+  const lower=text.trim();
+  for(const bot of customBots){
+    const trig=(bot.trigger||'').trim();
+    if(!trig)continue;
+    let matched=false;let args='';
+    if(lower.toLowerCase().startsWith(trig.toLowerCase())){
+      matched=true;
+      args=lower.slice(trig.length).trim();
+    }else if(trig.startsWith('!')||trig.startsWith('/')||trig.startsWith('.')){
+      // exact command style
+    }else{
+      // substring / keyword trigger
+      if(lower.toLowerCase().includes(trig.toLowerCase())){matched=true;args=lower;}
+    }
+    if(!matched)continue;
+    if(bot.chance<100&&Math.random()*100>bot.chance)continue;
+    const ctx={
+      user:me.username||'someone',
+      args:args,
+      channel:getCurrentChannelDisplayName?getCurrentChannelDisplayName():(activeChannel||''),
+      server:activeServer?(cachedServers.find(s=>s.id===activeServer)||{}).name||'':'Nexus Home',
+      mention:'@'+(me.username||'user')
+    };
+    const reply=fillBotTemplate(bot.reply,ctx);
+    setTimeout(()=>{postBotReply(bot.name,reply);},350+Math.random()*400);
+    return true;
+  }
+  return false;
+}
+
+// Built-in slash commands
+const SLASH_COMMANDS=[
+  {name:'/help',desc:'Show available commands',admin:false},
+  {name:'/announce',desc:'Post an announcement (admin)',admin:true},
+  {name:'/me',desc:'Send an action message — /me waves',admin:false},
+  {name:'/shrug',desc:'Append ¯\\_(ツ)_/¯',admin:false},
+  {name:'/tableflip',desc:'(╯°□°)╯︵ ┻━┻',admin:false},
+  {name:'/unflip',desc:'┳━┳ ヽ(ಠل͜ಠ)ﾉ',admin:false},
+  {name:'/ping',desc:'Check latency',admin:false},
+  {name:'/users',desc:'List online users',admin:false},
+  {name:'/server',desc:'Show current server info',admin:false},
+  {name:'/invite',desc:'Show server invite code',admin:false},
+  {name:'/bot',desc:'Bot tools — /bot list | /bot help | /bot remove <name>',admin:false},
+  {name:'/clear',desc:'Clear local message view (not server)',admin:false},
+  {name:'/nick',desc:'Show your username',admin:false},
+  {name:'/coinflip',desc:'Flip a coin',admin:false},
+  {name:'/roll',desc:'Roll dice — /roll 20',admin:false},
+  {name:'/echo',desc:'Echo text back as a bot',admin:false},
+  {name:'/topic',desc:'Show channel name',admin:false},
+  {name:'/uptime',desc:'Show how long this tab has been open',admin:false}
+];
+
+const appStartTime=Date.now();
+
+async function handleSlashCommand(raw){
+  const text=raw.trim();
+  if(!text.startsWith('/'))return false;
+  const parts=text.slice(1).split(/\s+/);
+  const cmd=(parts[0]||'').toLowerCase();
+  const args=parts.slice(1).join(' ').trim();
+  const argList=parts.slice(1);
+
+  if(cmd==='help'){
+    const lines=['**Commands**',
+      ...SLASH_COMMANDS.map(c=>'`'+c.name+'` — '+c.desc),
+      '',
+      '**Custom bots** — post a code block:',
+      '```bot',
+      'name: HelloBot',
+      'trigger: !hello',
+      'reply: Hey {user}! {args}',
+      '```',
+      'Placeholders: `{user}` `{args}` `{channel}` `{server}` `{mention}` `{random}`'
+    ];
+    await sendMessageToSupabase('system',null,lines.join('\n'),null);
+    return true;
+  }
+  if(cmd==='announce'){
+    if(!isAdmin){toast('Admin only',true);return true;}
+    if(!args){toast('Usage: /announce <text>',true);return true;}
+    try{
+      await saveChannelSettings({announcement:args,announcement_at:new Date().toISOString()});
+      await sendMessageToSupabase('system',null,'📢 ANNOUNCEMENT: '+args,null);
+      toast('Announcement posted');
+    }catch(e){toast('Failed: '+e.message,true);}
+    return true;
+  }
+  if(cmd==='me'){
+    if(!args){toast('Usage: /me <action>',true);return true;}
+    await sendMessageToSupabase('system',null,'*'+me.username+' '+args+'*',null);
+    return true;
+  }
+  if(cmd==='shrug'){
+    await sendMessageToSupabase(me.username,me.pfp,(args?args+' ':'')+'¯\_(ツ)_/¯',null);
+    return true;
+  }
+  if(cmd==='tableflip'){
+    await sendMessageToSupabase(me.username,me.pfp,(args?args+' ':'')+'(╯°□°)╯︵ ┻━┻',null);
+    return true;
+  }
+  if(cmd==='unflip'){
+    await sendMessageToSupabase(me.username,me.pfp,(args?args+' ':'')+'┳━┳ ヽ(ಠل͜ಠ)ﾉ',null);
+    return true;
+  }
+  if(cmd==='ping'){
+    const t0=Date.now();
+    try{
+      await supa.from('online_users').select('client_id').eq('client_id',me.clientId).maybeSingle();
+      const ms=Date.now()-t0;
+      await sendMessageToSupabase('system',null,'🏓 Pong! '+ms+'ms',null);
+    }catch(e){
+      await sendMessageToSupabase('system',null,'🏓 Pong (offline estimate) '+(Date.now()-t0)+'ms',null);
+    }
+    return true;
+  }
+  if(cmd==='users'){
+    const online=Object.values(cachedUsers).filter(u=>u&&u.username);
+    const list=online.map(u=>'• '+u.username).join('\n')||'Nobody online';
+    await sendMessageToSupabase('system',null,'👥 Online ('+online.length+'):\\n'+list,null);
+    return true;
+  }
+  if(cmd==='server'){
+    if(activeServer){
+      const srv=cachedServers.find(s=>s.id===activeServer);
+      if(srv){
+        await sendMessageToSupabase('system',null,'🏠 **'+srv.name+'**\\nInvite: `'+srv.invite_code+'`\\nOwner: '+(srv.owner_id===me.clientId?'you':srv.owner_id.slice(0,8)+'…'),null);
+      }
+    }else{
+      await sendMessageToSupabase('system',null,'🏠 You are on **Nexus Home** (global)',null);
+    }
+    return true;
+  }
+  if(cmd==='invite'){
+    if(activeServer){
+      const srv=cachedServers.find(s=>s.id===activeServer);
+      if(srv&&srv.invite_code){
+        await sendMessageToSupabase('system',null,'🔗 Invite code for **'+srv.name+'**: `'+srv.invite_code+'`',null);
+      }else toast('No invite code',true);
+    }else toast('Home server has no invite code — create a server with +',true);
+    return true;
+  }
+  if(cmd==='bot'){
+    const sub=(argList[0]||'help').toLowerCase();
+    if(sub==='list'){
+      if(!customBots.length){
+        await sendMessageToSupabase('system',null,'🤖 No custom bots yet. Post a ```bot code block to create one.',null);
+      }else{
+        const lines=customBots.map(b=>'• **'+b.name+'** — trigger `'+b.trigger+'` (by '+(b.owner||'?')+')'+(b.help?' — '+b.help:''));
+        await sendMessageToSupabase('system',null,'🤖 Custom bots ('+customBots.length+'):\\n'+lines.join('\n'),null);
+      }
+    }else if(sub==='remove'||sub==='delete'){
+      const name=argList.slice(1).join(' ').trim();
+      if(!name){toast('Usage: /bot remove <name>',true);return true;}
+      const before=customBots.length;
+      customBots=customBots.filter(b=>b.name.toLowerCase()!==name.toLowerCase()||(b.owner&&b.owner!==me.username&&!isAdmin));
+      // allow owner or admin
+      customBots=customBots.filter(b=>{
+        if(b.name.toLowerCase()!==name.toLowerCase())return true;
+        if(b.owner===me.username||isAdmin)return false;
+        return true;
+      });
+      saveCustomBots();
+      if(customBots.length<before){
+        await sendMessageToSupabase('system',null,'🗑️ Removed bot **'+name+'**',null);
+      }else toast('Bot not found or not yours',true);
+    }else if(sub==='clear'&&isAdmin){
+      customBots=[];saveCustomBots();
+      await sendMessageToSupabase('system',null,'🗑️ All custom bots cleared',null);
+    }else{
+      await sendMessageToSupabase('system',null,[
+        '🤖 **Bot help**',
+        'Create a bot by posting:',
+        '```bot',
+        'name: JokeBot',
+        'trigger: !joke',
+        'reply: Why did the chicken cross the road, {user}? {args}',
+        'help: Tell a joke',
+        'chance: 100',
+        '```',
+        '',
+        '`/bot list` — list bots',
+        '`/bot remove <name>` — remove your bot',
+        'Placeholders: {user} {args} {channel} {server} {mention} {random}'
+      ].join('\n'),null);
+    }
+    return true;
+  }
+  if(cmd==='clear'){
+    cachedMessages=[];renderMessages();toast('Local view cleared');
+    return true;
+  }
+  if(cmd==='nick'){
+    await sendMessageToSupabase('system',null,'Your username is **'+me.username+'**',null);
+    return true;
+  }
+  if(cmd==='coinflip'||cmd==='flip'){
+    const r=Math.random()<0.5?'Heads':'Tails';
+    await sendMessageToSupabase('system',null,'🪙 '+me.username+' flipped a coin: **'+r+'**',null);
+    return true;
+  }
+  if(cmd==='roll'){
+    let sides=6;
+    if(argList[0]){const n=parseInt(argList[0],10);if(!isNaN(n)&&n>=2&&n<=1000)sides=n;}
+    const roll=Math.floor(Math.random()*sides)+1;
+    await sendMessageToSupabase('system',null,'🎲 '+me.username+' rolled **'+roll+'** (d'+sides+')',null);
+    return true;
+  }
+  if(cmd==='echo'){
+    if(!args){toast('Usage: /echo <text>',true);return true;}
+    await postBotReply('Echo',args);
+    return true;
+  }
+  if(cmd==='topic'){
+    await sendMessageToSupabase('system',null,'📌 Channel: **'+(getCurrentChannelDisplayName?getCurrentChannelDisplayName():activeChannel)+'**',null);
+    return true;
+  }
+  if(cmd==='uptime'){
+    const sec=Math.floor((Date.now()-appStartTime)/1000);
+    const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;
+    await sendMessageToSupabase('system',null,'⏱️ Tab uptime: '+h+'h '+m+'m '+s+'s',null);
+    return true;
+  }
+  // Unknown slash — let it send as normal message
+  return false;
+}
+
+// Slash command autocomplete UI
+(function setupCmdHint(){
+  const composer=document.querySelector('.composer');
+  if(!composer||!el.messageInput)return;
+  let hint=document.getElementById('cmdHint');
+  if(!hint){
+    hint=document.createElement('div');
+    hint.id='cmdHint';
+    hint.className='cmd-hint';
+    const inner=document.getElementById('composerInner')||composer;
+    if(inner&&inner.parentNode){
+      inner.style.position='relative';
+      inner.parentNode.insertBefore(hint,inner);
+    }
+  }
+  let activeIdx=0;
+  function updateHint(){
+    const v=(el.messageInput.value||'');
+    if(!v.startsWith('/')||v.includes(' ')){hint.classList.remove('show');hint.innerHTML='';return;}
+    const q=v.toLowerCase();
+    const matches=SLASH_COMMANDS.filter(c=>c.name.startsWith(q));
+    if(!matches.length){hint.classList.remove('show');hint.innerHTML='';return;}
+    activeIdx=Math.min(activeIdx,matches.length-1);
+    hint.innerHTML=matches.map((c,i)=>'<div class="cmd-hint-item'+(i===activeIdx?' active':'')+'" data-cmd="'+c.name+'"><span class="cmd-name">'+c.name+'</span><span class="cmd-desc">'+escapeHtml(c.desc)+'</span></div>').join('');
+    hint.classList.add('show');
+    hint.querySelectorAll('.cmd-hint-item').forEach(item=>{
+      item.addEventListener('mousedown',ev=>{
+        ev.preventDefault();
+        el.messageInput.value=item.dataset.cmd+' ';
+        hint.classList.remove('show');
+        el.messageInput.focus();
+      });
+    });
+  }
+  el.messageInput.addEventListener('input',updateHint);
+  el.messageInput.addEventListener('keydown',ev=>{
+    if(!hint.classList.contains('show'))return;
+    const items=hint.querySelectorAll('.cmd-hint-item');
+    if(!items.length)return;
+    if(ev.key==='ArrowDown'){ev.preventDefault();activeIdx=(activeIdx+1)%items.length;updateHint();}
+    else if(ev.key==='ArrowUp'){ev.preventDefault();activeIdx=(activeIdx-1+items.length)%items.length;updateHint();}
+    else if(ev.key==='Tab'||(ev.key==='Enter'&&ev.shiftKey===false&&items[activeIdx]&&!ev.metaKey)){
+      // Tab completes; Enter is handled by send — complete if only selecting
+      if(ev.key==='Tab'){
+        ev.preventDefault();
+        el.messageInput.value=items[activeIdx].dataset.cmd+' ';
+        hint.classList.remove('show');
+      }
+    }
+    else if(ev.key==='Escape'){hint.classList.remove('show');}
+  });
+})();
+
 async function sendMessage(){
   const text=(el.messageInput.value||'').trim();
   if(!text&&!pendingFile)return;
   if(!me.username){toast('Set a profile first',true);return;}
   if(!supa){toast('Not connected',true);return;}
   if(!activeChannel){toast('No channel selected',true);return;}
+  // Slash commands (do not send the / line as a normal message)
+  if(text.startsWith('/')&&!pendingFile){
+    el.messageInput.value='';el.messageInput.style.height='auto';
+    try{
+      const handled=await handleSlashCommand(text);
+      if(handled)return;
+      // unknown slash — fall through and send as normal chat
+      el.messageInput.value=text;
+    }catch(e){toast('Command failed: '+(e.message||e),true);return;}
+  }
+  // Register any ```bot code blocks in this message
+  if(text.includes('```bot')){
+    const registered=scanMessageForBotDefs(text);
+    if(registered.length){
+      registered.forEach(b=>toast('🤖 Bot "'+b.name+'" registered ('+b.trigger+')'));
+    }
+  }
   if(currentView!=='dm'){
     if(selfBanned()){toast('You are banned from this server',true);return;}
     const to=selfTimedOut();
@@ -3490,6 +3904,8 @@ async function sendMessage(){
     renderMessages();
     if(identitySet)registerOnlineUser().catch(console.error);
     if(identitySet)upsertKnownUser().catch(console.error);
+    // Trigger custom bots on this message (client-side)
+    try{tryCustomBots(textToSend);}catch(e){console.warn('bot trigger',e);}
   }catch(err){
     console.error('send failed',err);
     const idx=cachedMessages.findIndex(m=>m.id===localId);
@@ -3600,8 +4016,15 @@ function subscribeRealtime(){
         renderMessages(isNew?row.id:null);
         renderPinned();
         if(isNew){
-          const isFromOther=row.username!==me.username&&row.username!=='system';
+          const isFromOther=row.username!==me.username&&row.username!=='system'&&!(row.username||'').startsWith('🤖');
           if(isFromOther){
+            // Mentions of me
+            if(me.username&&row.text&&row.text.toLowerCase().includes('@'+me.username.toLowerCase())){
+              playBeep();
+              if(!document.hasFocus())showDesktopNotification(row.username+' mentioned you',row.text,row.pfp_data_url);
+            }
+            // Custom bots react to others' messages too
+            try{tryCustomBots(row.text||'');}catch(e){}
             playBeep();
             if(!document.hasFocus()){
               const chName=getCurrentChannelDisplayName();
@@ -3818,6 +4241,17 @@ function renderMessages(highlightId){
       else if(a==='copy'){const m=cachedMessages.find(x=>x.id===id);if(m&&m.text)navigator.clipboard.writeText(m.text).then(()=>toast('Copied'));}
       else if(a==='pin'){togglePin(id).catch(e=>toast('Pin failed: '+e.message,true));}
       else if(a==='delete'){if(confirm('Delete this message?'))deleteMessage(id).catch(e=>toast('Delete failed: '+e.message,true));}
+    });
+  });
+  // Click @mention → open profile
+  el.messagesContainer.querySelectorAll('.mention').forEach(span=>{
+    span.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      const name=span.dataset.mention;
+      if(!name)return;
+      const user=Object.values(cachedUsers).find(x=>x&&x.username&&x.username.toLowerCase()===name.toLowerCase())
+        ||Object.values(cachedKnownUsers).find(x=>x&&x.username&&x.username.toLowerCase()===name.toLowerCase());
+      openUserProfile(user?user.client_id:name);
     });
   });
   // Click username in chat → fullscreen profile
