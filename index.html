@@ -617,6 +617,37 @@ a:hover{text-decoration:underline}
   .call-ctrl{width:48px;height:48px;font-size:19px}
   .call-ctrl.end{padding:0 18px;font-size:13px}
 }
+
+/* ===== FULLSCREEN USER PROFILE ===== */
+.user-profile-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;z-index:2200;backdrop-filter:blur(8px);animation:lightboxIn .2s ease}
+.user-profile-backdrop.show{display:flex}
+.user-profile-card{width:min(560px,94vw);max-height:92vh;background:var(--bg);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.08)}
+.user-profile-banner{height:140px;background:linear-gradient(135deg,#5865f2,#8b3dfc 50%,#eb459e);position:relative;flex-shrink:0;overflow:hidden}
+.user-profile-banner img{width:100%;height:100%;object-fit:cover;display:block}
+.user-profile-banner-placeholder{width:100%;height:100%;background:linear-gradient(135deg,var(--blurple),#8b3dfc 50%,#eb459e)}
+.user-profile-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;z-index:2;border:none}
+.user-profile-close:hover{background:rgba(0,0,0,.8)}
+.user-profile-body{padding:0 24px 24px;overflow-y:auto;flex:1;min-height:0}
+.user-profile-avatar-row{display:flex;align-items:flex-end;gap:16px;margin-top:-48px;margin-bottom:16px;position:relative}
+.user-profile-avatar{width:96px;height:96px;border-radius:50%;border:6px solid var(--bg);background:var(--blurple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;overflow:hidden;flex-shrink:0;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.user-profile-avatar img{width:100%;height:100%;object-fit:cover}
+.user-profile-name-block{flex:1;min-width:0;padding-bottom:4px}
+.user-profile-name{font-size:24px;font-weight:800;color:var(--text-bright);word-break:break-word;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.user-profile-status-line{font-size:13px;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:6px}
+.user-profile-section{margin-top:18px}
+.user-profile-section h4{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:8px}
+.user-profile-bio{font-size:15px;line-height:1.55;color:var(--text);white-space:pre-wrap;word-break:break-word}
+.user-profile-hobbies{display:flex;flex-wrap:wrap;gap:6px}
+.user-profile-hobby{background:var(--bg-alt);border:1px solid rgba(255,255,255,.08);padding:5px 12px;border-radius:20px;font-size:13px;color:var(--text);font-weight:500}
+.user-profile-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
+.user-profile-actions .admin-btn{padding:10px 16px;font-size:13px}
+.user-profile-meta{font-size:12px;color:var(--text-muted);margin-top:12px;font-family:'SF Mono',monospace}
+.profile-banner-preview{width:100%;height:100px;border-radius:8px;background:linear-gradient(135deg,#5865f2,#8b3dfc);overflow:hidden;position:relative;cursor:pointer;border:2px solid transparent}
+.profile-banner-preview:hover{border-color:var(--blurple)}
+.profile-banner-preview img{width:100%;height:100%;object-fit:cover}
+.profile-banner-preview .banner-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);color:#fff;font-size:12px;font-weight:700;letter-spacing:.04em;opacity:0;transition:opacity .15s}
+.profile-banner-preview:hover .banner-hint{opacity:1}
+
 #pfpFileInput,#fileUploadInput,#serverIconFileInput{display:none}
 </style>
 </head>
@@ -631,7 +662,7 @@ a:hover{text-decoration:underline}
     <div class="server-divider"></div>
     <div id="serverList"></div>
     <div class="server-rail-sep"></div>
-    <div class="server-icon add-server" id="addServerBtn" title="Create or Join a Server" style="display:none">+</div>
+    <div class="server-icon add-server" id="addServerBtn" title="Create or Join a Server">+</div>
   </div>
 
   <div class="channels">
@@ -772,6 +803,21 @@ a:hover{text-decoration:underline}
             <input type="text" id="profileUsernameInput" maxlength="240" placeholder="Your username">
           </div>
           <div>
+            <label>Banner <span style="color:var(--text-muted);font-weight:400;text-transform:none;">(shown on your fullscreen profile)</span></label>
+            <div class="profile-banner-preview" id="profileBannerPreview" title="Click to upload banner">
+              <div class="banner-hint">CLICK TO UPLOAD BANNER</div>
+            </div>
+            <button class="btn-secondary" id="profileRemoveBanner" style="padding:6px 0;font-size:13px;margin-top:6px;">Remove banner</button>
+          </div>
+          <div>
+            <label>About / Description</label>
+            <textarea id="profileBioInput" class="admin-inline-input" rows="3" maxlength="500" placeholder="Tell people about yourself…" style="resize:vertical;min-height:72px;font-family:inherit;width:100%;"></textarea>
+          </div>
+          <div>
+            <label>Hobbies <span style="color:var(--text-muted);font-weight:400;text-transform:none;">(comma-separated)</span></label>
+            <input type="text" id="profileHobbiesInput" maxlength="200" placeholder="e.g. gaming, music, coding, art">
+          </div>
+          <div>
             <label>Avatar Ring <span style="color:var(--text-muted);font-weight:400;text-transform:none;">(static + animated — hover to preview)</span></label>
             <div class="frame-options" id="frameOptions"></div>
           </div>
@@ -813,7 +859,7 @@ a:hover{text-decoration:underline}
 <div class="modal-backdrop" id="friendsModal">
   <div class="modal xwide">
     <div class="modal-header">
-      <div class="modal-title">Friends</div>
+      <div class="modal-title">Friends List</div>
       <div class="modal-close" id="friendsClose">✕</div>
     </div>
     <div class="modal-body">
@@ -1133,7 +1179,10 @@ a:hover{text-decoration:underline}
   <div class="snake-modal">
     <div class="snake-header">
       <div class="snake-title">🐍 SNAKE</div>
-      <div class="snake-score" id="snakeScore">Google Snake Mods</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="snake-score" id="snakeScore">Google Snake Mods</div>
+        <button type="button" id="snakeCloseBtn" title="Close (Esc)" style="background:rgba(0,0,0,.35);border:none;color:#fff;width:36px;height:36px;border-radius:8px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
+      </div>
     </div>
     <div class="snake-body">
       <iframe id="snakeIframe"
@@ -1151,6 +1200,36 @@ a:hover{text-decoration:underline}
   </div>
 </div>
 
+
+<!-- FULLSCREEN USER PROFILE -->
+<div class="user-profile-backdrop" id="userProfileModal">
+  <div class="user-profile-card">
+    <div class="user-profile-banner" id="userProfileBanner">
+      <div class="user-profile-banner-placeholder" id="userProfileBannerPlaceholder"></div>
+      <button type="button" class="user-profile-close" id="userProfileClose" title="Close">✕</button>
+    </div>
+    <div class="user-profile-body">
+      <div class="user-profile-avatar-row">
+        <div class="user-profile-avatar" id="userProfileAvatar">?</div>
+        <div class="user-profile-name-block">
+          <div class="user-profile-name" id="userProfileName">User</div>
+          <div class="user-profile-status-line" id="userProfileStatusLine"></div>
+        </div>
+      </div>
+      <div class="user-profile-section" id="userProfileBioSection">
+        <h4>About</h4>
+        <div class="user-profile-bio" id="userProfileBio">No bio set.</div>
+      </div>
+      <div class="user-profile-section" id="userProfileHobbiesSection">
+        <h4>Hobbies</h4>
+        <div class="user-profile-hobbies" id="userProfileHobbies"></div>
+      </div>
+      <div class="user-profile-meta" id="userProfileMeta"></div>
+      <div class="user-profile-actions" id="userProfileActions"></div>
+    </div>
+  </div>
+</div>
+
 <!-- NOTIF BANNER -->
 <div class="notif-banner" id="notifBanner">
   <div class="notif-banner-title">🔔 Enable notifications?</div>
@@ -1164,6 +1243,7 @@ a:hover{text-decoration:underline}
 <input type="file" id="pfpFileInput" accept="image/*">
 <input type="file" id="fileUploadInput">
 <input type="file" id="serverIconFileInput" accept="image/*">
+<input type="file" id="bannerFileInput" accept="image/*">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
 <script>
@@ -1203,6 +1283,17 @@ const el={
   pfpFileInput:$('pfpFileInput'),fileUploadInput:$('fileUploadInput'),serverIconFileInput:$('serverIconFileInput'),
   profileModal:$('profileModal'),profileClose:$('profileClose'),profileCancel:$('profileCancel'),profileSave:$('profileSave'),
   profileAvatarPreview:$('profileAvatarPreview'),profileUsernameInput:$('profileUsernameInput'),
+  profileBannerPreview:$('profileBannerPreview'),profileRemoveBanner:$('profileRemoveBanner'),
+  profileBioInput:$('profileBioInput'),profileHobbiesInput:$('profileHobbiesInput'),
+  bannerFileInput:$('bannerFileInput'),
+  userProfileModal:$('userProfileModal'),userProfileClose:$('userProfileClose'),
+  userProfileBanner:$('userProfileBanner'),userProfileBannerPlaceholder:$('userProfileBannerPlaceholder'),
+  userProfileAvatar:$('userProfileAvatar'),userProfileName:$('userProfileName'),
+  userProfileStatusLine:$('userProfileStatusLine'),userProfileBio:$('userProfileBio'),
+  userProfileHobbies:$('userProfileHobbies'),userProfileMeta:$('userProfileMeta'),
+  userProfileActions:$('userProfileActions'),userProfileBioSection:$('userProfileBioSection'),
+  userProfileHobbiesSection:$('userProfileHobbiesSection'),
+
   profileRemovePfp:$('profileRemovePfp'),frameOptions:$('frameOptions'),profileError:$('profileError'),
   tabProfile:$('tabProfile'),tabAppearance:$('tabAppearance'),tabAdmin:$('tabAdmin'),adminTabBtn:$('adminTabBtn'),
   colorBg:$('colorBg'),hexBg:$('hexBg'),colorBgAlt:$('colorBgAlt'),hexBgAlt:$('hexBgAlt'),
@@ -1296,6 +1387,9 @@ const me={
   username:savedProfile.username||null,
   pfp:savedProfile.pfp||null,
   frame:savedProfile.frame||'none',
+  banner:savedProfile.banner||null,
+  bio:savedProfile.bio||'',
+  hobbies:savedProfile.hobbies||'',
   clientId:clientId
 };
 
@@ -1548,7 +1642,29 @@ function openSnakeModal(){
 }
 function closeSnakeModal(){
   el.snakeModal.classList.remove('show');
+  try{
+    const iframe=document.getElementById('snakeIframe');
+    if(iframe){
+      // Blur so ESC / keys return to the app
+      iframe.blur();
+      // Optional: reset src briefly so the embed releases keyboard lock
+      // (kept same src to avoid full reload cost — just blur is enough for most cases)
+    }
+  }catch(e){}
+  try{document.body.focus();}catch(e){}
 }
+// Snake close: button + click outside the modal panel
+(function(){
+  const btn=document.getElementById('snakeCloseBtn');
+  if(btn)btn.addEventListener('click',function(ev){ev.stopPropagation();closeSnakeModal();});
+  if(el.snakeModal){
+    el.snakeModal.addEventListener('click',function(ev){
+      // Click on the dark backdrop (not the inner .snake-modal) closes
+      if(ev.target===el.snakeModal)closeSnakeModal();
+    });
+  }
+})();
+
 // Legacy SnakeGame object retained for backward compatibility.
 const SnakeGame={
   canvas:null,ctx:null,gridW:20,gridH:20,cellSize:20,
@@ -1917,7 +2033,7 @@ function switchServerTab(name){
 }
 function closeServerModal(){el.serverModal.classList.remove('show');}
 document.querySelectorAll('[data-servertab]').forEach(t=>{t.addEventListener('click',()=>switchServerTab(t.dataset.servertab));});
-if(el.addServerBtn)el.addServerBtn.addEventListener('click',function(){toast("Adding servers is disabled",true);});
+if(el.addServerBtn)el.addServerBtn.addEventListener('click',openCreateServerModal);
 if(el.serverModalClose)el.serverModalClose.addEventListener('click',closeServerModal);
 if(el.serverModalCancel)el.serverModalCancel.addEventListener('click',closeServerModal);
 
@@ -1949,13 +2065,26 @@ if(el.serverModalAction)el.serverModalAction.addEventListener('click',async()=>{
     if(name.length<2){el.serverCreateError.textContent='At least 2 characters';return;}
     el.serverModalAction.disabled=true;el.serverModalAction.textContent='Creating...';
     try{
+      // Unique name check (case-insensitive)
+      const{data:nameDups,error:nameErr}=await supa.from('servers').select('id,name');
+      if(nameErr)throw nameErr;
+      if((nameDups||[]).some(s=>String(s.name||'').toLowerCase()===name.toLowerCase())){
+        el.serverCreateError.textContent='A server with that name already exists';
+        el.serverModalAction.disabled=false;el.serverModalAction.textContent='Create Server';
+        return;
+      }
       let code=generate12DigitInvite();
       let attempts=0;
-      while(attempts<5){
+      while(attempts<10){
         const{data:dup}=await supa.from('servers').select('id').eq('invite_code',code).maybeSingle();
         if(!dup)break;
         code=generate12DigitInvite();
         attempts++;
+      }
+      if(attempts>=10){
+        el.serverCreateError.textContent='Could not generate a unique invite code — try again';
+        el.serverModalAction.disabled=false;el.serverModalAction.textContent='Create Server';
+        return;
       }
       const{data:inserted,error}=await supa.from('servers').insert({
         name:name,icon_data:pendingServerIcon||null,owner_id:me.clientId,invite_code:code
@@ -2445,6 +2574,142 @@ function openFriendsModal(){
   renderFriendsModal();
   el.friendsModal.classList.add('show');
 }
+
+// ============================================================
+// FULLSCREEN USER PROFILE
+// ============================================================
+function openUserProfile(clientIdOrUsername){
+  let u=null;
+  if(clientIdOrUsername){
+    u=cachedUsers[clientIdOrUsername]||cachedKnownUsers[clientIdOrUsername];
+    if(!u){
+      // try match by username
+      const all=Object.values(cachedUsers).concat(Object.values(cachedKnownUsers));
+      u=all.find(x=>x&&x.username===clientIdOrUsername)||null;
+    }
+  }
+  if(!u){
+    // self fallback
+    if(clientIdOrUsername===me.clientId||clientIdOrUsername===me.username){
+      u={client_id:me.clientId,username:me.username,pfp_data_url:me.pfp,frame:me.frame,bio:me.bio,banner_data_url:me.banner,hobbies:me.hobbies,rank:(cachedUsers[me.clientId]||{}).rank||'member'};
+    }else{
+      toast('User not found',true);return;
+    }
+  }
+  const isSelf=u.client_id===me.clientId;
+  // Prefer live self data
+  let banner=u.banner_data_url||null;
+  let bio=u.bio||'';
+  let hobbies=u.hobbies||'';
+  if(isSelf){
+    banner=me.banner||banner;
+    bio=me.bio||bio;
+    hobbies=me.hobbies||hobbies;
+  }
+  // Banner
+  const bannerEl=el.userProfileBanner;
+  if(banner){
+    bannerEl.innerHTML='<img src="'+banner+'" alt=""><button type="button" class="user-profile-close" id="userProfileCloseInner" title="Close">✕</button>';
+  }else{
+    bannerEl.innerHTML='<div class="user-profile-banner-placeholder"></div><button type="button" class="user-profile-close" id="userProfileCloseInner" title="Close">✕</button>';
+  }
+  const closeBtn=document.getElementById('userProfileCloseInner');
+  if(closeBtn)closeBtn.addEventListener('click',closeUserProfile);
+
+  // Avatar
+  const pfp=u.pfp_data_url||(isSelf?me.pfp:null);
+  const frame=u.frame||(isSelf?me.frame:'none')||'none';
+  const displayName=u.force_nick||u.username||'Unknown';
+  const avInner=pfp?'<img src="'+pfp+'" alt="" onerror="this.style.display=\'none\'">':escapeHtml(initials(displayName));
+  el.userProfileAvatar.innerHTML=wrapAvatar(avInner,frame);
+
+  // Name + status
+  el.userProfileName.innerHTML=rankBadge(u.rank||'member')+escapeHtml(displayName)+(isSelf?' <span style="color:var(--text-muted);font-size:14px;font-weight:600;">(you)</span>':'');
+  const isOnline=!!cachedUsers[u.client_id];
+  const timedOut=u.timeout_until&&new Date(u.timeout_until)>new Date();
+  let statusHtml='';
+  if(isOnline)statusHtml+='<span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;"></span> Online';
+  else statusHtml+='<span style="width:8px;height:8px;border-radius:50%;background:#80848e;display:inline-block;"></span> Offline';
+  if(timedOut)statusHtml+=' · <span style="color:var(--red);">Timed out</span>';
+  if(u.banned)statusHtml+=' · <span style="color:var(--red);">Banned</span>';
+  if(u.warnings>0)statusHtml+=' · ⚠️ '+u.warnings+' warning'+(u.warnings===1?'':'s');
+  el.userProfileStatusLine.innerHTML=statusHtml;
+
+  // Bio
+  if(bio&&bio.trim()){
+    el.userProfileBio.textContent=bio.trim();
+    el.userProfileBioSection.style.display='';
+  }else{
+    el.userProfileBio.textContent=isSelf?'No bio yet — set one in Settings.':'No bio set.';
+    el.userProfileBioSection.style.display='';
+  }
+
+  // Hobbies
+  const hobbyList=(hobbies||'').split(',').map(s=>s.trim()).filter(Boolean);
+  if(hobbyList.length){
+    el.userProfileHobbies.innerHTML=hobbyList.map(h=>'<span class="user-profile-hobby">'+escapeHtml(h)+'</span>').join('');
+    el.userProfileHobbiesSection.style.display='';
+  }else{
+    el.userProfileHobbies.innerHTML='<span style="color:var(--text-muted);font-size:13px;">None listed</span>';
+    el.userProfileHobbiesSection.style.display='';
+  }
+
+  // Meta
+  el.userProfileMeta.textContent='ID: '+(u.client_id||'').slice(0,12)+'…'+(u.last_seen?' · Last seen '+shortTimeAgo(u.last_seen):'');
+
+  // Actions
+  let actions='';
+  if(isSelf){
+    actions+='<button class="admin-btn" id="upEditProfile">✏️ Edit Profile</button>';
+  }else{
+    const fs=friendshipStatusWith(u.client_id);
+    if(fs==='friends'){
+      actions+='<button class="admin-btn success" id="upMessage">💬 Message</button>';
+      actions+='<button class="admin-btn danger" id="upUnfriend">Unfriend</button>';
+    }else if(fs==='sent'){
+      actions+='<button class="admin-btn ghost" disabled>⏳ Request pending</button>';
+    }else if(fs==='incoming'){
+      actions+='<button class="admin-btn success" id="upAcceptFriend">✅ Accept Friend</button>';
+    }else{
+      actions+='<button class="admin-btn" id="upAddFriend">👋 Add Friend</button>';
+    }
+    if(isOnline){
+      actions+='<button class="admin-btn success" id="upCall">📞 Call</button>';
+    }
+  }
+  el.userProfileActions.innerHTML=actions;
+
+  // Wire action buttons
+  const editBtn=document.getElementById('upEditProfile');
+  if(editBtn)editBtn.addEventListener('click',()=>{closeUserProfile();openProfileModal();});
+  const msgBtn=document.getElementById('upMessage');
+  if(msgBtn)msgBtn.addEventListener('click',()=>{closeUserProfile();openDMWith(u.client_id);});
+  const addBtn=document.getElementById('upAddFriend');
+  if(addBtn)addBtn.addEventListener('click',async()=>{await sendFriendRequest(u.client_id);closeUserProfile();openUserProfile(u.client_id);});
+  const acceptBtn=document.getElementById('upAcceptFriend');
+  if(acceptBtn)acceptBtn.addEventListener('click',async()=>{await sendFriendRequest(u.client_id);closeUserProfile();openUserProfile(u.client_id);});
+  const unfriendBtn=document.getElementById('upUnfriend');
+  if(unfriendBtn)unfriendBtn.addEventListener('click',async()=>{
+    const f=cachedFriendships.find(x=>{
+      const other=x.user_a===me.clientId?x.user_b:x.user_a;
+      return other===u.client_id&&x.status==='accepted';
+    });
+    if(f&&confirm('Unfriend '+displayName+'?')){
+      try{await supa.from('friendships').delete().eq('id',f.id);toast('Unfriended');await refreshFriendships();closeUserProfile();}
+      catch(e){toast('Failed: '+e.message,true);}
+    }
+  });
+  const callBtn=document.getElementById('upCall');
+  if(callBtn)callBtn.addEventListener('click',()=>{closeUserProfile();startDMCall(u.client_id,displayName);});
+
+  el.userProfileModal.classList.add('show');
+}
+function closeUserProfile(){
+  if(el.userProfileModal)el.userProfileModal.classList.remove('show');
+}
+if(el.userProfileClose)el.userProfileClose.addEventListener('click',closeUserProfile);
+if(el.userProfileModal)el.userProfileModal.addEventListener('click',ev=>{if(ev.target===el.userProfileModal)closeUserProfile();});
+
 el.friendsBtn.addEventListener('click',openFriendsModal);
 el.friendsClose.addEventListener('click',()=>el.friendsModal.classList.remove('show'));
 
@@ -2745,8 +3010,8 @@ function getCurrentChannelDisplayName(){
 // PROFILE MODAL
 // ============================================================
 function openProfileModal(){
-  if(!identitySet){editingSnapshot={username:'',pfp:null,frame:'none'};el.profileSave.textContent='Create Profile';}
-  else{editingSnapshot={username:me.username,pfp:me.pfp,frame:me.frame};el.profileSave.textContent='Save Changes';}
+  if(!identitySet){editingSnapshot={username:'',pfp:null,frame:'none',banner:null,bio:'',hobbies:''};el.profileSave.textContent='Create Profile';}
+  else{editingSnapshot={username:me.username,pfp:me.pfp,frame:me.frame,banner:me.banner||null,bio:me.bio||'',hobbies:me.hobbies||''};el.profileSave.textContent='Save Changes';}
   el.profileError.textContent='';
   switchTab('profile');
   renderProfileModal();
@@ -2795,9 +3060,22 @@ function renderProfileModal(){
   el.frameOptions.querySelectorAll('.frame-option').forEach(opt=>{
     opt.addEventListener('click',()=>{editingSnapshot.frame=opt.dataset.frame;renderProfileModal();});
   });
+  // Banner / bio / hobbies
+  if(el.profileBannerPreview){
+    if(editingSnapshot.banner){
+      el.profileBannerPreview.innerHTML='<img src="'+editingSnapshot.banner+'" alt=""><div class="banner-hint">CLICK TO CHANGE BANNER</div>';
+    }else{
+      el.profileBannerPreview.innerHTML='<div class="banner-hint">CLICK TO UPLOAD BANNER</div>';
+      el.profileBannerPreview.style.background='linear-gradient(135deg,#5865f2,#8b3dfc)';
+    }
+  }
+  if(el.profileBioInput)el.profileBioInput.value=editingSnapshot.bio||'';
+  if(el.profileHobbiesInput)el.profileHobbiesInput.value=editingSnapshot.hobbies||'';
 }
 async function saveProfile(){
   if(!editingSnapshot)return;el.profileError.textContent='';
+  if(el.profileBioInput)editingSnapshot.bio=el.profileBioInput.value||'';
+  if(el.profileHobbiesInput)editingSnapshot.hobbies=el.profileHobbiesInput.value||'';
   const newUsername=(el.profileUsernameInput.value||'').trim();
   const cpLen=codepointLength(newUsername);
   if(!newUsername){el.profileError.textContent='Username cannot be empty';return;}
@@ -2810,8 +3088,10 @@ async function saveProfile(){
   }
   const newTheme=themeFromModal();currentTheme=newTheme;lsSet(LS.THEME,newTheme);applyTheme(newTheme);
   const wasIdentitySet=identitySet;
-  me.username=newUsername;me.pfp=editingSnapshot.pfp;me.frame=editingSnapshot.frame;identitySet=true;
-  lsSet(LS.PROFILE,{username:me.username,pfp:me.pfp,frame:me.frame});
+  me.username=newUsername;me.pfp=editingSnapshot.pfp;me.frame=editingSnapshot.frame;
+  me.banner=editingSnapshot.banner||null;me.bio=(editingSnapshot.bio||'').trim();me.hobbies=(editingSnapshot.hobbies||'').trim();
+  identitySet=true;
+  lsSet(LS.PROFILE,{username:me.username,pfp:me.pfp,frame:me.frame,banner:me.banner,bio:me.bio,hobbies:me.hobbies});
   try{
     await registerOnlineUser();
     await upsertKnownUser();
@@ -2839,10 +3119,27 @@ el.pfpFileInput.addEventListener('change',ev=>{
     if(editingSnapshot){editingSnapshot.pfp=url;renderProfileModal();}};
   r.readAsDataURL(file);el.pfpFileInput.value='';
 });
+if(el.profileBannerPreview)el.profileBannerPreview.addEventListener('click',()=>{if(el.bannerFileInput)el.bannerFileInput.click();});
+if(el.profileRemoveBanner)el.profileRemoveBanner.addEventListener('click',()=>{if(!editingSnapshot)return;editingSnapshot.banner=null;renderProfileModal();});
+if(el.bannerFileInput)el.bannerFileInput.addEventListener('change',ev=>{
+  const file=ev.target.files&&ev.target.files[0];if(!file)return;
+  if(file.size>800000){toast('Banner max 800KB',true);el.bannerFileInput.value='';return;}
+  const r=new FileReader();
+  r.onload=e=>{const url=e.target.result;if(url.length>1200000){toast('Banner too large after encoding',true);return;}
+    if(editingSnapshot){editingSnapshot.banner=url;renderProfileModal();}};
+  r.readAsDataURL(file);el.bannerFileInput.value='';
+});
 el.settingsBtn.addEventListener('click',openProfileModal);
 el.userPanelAvatar.addEventListener('click',openProfileModal);
 el.userPanelInfo.addEventListener('click',openProfileModal);
-el.headerAvatar.addEventListener('click',openProfileModal);
+// Top header avatar: single click returns to the global / home server
+el.headerAvatar.addEventListener('click',async()=>{
+  try{
+    await switchToHome();
+    toast('Home · #global-chat');
+  }catch(e){console.warn(e);}
+});
+el.headerAvatar.title='Go to Home (global server)';
 
 // ============================================================
 // AVATARS
@@ -2902,18 +3199,41 @@ el.memberToggle.addEventListener('click',()=>{el.membersSidebar.style.display=el
 async function registerOnlineUser(){
   if(!supa||!me.username)return;
   const payload={username:me.username,pfp_data_url:me.pfp||null,frame:me.frame||'none',last_seen:new Date().toISOString()};
-  const{data:updated,error:updErr}=await supa.from('online_users').update(payload).eq('client_id',me.clientId).select();
-  if(updErr)throw updErr;
-  if(updated&&updated.length>0)return;
-  const{error:insErr}=await supa.from('online_users').insert({client_id:me.clientId,...payload,rank:'member',timeout_until:null,banned:false,warnings:0,force_nick:null});
+  // Best-effort extended profile fields (ignored if columns don't exist in DB)
+  try{
+    payload.bio=me.bio||null;
+    payload.banner_data_url=me.banner||null;
+    payload.hobbies=me.hobbies||null;
+  }catch(e){}
+  let updErr=null;
+  try{
+    const{data:updated,error}=await supa.from('online_users').update(payload).eq('client_id',me.clientId).select();
+    if(error){updErr=error;}
+    else if(updated&&updated.length>0)return;
+  }catch(e){updErr=e;}
+  // Fallback without extended fields if schema rejects them
+  if(updErr){
+    const basic={username:me.username,pfp_data_url:me.pfp||null,frame:me.frame||'none',last_seen:new Date().toISOString()};
+    const{data:updated2,error:e2}=await supa.from('online_users').update(basic).eq('client_id',me.clientId).select();
+    if(e2)throw e2;
+    if(updated2&&updated2.length>0)return;
+  }
+  const insertPayload={client_id:me.clientId,username:me.username,pfp_data_url:me.pfp||null,frame:me.frame||'none',last_seen:payload.last_seen,rank:'member',timeout_until:null,banned:false,warnings:0,force_nick:null};
+  const{error:insErr}=await supa.from('online_users').insert(insertPayload);
   if(insErr)throw insErr;
 }
 async function upsertKnownUser(){
   if(!supa||!me.username)return;
   const existing=cachedKnownUsers[me.clientId]||{};
   const row={client_id:me.clientId,username:me.username,pfp_data_url:me.pfp||null,frame:me.frame||'none',last_seen:new Date().toISOString(),rank:existing.rank||'member'};
+  try{row.bio=me.bio||null;row.banner_data_url=me.banner||null;row.hobbies=me.hobbies||null;}catch(e){}
   const{error}=await supa.from('known_users').upsert(row,{onConflict:'client_id'});
-  if(error)console.warn('known_users upsert',error);
+  if(error){
+    // Retry without extended fields
+    const basic={client_id:me.clientId,username:me.username,pfp_data_url:me.pfp||null,frame:me.frame||'none',last_seen:new Date().toISOString(),rank:existing.rank||'member'};
+    const{error:e2}=await supa.from('known_users').upsert(basic,{onConflict:'client_id'});
+    if(e2)console.warn('known_users upsert',e2);
+  }
 }
 async function unregisterOnlineUser(){if(!supa)return;try{await supa.from('online_users').delete().eq('client_id',me.clientId);}catch(e){}}
 async function isUsernameTaken(username,excludeId){
@@ -3301,6 +3621,36 @@ function renderMessages(highlightId){
       else if(a==='delete'){if(confirm('Delete this message?'))deleteMessage(id).catch(e=>toast('Delete failed: '+e.message,true));}
     });
   });
+  // Click username in chat → fullscreen profile
+  el.messagesContainer.querySelectorAll('.msg-username').forEach(span=>{
+    span.style.cursor='pointer';
+    span.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      const msgEl=span.closest('.msg');
+      const msgId=msgEl?msgEl.dataset.msgId:null;
+      const m=msgId?cachedMessages.find(x=>x.id===msgId):null;
+      if(m&&m.username){
+        const user=Object.values(cachedUsers).find(x=>x&&x.username===m.username)
+          ||Object.values(cachedKnownUsers).find(x=>x&&x.username===m.username);
+        openUserProfile(user?user.client_id:m.username);
+      }
+    });
+  });
+  // Click avatar in chat → fullscreen profile
+  el.messagesContainer.querySelectorAll('.msg-avatar').forEach(av=>{
+    av.style.cursor='pointer';
+    av.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      const msgEl=av.closest('.msg');
+      const msgId=msgEl?msgEl.dataset.msgId:null;
+      const m=msgId?cachedMessages.find(x=>x.id===msgId):null;
+      if(m&&m.username){
+        const user=Object.values(cachedUsers).find(x=>x&&x.username===m.username)
+          ||Object.values(cachedKnownUsers).find(x=>x&&x.username===m.username);
+        openUserProfile(user?user.client_id:m.username);
+      }
+    });
+  });
   el.messagesContainer.querySelectorAll('.reaction').forEach(r=>{
     r.addEventListener('click',ev=>{
       ev.stopPropagation();
@@ -3372,6 +3722,20 @@ function renderMembers(){
       if(CallState.active){toast('You are already in a call',true);return;}
       startDMCall(btn.dataset.callPeer,btn.dataset.callName);
     });
+  });
+  // Click member name / row → fullscreen profile
+  el.membersList.querySelectorAll('.member').forEach(row=>{
+    const peerId=row.dataset.peerId;
+    if(!peerId)return;
+    const nameEl=row.querySelector('.member-name');
+    const avEl=row.querySelector('.member-avatar-wrap');
+    const open=ev=>{
+      if(ev.target.closest('.member-actions'))return;
+      ev.stopPropagation();
+      openUserProfile(peerId);
+    };
+    if(nameEl){nameEl.style.cursor='pointer';nameEl.addEventListener('click',open);}
+    if(avEl){avEl.style.cursor='pointer';avEl.addEventListener('click',open);}
   });
   el.membersList.querySelectorAll('[data-friend-action]').forEach(btn=>{
     btn.addEventListener('click',async ev=>{
@@ -4688,6 +5052,7 @@ document.addEventListener('keydown',ev=>{
     if(el.serverMembersModal.classList.contains('show')){el.serverMembersModal.classList.remove('show');return;}
     if(el.serverInfoModal.classList.contains('show')){el.serverInfoModal.classList.remove('show');return;}
     if(el.serverModal.classList.contains('show')){el.serverModal.classList.remove('show');return;}
+    if(el.userProfileModal&&el.userProfileModal.classList.contains('show')){closeUserProfile();return;}
     if(el.friendsModal.classList.contains('show')){el.friendsModal.classList.remove('show');return;}
     if(el.lightbox.classList.contains('show')){closeLightbox();return;}
     if(el.snakeModal.classList.contains('show')){closeSnakeModal();return;}
