@@ -628,12 +628,16 @@ a:hover{text-decoration:underline}
 .user-profile-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;z-index:2;border:none}
 .user-profile-close:hover{background:rgba(0,0,0,.8)}
 .user-profile-body{padding:0 24px 24px;overflow-y:auto;flex:1;min-height:0}
-.user-profile-avatar-row{display:flex;align-items:flex-end;gap:16px;margin-top:-48px;margin-bottom:16px;position:relative}
-.user-profile-avatar{width:96px;height:96px;border-radius:50%;border:6px solid var(--bg);background:var(--blurple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;overflow:hidden;flex-shrink:0;box-shadow:0 4px 20px rgba(0,0,0,.4)}
-.user-profile-avatar img{width:100%;height:100%;object-fit:cover}
-.user-profile-name-block{flex:1;min-width:0;padding-bottom:4px}
-.user-profile-name{font-size:24px;font-weight:800;color:var(--text-bright);word-break:break-word;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.user-profile-status-line{font-size:13px;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:6px}
+.user-profile-avatar-row{display:flex;align-items:flex-end;gap:14px;margin-top:-52px;margin-bottom:18px;position:relative;z-index:2}
+.user-profile-avatar{width:96px;height:96px;border-radius:50%;border:6px solid var(--bg);background:var(--blurple);color:#fff;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;overflow:hidden;flex-shrink:0;box-shadow:0 4px 20px rgba(0,0,0,.4);box-sizing:border-box}
+.user-profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.user-profile-avatar > div,
+.user-profile-avatar .frame-wrapper,
+.user-profile-avatar .frame-inner{width:100% !important;height:100% !important;border-radius:50%;box-sizing:border-box}
+.user-profile-avatar .frame-inner img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.user-profile-name-block{flex:1;min-width:0;padding-bottom:10px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px}
+.user-profile-name{font-size:22px;font-weight:800;color:var(--text-bright);word-break:break-word;display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:1.2}
+.user-profile-status-line{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px;line-height:1.3;margin-top:0}
 .user-profile-section{margin-top:18px}
 .user-profile-section h4{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:8px}
 .user-profile-bio{font-size:15px;line-height:1.55;color:var(--text);white-space:pre-wrap;word-break:break-word}
@@ -964,6 +968,28 @@ a:hover{text-decoration:underline}
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="admin-btn" id="serverInfoViewMembers">👥 View Members</button>
         <button class="admin-btn" id="serverInfoCopyCode">📋 Copy Invite Code</button>
+      </div>
+      <div id="serverOwnerControls" style="display:none;margin-top:8px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06);">
+        <div style="font-size:12px;font-weight:800;color:var(--text-bright);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;">Owner Controls</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700;display:block;margin-bottom:6px;">Server Name</label>
+            <div style="display:flex;gap:8px;">
+              <input type="text" id="serverEditNameInput" class="admin-inline-input" maxlength="48" placeholder="Server name" style="flex:1;">
+              <button class="admin-btn" id="serverEditNameBtn">Rename</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700;display:block;margin-bottom:6px;">Server Icon</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <button class="admin-btn" id="serverEditIconBtn">📷 Change Icon</button>
+              <button class="admin-btn ghost" id="serverRemoveIconBtn">Remove Icon</button>
+            </div>
+          </div>
+          <div>
+            <button class="admin-btn danger" id="serverDeleteBtn" style="width:100%;padding:10px;">🗑️ Delete Server Permanently</button>
+          </div>
+        </div>
       </div>
       <div class="modal-error" id="serverInfoError"></div>
     </div>
@@ -1678,7 +1704,13 @@ let serverClickCount=0;let serverClickResetTimer=null;
 el.serverHome.addEventListener('click',()=>{
   serverClickCount++;clearTimeout(serverClickResetTimer);
   serverClickResetTimer=setTimeout(()=>{serverClickCount=0;},2500);
-  if(serverClickCount<5){el.serverHome.style.transform='scale(0.94)';setTimeout(()=>{el.serverHome.style.transform='';},100);}
+  if(serverClickCount<5){
+    el.serverHome.style.transform='scale(0.94)';setTimeout(()=>{el.serverHome.style.transform='';},100);
+    // Single click → go home / global
+    if(serverClickCount===1){
+      switchToHome().catch(console.warn);
+    }
+  }
   if(serverClickCount>=5){serverClickCount=0;clearTimeout(serverClickResetTimer);openSnakeModal();}
 });
 
@@ -1926,15 +1958,36 @@ function broadcastDeleteLive(id){
 async function refreshServers(){
   if(!supa)return;
   try{
-    const{data:memberships,error:me}=await supa.from('server_members').select('server_id').eq('client_id',me.clientId);
-    if(me)throw me;
-    const ids=(memberships||[]).map(m=>m.server_id);
-    if(ids.length===0){cachedServers=[];renderServerRail();return;}
+    const idSet=new Set();
+    // Memberships
+    try{
+      const{data:memberships,error:me}=await supa.from('server_members').select('server_id').eq('client_id',me.clientId);
+      if(!me&&memberships)memberships.forEach(m=>{if(m.server_id)idSet.add(m.server_id);});
+    }catch(e){console.warn('memberships fetch',e);}
+    // Also include servers you own (in case membership row is missing / RLS)
+    try{
+      const{data:owned}=await supa.from('servers').select('id').eq('owner_id',me.clientId);
+      if(owned)owned.forEach(s=>{if(s.id)idSet.add(s.id);});
+    }catch(e){console.warn('owned servers fetch',e);}
+    const ids=Array.from(idSet);
+    if(ids.length===0){cachedServers=[];renderServerRail();updateServerHeaderTitle();return;}
     const{data:servers,error:se}=await supa.from('servers').select('*').in('id',ids);
     if(se)throw se;
     cachedServers=(servers||[]).sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
     renderServerRail();
+    updateServerHeaderTitle();
   }catch(e){console.warn('refreshServers',e);}
+}
+function updateServerHeaderTitle(){
+  if(!el.serverHeaderTitle)return;
+  if(activeServer){
+    const srv=cachedServers.find(s=>s.id===activeServer);
+    el.serverHeaderTitle.textContent=srv?srv.name:'Server';
+  }else if(currentView==='dm'){
+    el.serverHeaderTitle.textContent='Direct Messages';
+  }else{
+    el.serverHeaderTitle.textContent='Nexus Home';
+  }
 }
 
 function renderServerRail(){
@@ -1942,13 +1995,19 @@ function renderServerRail(){
   cachedServers.forEach(srv=>{
     const active=activeServer===srv.id;
     const inner=srv.icon_data?'<img src="'+srv.icon_data+'" alt="">':initials(srv.name);
-    html+='<div class="server-icon'+(active?' active':'')+'" data-server-id="'+srv.id+'" title="'+escapeHtml(srv.name)+'" style="background:'+(srv.icon_data?'transparent':'#313338')+';">'+inner+'</div>';
+    html+='<div class="server-icon'+(active?' active':'')+'" data-server-id="'+srv.id+'" title="'+escapeHtml(srv.name)+(srv.invite_code?' · '+srv.invite_code:'')+'" style="background:'+(srv.icon_data?'transparent':'#313338')+';">'+inner+'</div>';
   });
   el.serverList.innerHTML=html;
   el.serverList.querySelectorAll('.server-icon[data-server-id]').forEach(icon=>{
     icon.addEventListener('click',()=>switchServer(icon.dataset.serverId));
   });
+  // Home icon active state
+  if(el.serverHome){
+    if(!activeServer&&currentView!=='dm')el.serverHome.classList.add('active');
+    else el.serverHome.classList.remove('active');
+  }
   updateFriendsBadge();
+  updateServerHeaderTitle();
 }
 
 function updateFriendsBadge(){
@@ -1978,6 +2037,7 @@ async function switchServer(serverId){
     else{activeChannel=list[0].id;}
     lsSet(LS.ACTIVE_CHANNEL,activeChannel);
     renderServerRail();
+    updateServerHeaderTitle();
     renderChannelList();
     updateChatHeader();
     await loadCurrentChannel();
@@ -1992,6 +2052,7 @@ async function switchToHome(){
   activeChannel='global';
   lsSet(LS.ACTIVE_CHANNEL,'global');
   renderServerRail();
+  updateServerHeaderTitle();
   renderChannelList();
   updateChatHeader();
   await loadCurrentChannel();
@@ -2047,11 +2108,29 @@ function renderServerIconPreview(){
 el.serverIconPreview.addEventListener('click',()=>el.serverIconFileInput.click());
 el.serverIconRemove.addEventListener('click',()=>{pendingServerIcon=null;renderServerIconPreview();});
 el.newServerName.addEventListener('input',renderServerIconPreview);
+let serverIconEditMode=false; // true when changing icon from Server Info (not create modal)
 el.serverIconFileInput.addEventListener('change',ev=>{
   const file=ev.target.files&&ev.target.files[0];if(!file)return;
   if(file.size>500000){toast('Icon must be under 500KB',true);el.serverIconFileInput.value='';return;}
   const r=new FileReader();
-  r.onload=e=>{pendingServerIcon=e.target.result;renderServerIconPreview();};
+  r.onload=async e=>{
+    const dataUrl=e.target.result;
+    if(serverIconEditMode&&activeServer){
+      serverIconEditMode=false;
+      const srv=cachedServers.find(s=>s.id===activeServer);
+      if(!srv||srv.owner_id!==me.clientId){toast('Only the owner can change the icon',true);return;}
+      try{
+        const{error}=await supa.from('servers').update({icon_data:dataUrl}).eq('id',srv.id);
+        if(error)throw error;
+        srv.icon_data=dataUrl;
+        if(el.serverInfoIcon)el.serverInfoIcon.innerHTML='<img src="'+dataUrl+'" alt="">';
+        renderServerRail();
+        toast('Icon updated');
+      }catch(err){toast('Icon update failed: '+err.message,true);}
+    }else{
+      pendingServerIcon=dataUrl;renderServerIconPreview();
+    }
+  };
   r.readAsDataURL(file);
   el.serverIconFileInput.value='';
 });
@@ -2090,11 +2169,28 @@ if(el.serverModalAction)el.serverModalAction.addEventListener('click',async()=>{
         name:name,icon_data:pendingServerIcon||null,owner_id:me.clientId,invite_code:code
       }).select().single();
       if(error)throw error;
-      await supa.from('server_members').insert({server_id:inserted.id,client_id:me.clientId,username:me.username});
-      await supa.from('channels').insert({
-        name:'general',channel_key:'srv_'+inserted.id.slice(0,8),
-        created_by:me.username,server_id:inserted.id,is_public:true
-      });
+      // Membership — try with username, fall back without if column missing
+      try{
+        const{error:memErr}=await supa.from('server_members').insert({server_id:inserted.id,client_id:me.clientId,username:me.username});
+        if(memErr){
+          await supa.from('server_members').insert({server_id:inserted.id,client_id:me.clientId});
+        }
+      }catch(memE){
+        try{await supa.from('server_members').insert({server_id:inserted.id,client_id:me.clientId});}catch(e2){console.warn('membership insert',e2);}
+      }
+      // Default general channel
+      try{
+        await supa.from('channels').insert({
+          name:'general',channel_key:'srv_'+inserted.id.slice(0,8),
+          created_by:me.username,server_id:inserted.id,is_public:true
+        });
+      }catch(chE){console.warn('default channel',chE);}
+      // Optimistic local cache so it shows immediately even if refresh is slow
+      if(!cachedServers.find(s=>s.id===inserted.id)){
+        cachedServers.push(inserted);
+        cachedServers.sort((a,b)=>new Date(a.created_at||0)-new Date(b.created_at||0));
+      }
+      renderServerRail();
       closeServerModal();
       toast('Server created! Invite code: '+code,'info');
       await refreshServers();
@@ -2142,10 +2238,21 @@ async function openServerInfoModal(){
   try{
     const{data:members}=await supa.from('server_members').select('*').eq('server_id',srv.id);
     cachedServerMembers=members||[];
-    el.serverInfoMembers.textContent=members.length+' member'+(members.length===1?'':'s');
+    el.serverInfoMembers.textContent=(members||[]).length+' member'+((members||[]).length===1?'':'s');
   }catch(e){el.serverInfoMembers.textContent='—';}
-  el.serverInfoInviteCode.textContent=srv.invite_code;
+  el.serverInfoInviteCode.textContent=srv.invite_code||'—';
   el.serverInfoError.textContent='';
+  // Owner controls
+  const ownerControls=document.getElementById('serverOwnerControls');
+  const isOwner=srv.owner_id===me.clientId;
+  if(ownerControls){
+    ownerControls.style.display=isOwner?'block':'none';
+    if(isOwner){
+      const nameInput=document.getElementById('serverEditNameInput');
+      if(nameInput)nameInput.value=srv.name||'';
+      // Hide leave for owner (they should delete instead) — still allow leave
+    }
+  }
   el.serverInfoModal.classList.add('show');
 }
 el.serverInfoClose.addEventListener('click',()=>el.serverInfoModal.classList.remove('show'));
@@ -2172,6 +2279,98 @@ el.serverInfoLeave.addEventListener('click',async()=>{
     await switchToHome();
   }catch(e){toast('Failed: '+e.message,true);}
 });
+
+// Owner: rename server
+(function(){
+  const btn=document.getElementById('serverEditNameBtn');
+  if(!btn)return;
+  btn.addEventListener('click',async()=>{
+    if(!activeServer)return;
+    const srv=cachedServers.find(s=>s.id===activeServer);
+    if(!srv||srv.owner_id!==me.clientId){toast('Only the owner can rename',true);return;}
+    const input=document.getElementById('serverEditNameInput');
+    const newName=(input&&input.value||'').trim();
+    if(!newName||newName.length<2){el.serverInfoError.textContent='Name must be at least 2 characters';return;}
+    try{
+      const{data:nameDups}=await supa.from('servers').select('id,name');
+      if((nameDups||[]).some(s=>s.id!==srv.id&&String(s.name||'').toLowerCase()===newName.toLowerCase())){
+        el.serverInfoError.textContent='A server with that name already exists';return;
+      }
+      const{error}=await supa.from('servers').update({name:newName}).eq('id',srv.id);
+      if(error)throw error;
+      srv.name=newName;
+      el.serverInfoName.textContent=newName;
+      updateServerHeaderTitle();
+      renderServerRail();
+      toast('Server renamed');
+      el.serverInfoError.textContent='';
+    }catch(e){el.serverInfoError.textContent='Rename failed: '+e.message;}
+  });
+})();
+
+// Owner: change icon
+(function(){
+  const btn=document.getElementById('serverEditIconBtn');
+  if(!btn)return;
+  btn.addEventListener('click',()=>{
+    if(!activeServer)return;
+    const srv=cachedServers.find(s=>s.id===activeServer);
+    if(!srv||srv.owner_id!==me.clientId){toast('Only the owner can change the icon',true);return;}
+    serverIconEditMode=true;
+    if(el.serverIconFileInput)el.serverIconFileInput.click();
+  });
+})();
+
+// Owner: remove icon
+(function(){
+  const btn=document.getElementById('serverRemoveIconBtn');
+  if(!btn)return;
+  btn.addEventListener('click',async()=>{
+    if(!activeServer)return;
+    const srv=cachedServers.find(s=>s.id===activeServer);
+    if(!srv||srv.owner_id!==me.clientId){toast('Only the owner can remove the icon',true);return;}
+    try{
+      const{error}=await supa.from('servers').update({icon_data:null}).eq('id',srv.id);
+      if(error)throw error;
+      srv.icon_data=null;
+      el.serverInfoIcon.innerHTML=initials(srv.name);
+      renderServerRail();
+      toast('Icon removed');
+    }catch(e){toast('Failed: '+e.message,true);}
+  });
+})();
+
+// Owner: delete server
+(function(){
+  const btn=document.getElementById('serverDeleteBtn');
+  if(!btn)return;
+  btn.addEventListener('click',async()=>{
+    if(!activeServer)return;
+    const srv=cachedServers.find(s=>s.id===activeServer);
+    if(!srv||srv.owner_id!==me.clientId){toast('Only the owner can delete',true);return;}
+    if(!confirm('Delete "'+srv.name+'" permanently? All channels and messages in this server will be removed.'))return;
+    if(!confirm('This cannot be undone. Delete server?'))return;
+    try{
+      // Delete channels + messages for this server
+      const{data:chs}=await supa.from('channels').select('id').eq('server_id',srv.id);
+      if(chs&&chs.length){
+        for(const ch of chs){
+          try{await supa.from('messages').delete().eq('channel_id',ch.id);}catch(e){}
+        }
+        await supa.from('channels').delete().eq('server_id',srv.id);
+      }
+      try{await supa.from('server_members').delete().eq('server_id',srv.id);}catch(e){}
+      const{error}=await supa.from('servers').delete().eq('id',srv.id);
+      if(error)throw error;
+      toast('Server deleted');
+      el.serverInfoModal.classList.remove('show');
+      activeServer=null;
+      await refreshServers();
+      await switchToHome();
+    }catch(e){toast('Delete failed: '+e.message,true);el.serverInfoError.textContent='Delete failed: '+e.message;}
+  });
+})();
+
 
 function openServerMembersModal(){
   const srv=cachedServers.find(s=>s.id===activeServer);
