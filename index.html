@@ -712,6 +712,62 @@ a:hover{text-decoration:underline}
 .profile-banner-preview .banner-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);color:#fff;font-size:12px;font-weight:700;letter-spacing:.04em;opacity:0;transition:opacity .15s}
 .profile-banner-preview:hover .banner-hint{opacity:1}
 
+
+/* ===== SOCIAL + DIFFERENTIATORS ===== */
+.reply-bar{display:none;align-items:center;gap:10px;padding:8px 12px;margin:0 16px 6px;background:var(--bg-alt);border-left:3px solid var(--blurple);border-radius:0 8px 8px 0;font-size:13px}
+.reply-bar.show{display:flex}
+.reply-bar .reply-meta{flex:1;min-width:0;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.reply-bar .reply-meta b{color:var(--blurple)}
+.reply-bar .reply-cancel{background:transparent;color:var(--text-muted);font-size:16px;padding:4px 8px;cursor:pointer}
+.msg-reply-ref{font-size:12px;color:var(--text-muted);margin-bottom:4px;padding:4px 8px;border-left:2px solid var(--blurple);cursor:pointer;opacity:.9}
+.msg-reply-ref:hover{opacity:1;color:var(--text)}
+.mention-everyone{background:rgba(240,178,50,.25);color:#f0b232;padding:0 4px;border-radius:3px;font-weight:700}
+.status-picker{position:absolute;bottom:56px;left:8px;background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px;display:none;z-index:50;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.status-picker.show{display:block}
+.status-picker button{display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border-radius:4px;font-size:13px;color:var(--text);text-align:left}
+.status-picker button:hover{background:#35373c}
+.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.status-dot.online{background:var(--green)}
+.status-dot.idle{background:var(--yellow)}
+.status-dot.dnd{background:var(--red)}
+.status-dot.offline{background:#747f8d}
+.user-panel-status .custom-status{color:var(--text-muted);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.density-compact .msg{padding-top:2px;padding-bottom:2px}
+.density-compact .msg-text{font-size:14px;line-height:1.3}
+.density-compact .msg-header{margin-bottom:0}
+.density-cozy .msg{padding-top:10px;padding-bottom:10px}
+.density-cozy .msg-text{font-size:16px;line-height:1.5}
+.snow-overlay{pointer-events:none;position:fixed;inset:0;z-index:1500;overflow:hidden;display:none}
+.snow-overlay.show{display:block}
+.snowflake{position:absolute;top:-10px;color:#fff;user-select:none;animation:snowfall linear infinite;opacity:.85;text-shadow:0 0 4px rgba(255,255,255,.5)}
+@keyframes snowfall{to{transform:translateY(110vh) rotate(360deg)}}
+.whiteboard-modal .wb-wrap{display:flex;flex-direction:column;gap:10px;padding:12px}
+.whiteboard-modal canvas{background:#fff;border-radius:8px;cursor:crosshair;width:100%;max-height:55vh;touch-action:none}
+.wb-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.wb-tools button,.wb-tools label{padding:6px 10px;border-radius:6px;background:#2b2d31;font-size:12px;font-weight:700;cursor:pointer}
+.wb-tools button.active{outline:2px solid var(--blurple)}
+.wb-tools input[type="color"]{width:36px;height:28px;border:none;background:none;cursor:pointer}
+.wb-tools input[type="range"]{width:80px;accent-color:var(--blurple)}
+.playlist-panel{padding:12px;display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow:auto}
+.playlist-item{display:flex;gap:8px;align-items:center;padding:8px;background:var(--bg-alt);border-radius:8px;font-size:13px}
+.playlist-item a{color:#00a8fc;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini-apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;padding:16px}
+.mini-app-card{background:var(--bg-alt);border-radius:12px;padding:16px;text-align:center;cursor:pointer;border:1px solid rgba(255,255,255,.06);transition:.15s}
+.mini-app-card:hover{border-color:var(--blurple);transform:translateY(-2px)}
+.mini-app-card .icon{font-size:36px;margin-bottom:8px}
+.mini-app-card .title{font-weight:800;font-size:14px}
+.mini-app-card .desc{font-size:11px;color:var(--text-muted);margin-top:4px}
+.ttt-board{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:240px;margin:12px auto}
+.ttt-cell{aspect-ratio:1;background:#2b2d31;border-radius:8px;font-size:32px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ttt-cell:hover{background:#35373c}
+.role-perm-hint{font-size:10px;color:var(--text-muted);margin-left:4px}
+.blocked-msg{opacity:.45;font-style:italic;color:var(--text-muted);padding:8px 16px;font-size:13px}
+.note-box{width:100%;min-height:60px;background:var(--bg-alt);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:var(--text);padding:8px;font-size:13px;resize:vertical}
+.header-tools{display:flex;gap:4px;align-items:center}
+.header-tools .header-icon-btn{width:32px;height:32px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#b5bac1;font-size:16px;cursor:pointer;background:transparent;border:none}
+.header-tools .header-icon-btn:hover{background:#35373c;color:var(--text)}
+.header-tools .header-icon-btn.on{color:var(--blurple)}
+
 #pfpFileInput,#fileUploadInput,#serverIconFileInput{display:none}
 </style>
 </head>
@@ -735,14 +791,25 @@ a:hover{text-decoration:underline}
       <span class="server-header-arrow">▼</span>
     </div>
     <div class="channel-list" id="channelList"></div>
-    <div class="user-panel">
+    <div class="user-panel" style="position:relative">
       <div class="user-panel-avatar" id="userPanelAvatar" title="Profile settings">?</div>
       <div class="user-panel-info" id="userPanelInfo">
         <div class="user-panel-name" id="userPanelName">Not set</div>
-        <div class="user-panel-status"><span class="dot" id="connectionDot"></span><span id="userPanelStatus">Offline</span></div>
+        <div class="user-panel-status"><span class="dot" id="connectionDot"></span><span id="userPanelStatus">Offline</span><span class="custom-status" id="customStatusText"></span></div>
       </div>
+      <div class="user-panel-icon-btn" id="statusBtn" title="Set status">💭</div>
       <div class="user-panel-icon-btn" id="friendsBtn" title="Friends & DMs">👥<span class="badge" id="friendsBadge" style="display:none">0</span></div>
       <div class="user-panel-icon-btn" id="settingsBtn" title="Settings">⚙</div>
+      <div class="status-picker" id="statusPicker">
+        <button type="button" data-status="online"><span class="status-dot online"></span> Online</button>
+        <button type="button" data-status="idle"><span class="status-dot idle"></span> Idle</button>
+        <button type="button" data-status="dnd"><span class="status-dot dnd"></span> Do Not Disturb</button>
+        <button type="button" data-status="offline"><span class="status-dot offline"></span> Invisible</button>
+        <div style="border-top:1px solid rgba(255,255,255,.08);margin:4px 0;padding-top:6px;">
+          <input type="text" id="customStatusInput" maxlength="48" placeholder="Custom status…" style="width:100%;padding:6px 8px;border-radius:4px;border:1px solid #3f4147;background:#1e1f22;color:var(--text);font-size:12px;">
+          <button type="button" id="customStatusSave" style="width:100%;margin-top:4px;padding:6px;background:var(--blurple);color:#fff;border-radius:4px;font-size:12px;font-weight:700;">Save status</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -752,6 +819,13 @@ a:hover{text-decoration:underline}
       <span class="chat-header-title" id="chatHeaderTitle">global-chat</span>
       <span class="chat-header-sub" id="chatHeaderSub"></span>
       <div class="chat-header-spacer"></div>
+      <div class="header-tools">
+        <button class="header-icon-btn" id="whiteboardBtn" title="Whiteboard — draw & send">🖌️</button>
+        <button class="header-icon-btn" id="playlistBtn" title="Shared playlist">🎵</button>
+        <button class="header-icon-btn" id="miniAppsBtn" title="Mini apps">🎮</button>
+        <button class="header-icon-btn" id="densityBtn" title="Message density (compact/cozy)">☰</button>
+        <button class="header-icon-btn" id="snowBtn" title="Seasonal snow">❄️</button>
+      </div>
       <button class="header-icon-btn" id="realtimeIndicator" title="Realtime connection status">📡</button>
       <button class="header-icon-btn" id="startGroupCallBtn" title="Start group call in this channel">📹</button>
       <button class="header-icon-btn" id="memberToggle" title="Toggle members">👥</button>
@@ -779,6 +853,10 @@ a:hover{text-decoration:underline}
       <span id="composerLockText">This channel is locked.</span>
     </div>
 
+    <div class="reply-bar" id="replyBar">
+      <div class="reply-meta" id="replyBarMeta">Replying…</div>
+      <button type="button" class="reply-cancel" id="replyBarCancel" title="Cancel reply">✕</button>
+    </div>
     <div class="composer">
       <div class="composer-inner" id="composerInner">
         <div class="composer-plus" id="attachBtn" title="Attach file (max 10MB)">＋</div>
@@ -795,6 +873,7 @@ a:hover{text-decoration:underline}
       <div class="emoji-picker-tabs" id="emojiPickerTabs">
         <button type="button" class="emoji-tab active" data-emoji-tab="standard">Standard</button>
         <button type="button" class="emoji-tab" data-emoji-tab="custom">Custom</button>
+        <button type="button" class="emoji-tab" data-emoji-tab="server">Server</button>
       </div>
       <div class="emoji-picker-body" id="emojiPickerBody"></div>
       <input type="file" id="customEmojiFileInput" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif" style="display:none" multiple>
@@ -1287,6 +1366,70 @@ a:hover{text-decoration:underline}
 </div>
 
 <!-- SNAKE — now an iframe embed -->
+
+<!-- WHITEBOARD -->
+<div class="modal-backdrop" id="whiteboardModal">
+  <div class="modal whiteboard-modal" style="width:min(900px,96vw);max-width:96vw;">
+    <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08);">
+      <div class="modal-title" style="font-weight:800;">🖌️ Whiteboard</div>
+      <button type="button" id="whiteboardClose" style="background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;">✕</button>
+    </div>
+    <div class="wb-wrap">
+      <div class="wb-tools">
+        <button type="button" class="active" data-wb-tool="pen">✏️ Pen</button>
+        <button type="button" data-wb-tool="eraser">🧽 Eraser</button>
+        <label>Color <input type="color" id="wbColor" value="#111111"></label>
+        <label>Size <input type="range" id="wbSize" min="1" max="40" value="4"></label>
+        <button type="button" id="wbClear">Clear</button>
+        <button type="button" id="wbUndo">Undo</button>
+        <button type="button" id="wbSend" style="background:var(--blurple);color:#fff;margin-left:auto;">Send to chat ➤</button>
+      </div>
+      <canvas id="wbCanvas" width="860" height="480"></canvas>
+      <p style="font-size:12px;color:var(--text-muted);">Draw something fun when you're bored — then send it as an image in the current channel.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYLIST -->
+<div class="modal-backdrop" id="playlistModal">
+  <div class="modal" style="width:min(480px,94vw);">
+    <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08);">
+      <div class="modal-title" style="font-weight:800;">🎵 Shared Playlist</div>
+      <button type="button" id="playlistClose" style="background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;">✕</button>
+    </div>
+    <div class="playlist-panel">
+      <div style="display:flex;gap:8px;">
+        <input type="url" id="playlistUrlInput" placeholder="Paste YouTube / music link…" style="flex:1;padding:8px 10px;border-radius:6px;border:1px solid #3f4147;background:#1e1f22;color:var(--text);">
+        <button type="button" id="playlistAddBtn" class="admin-btn success">Add</button>
+      </div>
+      <div id="playlistList"></div>
+      <button type="button" id="playlistShareBtn" class="admin-btn" style="margin-top:8px;">📢 Share playlist in chat</button>
+    </div>
+  </div>
+</div>
+
+<!-- MINI APPS -->
+<div class="modal-backdrop" id="miniAppsModal">
+  <div class="modal" style="width:min(560px,94vw);">
+    <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08);">
+      <div class="modal-title" style="font-weight:800;">🎮 Mini Apps</div>
+      <button type="button" id="miniAppsClose" style="background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;">✕</button>
+    </div>
+    <div class="mini-apps-grid" id="miniAppsGrid">
+      <div class="mini-app-card" data-app="snake"><div class="icon">🐍</div><div class="title">Snake</div><div class="desc">Classic snake mods</div></div>
+      <div class="mini-app-card" data-app="ttt"><div class="icon">⭕</div><div class="title">Tic-Tac-Toe</div><div class="desc">Play vs yourself / friend</div></div>
+      <div class="mini-app-card" data-app="guess"><div class="icon">🔢</div><div class="title">Guess Number</div><div class="desc">1–100 high/low</div></div>
+      <div class="mini-app-card" data-app="whiteboard"><div class="icon">🖌️</div><div class="title">Whiteboard</div><div class="desc">Draw & send</div></div>
+      <div class="mini-app-card" data-app="coinflip"><div class="icon">🪙</div><div class="title">Coin Flip</div><div class="desc">Quick heads/tails</div></div>
+      <div class="mini-app-card" data-app="dice"><div class="icon">🎲</div><div class="title">Dice Roll</div><div class="desc">Roll a d6</div></div>
+    </div>
+    <div id="miniAppPlayArea" style="padding:12px 16px 20px;display:none;"></div>
+  </div>
+</div>
+
+<!-- SNOW OVERLAY -->
+<div class="snow-overlay" id="snowOverlay" aria-hidden="true"></div>
+
 <div class="modal-backdrop" id="snakeModal">
   <div class="snake-modal">
     <div class="snake-header">
@@ -1466,6 +1609,15 @@ const el={
   callBgPickImage:$('callBgPickImage'),callBgClearImage:$('callBgClearImage'),callBgFileInput:$('callBgFileInput'),
   callBgPreview:$('callBgPreview'),callBgBlurRow:$('callBgBlurRow'),callBgImageRow:$('callBgImageRow'),
   customEmojiFileInput:$('customEmojiFileInput'),emojiPickerTabs:$('emojiPickerTabs'),
+  statusBtn:$('statusBtn'),statusPicker:$('statusPicker'),customStatusInput:$('customStatusInput'),customStatusSave:$('customStatusSave'),customStatusText:$('customStatusText'),
+  replyBar:$('replyBar'),replyBarMeta:$('replyBarMeta'),replyBarCancel:$('replyBarCancel'),
+  whiteboardBtn:$('whiteboardBtn'),whiteboardModal:$('whiteboardModal'),whiteboardClose:$('whiteboardClose'),
+  wbCanvas:$('wbCanvas'),wbColor:$('wbColor'),wbSize:$('wbSize'),wbClear:$('wbClear'),wbUndo:$('wbUndo'),wbSend:$('wbSend'),
+  playlistBtn:$('playlistBtn'),playlistModal:$('playlistModal'),playlistClose:$('playlistClose'),
+  playlistUrlInput:$('playlistUrlInput'),playlistAddBtn:$('playlistAddBtn'),playlistList:$('playlistList'),playlistShareBtn:$('playlistShareBtn'),
+  miniAppsBtn:$('miniAppsBtn'),miniAppsModal:$('miniAppsModal'),miniAppsClose:$('miniAppsClose'),miniAppsGrid:$('miniAppsGrid'),miniAppPlayArea:$('miniAppPlayArea'),
+  densityBtn:$('densityBtn'),snowBtn:$('snowBtn'),snowOverlay:$('snowOverlay'),
+
   timeoutModal:$('timeoutModal'),timeoutClose:$('timeoutClose'),
   timeoutTargetName:$('timeoutTargetName'),timeoutCustomInput:$('timeoutCustomInput'),
   timeoutApplyCustom:$('timeoutApplyCustom'),timeoutRemove:$('timeoutRemove'),timeoutError:$('timeoutError'),
@@ -1491,7 +1643,17 @@ const LS={
   USER_RANKS:'nexus_user_ranks_v1',
   CUSTOM_RANKS:'nexus_custom_ranks_v1',
   CUSTOM_EMOJIS:'nexus_custom_emojis_v1',
-  CALL_BG:'nexus_call_bg_v1'
+  CALL_BG:'nexus_call_bg_v1',
+  USER_STATUS:'nexus_user_status_v1',
+  USER_NOTES:'nexus_user_notes_v1',
+  BLOCKED_USERS:'nexus_blocked_users_v1',
+  MUTE_EVERYONE:'nexus_mute_everyone_v1',
+  MUTE_HERE:'nexus_mute_here_v1',
+  MSG_DENSITY:'nexus_msg_density_v1',
+  SEASONAL_SNOW:'nexus_seasonal_snow_v1',
+  SERVER_EMOJIS:'nexus_server_emojis_v1',
+  PLAYLIST:'nexus_playlist_v1',
+  ROLE_PERMS:'nexus_role_perms_v1'
 };
 function lsGet(k,fb){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb;}catch(e){return fb;}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
@@ -1671,8 +1833,13 @@ function renderMessageText(text){
     const href=url.startsWith('www.')?'http://'+url:url;
     return '<a href="'+href+'" target="_blank" rel="noopener noreferrer">'+url+'</a>'+trailing;
   });
+  // @everyone / @here
+  html=html.replace(/@(everyone|here)\b/gi,function(full,kind){
+    return '<span class="mention-everyone">@'+kind.toLowerCase()+'</span>';
+  });
   // @mentions
   html=html.replace(/@([\w.\-\u00C0-\u024F\u1E00-\u1EFF]+)/g,function(full,name){
+    if(name.toLowerCase()==='everyone'||name.toLowerCase()==='here')return full;
     const isMe=me.username&&name.toLowerCase()===String(me.username).toLowerCase();
     return '<span class="mention'+(isMe?' me':'')+'" data-mention="'+escapeHtml(name)+'">@'+escapeHtml(name)+'</span>';
   });
@@ -1995,6 +2162,390 @@ const EMOJI_CATS={
   'Nature':['🌸','💮','🏵️','🌹','🥀','🌺','🌻','🌼','🌷','🌱','🪴','🌲','🌳','🌴','🌵','🌾','🌿','☘️','🍀','🎍','🎋','🍃','🍂','🍁','🍄','🐚','🌎','🌍','🌏','🌕','🌖','🌗','🌘','🌑','🌒','🌓','🌔','🌙','🌚','🌛','🌜','☀️','🌝','🌞','⭐','🌟','🌠','🌌','☁️','⛅','⛈️','🌤️','🌥️','🌦️','🌧️','🌨️','🌩️','🌪️','🌫️','🌈','☂️','☔','⚡','❄️','☃️','⛄','☄️','🔥','💧','🌊']
 };
 // ============================================================
+
+// ============================================================
+// SOCIAL / DISCORD-LIKE + DIFFERENTIATORS
+// Roles permissions, replies, @everyone/@here, status, notes,
+// block list, server emojis, whiteboard, playlist, mini-apps,
+// seasonal snow, compact/cozy density
+// ============================================================
+
+const DEFAULT_ROLE_PERMS={
+  owner:{canDelete:true,canPin:true,canTimeout:true,canBan:true,canAnnounce:true,canManageChannels:true,canManageRanks:true,color:'#f0b232'},
+  admin:{canDelete:true,canPin:true,canTimeout:true,canBan:true,canAnnounce:true,canManageChannels:true,canManageRanks:true,color:'#f23f43'},
+  mod:{canDelete:true,canPin:true,canTimeout:true,canBan:false,canAnnounce:false,canManageChannels:false,canManageRanks:false,color:'#23a55a'},
+  vip:{canDelete:false,canPin:false,canTimeout:false,canBan:false,canAnnounce:false,canManageChannels:false,canManageRanks:false,color:'#eb459e'},
+  '1of1':{canDelete:false,canPin:false,canTimeout:false,canBan:false,canAnnounce:false,canManageChannels:false,canManageRanks:false,color:'#ff00aa'},
+  member:{canDelete:false,canPin:false,canTimeout:false,canBan:false,canAnnounce:false,canManageChannels:false,canManageRanks:false,color:'#4e5058'}
+};
+function getRolePerms(rank){
+  const custom=lsGet(LS.ROLE_PERMS,{});
+  if(custom&&custom[rank])return {...DEFAULT_ROLE_PERMS.member,...DEFAULT_ROLE_PERMS[rank],...custom[rank]};
+  return DEFAULT_ROLE_PERMS[rank]||DEFAULT_ROLE_PERMS.member;
+}
+function myRank(){return resolveUserRank(me.clientId,(cachedUsers[me.clientId]||{}).rank||'member');}
+function iCan(perm){
+  if(isAdmin)return true;
+  const p=getRolePerms(myRank());
+  return !!(p&&p[perm]);
+}
+
+// ---- Presence status ----
+let myPresence=lsGet(LS.USER_STATUS,{status:'online',custom:''});
+function setMyPresence(status,custom){
+  myPresence={status:status||'online',custom:custom!=null?custom:(myPresence.custom||'')};
+  lsSet(LS.USER_STATUS,myPresence);
+  applyPresenceUI();
+  // best-effort push to online_users
+  if(supa&&me.clientId){
+    supa.from('online_users').update({status:myPresence.status,custom_status:myPresence.custom||null}).eq('client_id',me.clientId).then(()=>{}).catch(()=>{});
+  }
+}
+function applyPresenceUI(){
+  const st=myPresence.status||'online';
+  const labels={online:'Online',idle:'Idle',dnd:'Do Not Disturb',offline:'Invisible'};
+  if(el.userPanelStatus&&identitySet){
+    // keep connection text but show presence when online
+    if(el.customStatusText)el.customStatusText.textContent=myPresence.custom?(' · '+myPresence.custom):'';
+  }
+  if(el.connectionDot){
+    el.connectionDot.classList.remove('reconnecting','offline');
+    if(st==='dnd')el.connectionDot.style.background='var(--red)';
+    else if(st==='idle')el.connectionDot.style.background='var(--yellow)';
+    else if(st==='offline')el.connectionDot.style.background='#747f8d';
+    else el.connectionDot.style.background='';
+  }
+  if(el.statusPicker){
+    el.statusPicker.querySelectorAll('[data-status]').forEach(b=>{
+      b.style.outline=b.dataset.status===st?'1px solid var(--blurple)':'none';
+    });
+  }
+  if(el.customStatusInput)el.customStatusInput.value=myPresence.custom||'';
+}
+function bindStatusUI(){
+  if(!el.statusBtn)return;
+  el.statusBtn.addEventListener('click',ev=>{
+    ev.stopPropagation();
+    el.statusPicker.classList.toggle('show');
+  });
+  el.statusPicker.querySelectorAll('[data-status]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      setMyPresence(btn.dataset.status, myPresence.custom);
+      el.statusPicker.classList.remove('show');
+      toast('Status: '+btn.dataset.status);
+    });
+  });
+  if(el.customStatusSave){
+    el.customStatusSave.addEventListener('click',()=>{
+      setMyPresence(myPresence.status||'online', (el.customStatusInput.value||'').trim());
+      el.statusPicker.classList.remove('show');
+      toast('Custom status saved');
+    });
+  }
+  document.addEventListener('click',ev=>{
+    if(!el.statusPicker||!el.statusPicker.classList.contains('show'))return;
+    if(el.statusPicker.contains(ev.target)||ev.target===el.statusBtn)return;
+    el.statusPicker.classList.remove('show');
+  });
+  applyPresenceUI();
+}
+
+// ---- User notes (private) ----
+function getUserNotes(){const n=lsGet(LS.USER_NOTES,{});return (n&&typeof n==='object')?n:{};}
+function getNoteFor(uid){return getUserNotes()[uid]||'';}
+function setNoteFor(uid,note){
+  const n=getUserNotes();
+  if(!note)delete n[uid];else n[uid]=note;
+  lsSet(LS.USER_NOTES,n);
+}
+
+// ---- Block list ----
+function getBlocked(){const b=lsGet(LS.BLOCKED_USERS,[]);return Array.isArray(b)?b:[];}
+function isBlocked(uidOrName){
+  if(!uidOrName)return false;
+  const b=getBlocked();
+  return b.includes(uidOrName)||b.some(x=>String(x).toLowerCase()===String(uidOrName).toLowerCase());
+}
+function blockUser(uid,username){
+  const b=getBlocked();
+  if(uid&&!b.includes(uid))b.push(uid);
+  if(username&&!b.includes(username))b.push(username);
+  lsSet(LS.BLOCKED_USERS,b);
+  try{renderMessages();}catch(e){}
+  toast('Blocked '+ (username||uid));
+}
+function unblockUser(uid,username){
+  let b=getBlocked().filter(x=>x!==uid&&x!==username);
+  lsSet(LS.BLOCKED_USERS,b);
+  try{renderMessages();}catch(e){}
+  toast('Unblocked');
+}
+
+// ---- @everyone / @here mutes ----
+let muteEveryone=!!lsGet(LS.MUTE_EVERYONE,false);
+let muteHere=!!lsGet(LS.MUTE_HERE,false);
+
+// ---- Message density ----
+function applyDensity(d){
+  document.body.classList.remove('density-compact','density-cozy');
+  if(d==='compact')document.body.classList.add('density-compact');
+  if(d==='cozy')document.body.classList.add('density-cozy');
+  lsSet(LS.MSG_DENSITY,d||'default');
+  if(el.densityBtn){
+    el.densityBtn.classList.toggle('on',d&&d!=='default');
+    el.densityBtn.title='Density: '+(d||'default')+' (click to cycle)';
+  }
+}
+function cycleDensity(){
+  const cur=lsGet(LS.MSG_DENSITY,'default');
+  const next=cur==='default'?'compact':(cur==='compact'?'cozy':'default');
+  applyDensity(next);
+  toast('Message density: '+next);
+}
+
+// ---- Seasonal snow ----
+function setSnow(on){
+  lsSet(LS.SEASONAL_SNOW,!!on);
+  if(!el.snowOverlay)return;
+  el.snowOverlay.classList.toggle('show',!!on);
+  el.snowOverlay.innerHTML='';
+  if(on){
+    for(let i=0;i<48;i++){
+      const s=document.createElement('div');
+      s.className='snowflake';
+      s.textContent=['❄','❅','❆','·'][i%4];
+      s.style.left=Math.random()*100+'%';
+      s.style.fontSize=(8+Math.random()*14)+'px';
+      s.style.animationDuration=(6+Math.random()*10)+'s';
+      s.style.animationDelay=(Math.random()*8)+'s';
+      el.snowOverlay.appendChild(s);
+    }
+  }
+  if(el.snowBtn)el.snowBtn.classList.toggle('on',!!on);
+}
+
+// ---- Reply-to ----
+let replyToMsg=null;
+function setReplyTo(msg){
+  replyToMsg=msg||null;
+  if(!el.replyBar)return;
+  if(!replyToMsg){el.replyBar.classList.remove('show');return;}
+  const preview=(replyToMsg.text||'(attachment)').slice(0,80);
+  el.replyBarMeta.innerHTML='Replying to <b>'+escapeHtml(replyToMsg.username||'user')+'</b> — '+escapeHtml(preview);
+  el.replyBar.classList.add('show');
+  if(el.messageInput)el.messageInput.focus();
+}
+function clearReply(){setReplyTo(null);}
+function encodeReplyPrefix(msg){
+  if(!msg)return '';
+  const prev=(msg.text||'').replace(/[\[\]\|]/g,'').slice(0,60);
+  return '⟦REPLY:'+msg.id+'|'+(msg.username||'').replace(/[\[\]\|]/g,'')+'|'+prev+'⟧\n';
+}
+
+// ---- Server emojis (shared via local catalog; embeds on send like custom) ----
+function getServerEmojis(){
+  const key=activeServer||'home';
+  const all=lsGet(LS.SERVER_EMOJIS,{});
+  return Array.isArray(all[key])?all[key]:[];
+}
+function saveServerEmojis(list){
+  const key=activeServer||'home';
+  const all=lsGet(LS.SERVER_EMOJIS,{});
+  all[key]=list;
+  lsSet(LS.SERVER_EMOJIS,all);
+}
+
+// ---- Playlist ----
+function getPlaylist(){
+  const key=activeChannel||'global';
+  const all=lsGet(LS.PLAYLIST,{});
+  return Array.isArray(all[key])?all[key]:[];
+}
+function savePlaylist(list){
+  const key=activeChannel||'global';
+  const all=lsGet(LS.PLAYLIST,{});
+  all[key]=list;
+  lsSet(LS.PLAYLIST,all);
+}
+function renderPlaylist(){
+  if(!el.playlistList)return;
+  const list=getPlaylist();
+  if(!list.length){el.playlistList.innerHTML='<div style="color:var(--text-muted);font-size:13px;">No tracks yet — paste a link above.</div>';return;}
+  el.playlistList.innerHTML=list.map((item,i)=>
+    '<div class="playlist-item"><span style="color:var(--text-muted)">'+(i+1)+'.</span>'+
+    '<a href="'+escapeHtml(item.url)+'" target="_blank" rel="noopener">'+escapeHtml(item.title||item.url)+'</a>'+
+    '<button type="button" data-pl-del="'+i+'" style="color:var(--red);background:transparent;border:none;cursor:pointer;">✕</button></div>'
+  ).join('');
+  el.playlistList.querySelectorAll('[data-pl-del]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const list=getPlaylist();
+      list.splice(+b.dataset.plDel,1);
+      savePlaylist(list);
+      renderPlaylist();
+    });
+  });
+}
+
+// ---- Whiteboard ----
+const WB={drawing:false,tool:'pen',paths:[],current:null};
+function initWhiteboard(){
+  const canvas=el.wbCanvas;if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  function pos(ev){
+    const r=canvas.getBoundingClientRect();
+    const x=(ev.clientX-r.left)*(canvas.width/r.width);
+    const y=(ev.clientY-r.top)*(canvas.height/r.height);
+    return {x,y};
+  }
+  function start(ev){
+    WB.drawing=true;
+    const p=pos(ev.touches?ev.touches[0]:ev);
+    WB.current={tool:WB.tool,color:el.wbColor.value,size:+el.wbSize.value,points:[p]};
+    ev.preventDefault();
+  }
+  function move(ev){
+    if(!WB.drawing||!WB.current)return;
+    const p=pos(ev.touches?ev.touches[0]:ev);
+    WB.current.points.push(p);
+    redrawWB();
+    // draw current
+    strokePath(ctx,WB.current);
+    ev.preventDefault();
+  }
+  function end(){
+    if(WB.current&&WB.current.points.length){WB.paths.push(WB.current);}
+    WB.current=null;WB.drawing=false;
+  }
+  canvas.addEventListener('mousedown',start);
+  canvas.addEventListener('mousemove',move);
+  window.addEventListener('mouseup',end);
+  canvas.addEventListener('touchstart',start,{passive:false});
+  canvas.addEventListener('touchmove',move,{passive:false});
+  canvas.addEventListener('touchend',end);
+  document.querySelectorAll('[data-wb-tool]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      WB.tool=b.dataset.wbTool;
+      document.querySelectorAll('[data-wb-tool]').forEach(x=>x.classList.toggle('active',x===b));
+    });
+  });
+  if(el.wbClear)el.wbClear.addEventListener('click',()=>{WB.paths=[];WB.current=null;redrawWB();});
+  if(el.wbUndo)el.wbUndo.addEventListener('click',()=>{WB.paths.pop();redrawWB();});
+  if(el.wbSend)el.wbSend.addEventListener('click',sendWhiteboardToChat);
+}
+function strokePath(ctx,path){
+  if(!path||!path.points.length)return;
+  ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.strokeStyle=path.tool==='eraser'?'#ffffff':path.color;
+  ctx.lineWidth=path.tool==='eraser'?Math.max(12,path.size*3):path.size;
+  ctx.beginPath();
+  ctx.moveTo(path.points[0].x,path.points[0].y);
+  for(let i=1;i<path.points.length;i++)ctx.lineTo(path.points[i].x,path.points[i].y);
+  ctx.stroke();
+}
+function redrawWB(){
+  const canvas=el.wbCanvas;if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  WB.paths.forEach(p=>strokePath(ctx,p));
+}
+async function sendWhiteboardToChat(){
+  if(!el.wbCanvas)return;
+  if(!me.username){toast('Set a profile first',true);return;}
+  if(!activeChannel){toast('No channel selected',true);return;}
+  try{
+    const dataUrl=el.wbCanvas.toDataURL('image/png');
+    const file={data:dataUrl,name:'whiteboard-'+Date.now()+'.png',type:'image/png',size:Math.ceil(dataUrl.length*0.75)};
+    // use existing pendingFile + sendMessage path
+    pendingFile=file;
+    const prev=el.messageInput.value;
+    el.messageInput.value=(prev?prev+' ':'')+'🖌️ Whiteboard sketch';
+    if(replyToMsg){
+      el.messageInput.value=encodeReplyPrefix(replyToMsg)+el.messageInput.value;
+      clearReply();
+    }
+    await sendMessage();
+    toast('Whiteboard sent!');
+    if(el.whiteboardModal)el.whiteboardModal.classList.remove('show');
+  }catch(e){toast('Send failed: '+(e.message||e),true);}
+}
+function openWhiteboard(){
+  if(el.whiteboardModal)el.whiteboardModal.classList.add('show');
+  redrawWB();
+}
+
+// ---- Mini apps ----
+function openMiniApps(){
+  if(el.miniAppPlayArea){el.miniAppPlayArea.style.display='none';el.miniAppPlayArea.innerHTML='';}
+  if(el.miniAppsModal)el.miniAppsModal.classList.add('show');
+}
+function playMiniApp(app){
+  if(app==='snake'){
+    if(el.miniAppsModal)el.miniAppsModal.classList.remove('show');
+    if(el.snakeModal)el.snakeModal.classList.add('show');
+    return;
+  }
+  if(app==='whiteboard'){
+    if(el.miniAppsModal)el.miniAppsModal.classList.remove('show');
+    openWhiteboard();
+    return;
+  }
+  if(app==='coinflip'){
+    const r=Math.random()<0.5?'Heads':'Tails';
+    toast('🪙 '+r);
+    return;
+  }
+  if(app==='dice'){
+    toast('🎲 Rolled '+ (1+Math.floor(Math.random()*6)));
+    return;
+  }
+  if(!el.miniAppPlayArea)return;
+  el.miniAppPlayArea.style.display='block';
+  if(app==='ttt'){
+    let board=Array(9).fill('');
+    let turn='X';
+    el.miniAppPlayArea.innerHTML='<div style="text-align:center;font-weight:700;margin-bottom:8px;">Tic-Tac-Toe</div><div class="ttt-board" id="tttBoard"></div><div id="tttStatus" style="text-align:center;margin-top:8px;color:var(--text-muted);"></div><button type="button" id="tttReset" class="admin-btn" style="display:block;margin:10px auto;">Reset</button>';
+    function winner(){
+      const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      for(const [a,b,c] of L){if(board[a]&&board[a]===board[b]&&board[a]===board[c])return board[a];}
+      if(board.every(Boolean))return 'draw';
+      return null;
+    }
+    function paint(){
+      const root=$('tttBoard');
+      root.innerHTML=board.map((v,i)=>'<div class="ttt-cell" data-i="'+i+'">'+v+'</div>').join('');
+      root.querySelectorAll('.ttt-cell').forEach(cell=>{
+        cell.addEventListener('click',()=>{
+          const i=+cell.dataset.i;
+          if(board[i]||winner())return;
+          board[i]=turn;
+          turn=turn==='X'?'O':'X';
+          const w=winner();
+          $('tttStatus').textContent=w==='draw'?'Draw!':(w?(w+' wins!'):(turn+"'s turn"));
+          paint();
+        });
+      });
+    }
+    paint();
+    $('tttReset').onclick=()=>{board=Array(9).fill('');turn='X';$('tttStatus').textContent="X's turn";paint();};
+  }
+  if(app==='guess'){
+    const secret=1+Math.floor(Math.random()*100);
+    let tries=0;
+    el.miniAppPlayArea.innerHTML='<div style="text-align:center;"><div style="font-weight:700;margin-bottom:8px;">Guess 1–100</div><input id="guessInput" type="number" min="1" max="100" style="padding:8px;border-radius:6px;border:1px solid #3f4147;background:#1e1f22;color:var(--text);width:100px;"><button id="guessBtn" class="admin-btn success" style="margin-left:8px;">Guess</button><div id="guessMsg" style="margin-top:10px;color:var(--text-muted);"></div></div>';
+    $('guessBtn').onclick=()=>{
+      const n=parseInt($('guessInput').value,10);tries++;
+      if(isNaN(n))return;
+      if(n===secret)$('guessMsg').textContent='🎉 Correct in '+tries+' tries!';
+      else if(n<secret)$('guessMsg').textContent='Higher… ('+tries+')';
+      else $('guessMsg').textContent='Lower… ('+tries+')';
+    };
+  }
+}
+
+
 // CUSTOM EMOJIS (permanent until edited/deleted)
 // Stored in localStorage — PNG / JPEG / WEBP / GIF supported
 // Insert format in messages: :cemoji_ID:
@@ -2008,7 +2559,7 @@ function saveCustomEmojis(list){
   lsSet(LS.CUSTOM_EMOJIS,list);
 }
 function findCustomEmoji(id){
-  return getCustomEmojis().find(e=>e&&e.id===id)||null;
+  return getCustomEmojis().find(e=>e&&e.id===id)||getServerEmojis().find(e=>e&&e.id===id)||null;
 }
 function insertAtCursor(text){
   const input=el.messageInput;
@@ -2048,7 +2599,22 @@ function buildEmojiPicker(){
       const addBtn=ev.target.closest('[data-add-cemoji]');
       if(addBtn){
         ev.preventDefault();ev.stopPropagation();
-        if(el.customEmojiFileInput)el.customEmojiFileInput.click();
+        if(el.customEmojiFileInput){el.customEmojiFileInput.dataset.target='custom';el.customEmojiFileInput.click();}
+        return;
+      }
+      const addS=ev.target.closest('[data-add-semoji]');
+      if(addS){
+        ev.preventDefault();ev.stopPropagation();
+        if(el.customEmojiFileInput){el.customEmojiFileInput.dataset.target='server';el.customEmojiFileInput.click();}
+        return;
+      }
+      const delS=ev.target.closest('[data-del-semoji]');
+      if(delS){
+        ev.preventDefault();ev.stopPropagation();
+        const id=delS.dataset.delSemoji;
+        saveServerEmojis(getServerEmojis().filter(e=>e.id!==id));
+        toast('Server emoji deleted');
+        renderEmojiPickerBody();
         return;
       }
       const cbtn=ev.target.closest('button[data-cemoji]');
@@ -2068,7 +2634,8 @@ function buildEmojiPicker(){
       el.customEmojiFileInput.value='';
       if(!files.length)return;
       const allowed=['image/png','image/jpeg','image/jpg','image/webp','image/gif'];
-      let list=getCustomEmojis();
+      const target=el.customEmojiFileInput.dataset.target||'custom';
+      let list=[];
       for(const file of files){
         if(!allowed.includes(file.type) && !/\.(png|jpe?g|webp|gif)$/i.test(file.name)){
           toast('Unsupported: '+file.name+' (use PNG, JPEG, WEBP, GIF)',true);
@@ -2086,11 +2653,19 @@ function buildEmojiPicker(){
           toast('Added :'+base+':');
         }catch(e){toast('Failed to read '+file.name,true);}
       }
-      if(list.length>80)list=list.slice(-80);
-      saveCustomEmojis(list);
-      emojiPickerTab='custom';
+      if(target==='server'){
+        let sl=getServerEmojis().concat(list);
+        if(sl.length>80)sl=sl.slice(-80);
+        saveServerEmojis(sl);
+        emojiPickerTab='server';
+      }else{
+        let cl=getCustomEmojis().concat(list);
+        if(cl.length>80)cl=cl.slice(-80);
+        saveCustomEmojis(cl);
+        emojiPickerTab='custom';
+      }
       if(el.emojiPickerTabs){
-        el.emojiPickerTabs.querySelectorAll('.emoji-tab').forEach(t=>t.classList.toggle('active',t.dataset.emojiTab==='custom'));
+        el.emojiPickerTabs.querySelectorAll('.emoji-tab').forEach(t=>t.classList.toggle('active',t.dataset.emojiTab===emojiPickerTab));
       }
       renderEmojiPickerBody();
     });
@@ -2118,6 +2693,17 @@ function renderEmojiPickerBody(){
     });
     html+='</div>';
     html+='<p style="font-size:11px;color:var(--text-muted);margin:10px 4px 0;line-height:1.4;">Upload PNG, JPEG, WEBP, or GIF. Inserted as <code>:cemoji_id:</code> and stay until you delete them. Max ~2.5MB each.</p>';
+  }else if(emojiPickerTab==='server'){
+    html+='<div class="emoji-category">Server Emojis ('+escapeHtml(activeServer||'home')+')</div><div class="emoji-grid">';
+    html+='<button type="button" class="emoji-add-btn" data-add-semoji="1" title="Add server emoji">+</button>';
+    getServerEmojis().forEach(ce=>{
+      html+='<div class="custom-emoji-item" style="position:relative;display:inline-block">'+
+        '<button type="button" class="custom-emoji-btn" data-cemoji="'+escapeHtml(ce.id)+'" title=":'+escapeHtml(ce.name)+':">'+
+        '<img src="'+ce.dataUrl+'" alt="'+escapeHtml(ce.name)+'"></button>'+
+        '<button type="button" class="cemoji-del" data-del-semoji="'+escapeHtml(ce.id)+'" title="Delete">×</button></div>';
+    });
+    html+='</div>';
+    html+='<p style="font-size:11px;color:var(--text-muted);margin:10px 4px 0;">Server emojis are stored for this server on your device and embed when sent so others can see them.</p>';
   }else{
     for(const[cat,emojis]of Object.entries(EMOJI_CATS)){
       html+='<div class="emoji-category">'+cat+'</div><div class="emoji-grid">';
@@ -3168,13 +3754,33 @@ function openUserProfile(clientIdOrUsername){
       actions+='<button class="admin-btn success" id="upCall">📞 Call</button>';
     }
   }
+  // Private notes + block
+  const noteVal=getNoteFor(u.client_id||'');
+  const blocked=isBlocked(u.client_id)||isBlocked(u.username);
+  actions+='<div style="width:100%;margin-top:8px;"><div style="font-size:11px;font-weight:800;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;">Private note (only you)</div>';
+  actions+='<textarea class="note-box" id="upNoteBox" placeholder="Add a private note…">'+escapeHtml(noteVal)+'</textarea>';
+  actions+='<button class="admin-btn" id="upSaveNote" style="margin-top:6px;">Save note</button></div>';
+  if(!isSelf){
+    actions+='<button class="admin-btn '+(blocked?'success':'danger')+'" id="upBlockBtn" style="margin-top:8px;">'+(blocked?'Unblock user':'🚫 Block user')+'</button>';
+  }
   el.userProfileActions.innerHTML=actions;
 
   // Wire action buttons
+  const noteSave=document.getElementById('upSaveNote');
+  if(noteSave)noteSave.addEventListener('click',()=>{
+    const v=(document.getElementById('upNoteBox').value||'').trim();
+    setNoteFor(u.client_id,v);
+    toast('Note saved');
+  });
+  const blockBtn=document.getElementById('upBlockBtn');
+  if(blockBtn)blockBtn.addEventListener('click',()=>{
+    if(blocked){unblockUser(u.client_id,u.username);closeUserProfile();openUserProfile(u.client_id);}
+    else{if(confirm('Block '+u.username+'? Their messages and calls will be hidden.')){blockUser(u.client_id,u.username);closeUserProfile();}}
+  });
   const editBtn=document.getElementById('upEditProfile');
   if(editBtn)editBtn.addEventListener('click',()=>{closeUserProfile();openProfileModal();});
   const msgBtn=document.getElementById('upMessage');
-  if(msgBtn)msgBtn.addEventListener('click',()=>{closeUserProfile();openDMWith(u.client_id);});
+  if(msgBtn)msgBtn.addEventListener('click',()=>{if(isBlocked(u.client_id)||isBlocked(u.username)){toast('User is blocked',true);return;}closeUserProfile();openDMWith(u.client_id);});
   const addBtn=document.getElementById('upAddFriend');
   if(addBtn)addBtn.addEventListener('click',async()=>{await sendFriendRequest(u.client_id);closeUserProfile();openUserProfile(u.client_id);});
   const acceptBtn=document.getElementById('upAcceptFriend');
@@ -4150,6 +4756,11 @@ async function sendMessage(){
   if(!activeChannel){toast('No channel selected',true);return;}
   // Expand custom emojis into embeddable tokens for everyone
   if(text)text=expandCustomEmojisForSend(text);
+  // Attach reply reference
+  if(replyToMsg){
+    text=encodeReplyPrefix(replyToMsg)+(text||'');
+    clearReply();
+  }
   // Slash commands (do not send the / line as a normal message)
   if(text.startsWith('/')&&!pendingFile){
     el.messageInput.value='';el.messageInput.style.height='auto';
@@ -4328,6 +4939,14 @@ function subscribeRealtime(){
               playBeep();
               if(!document.hasFocus())showDesktopNotification(row.username+' mentioned you',row.text,row.pfp_data_url);
             }
+            if(row.text&&/@everyone\b/i.test(row.text)&&!muteEveryone){
+              playBeep();
+              if(!document.hasFocus())showDesktopNotification('@everyone from '+row.username,row.text,row.pfp_data_url);
+            }
+            if(row.text&&/@here\b/i.test(row.text)&&!muteHere){
+              playBeep();
+              if(!document.hasFocus())showDesktopNotification('@here from '+row.username,row.text,row.pfp_data_url);
+            }
             // Custom bots react to others' messages too
             try{tryCustomBots(row.text||'');}catch(e){}
             playBeep();
@@ -4474,6 +5093,13 @@ function renderMessages(highlightId){
       html+='<div style="padding:8px 16px;color:var(--text-muted);font-size:13px;text-align:center;">'+escapeHtml(m.text)+'</div>';
       lastTime=0;return;
     }
+    // Block list — hide messages from blocked users
+    if(isBlocked(m.username)){
+      const ud=Object.values(cachedUsers).find(x=>x&&x.username===m.username);
+      if(ud&&isBlocked(ud.client_id)){/*both*/}
+      html+='<div class="blocked-msg" data-msg-id="'+m.id+'">Blocked message hidden</div>';
+      return;
+    }
     const own=me.username&&m.username===me.username;
     const prev=msgs[i-1];
     const msgTime=m.created_at?new Date(m.created_at).getTime():0;
@@ -4513,10 +5139,11 @@ function renderMessages(highlightId){
     const canDelete=(own&&!m._pending)||isAdmin;
     const canPin=isAdmin&&currentView!=='dm';
     const actionBar=(m._pending||m._failed)?'':'<div class="msg-actions">'+
+      '<button class="action-btn" data-action="reply" data-msg-id="'+m.id+'" title="Reply">↩️</button>'+
       '<button class="action-btn" data-action="react" data-msg-id="'+m.id+'" title="Add reaction">😊</button>'+
       '<button class="action-btn" data-action="copy" data-msg-id="'+m.id+'" title="Copy text">📋</button>'+
-      (canPin?'<button class="action-btn'+(m.pinned?' pin-active':'')+'" data-action="pin" data-msg-id="'+m.id+'" title="'+(m.pinned?'Unpin':'Pin')+'">📌</button>':'')+
-      (canDelete?'<button class="action-btn danger" data-action="delete" data-msg-id="'+m.id+'" title="Delete">🗑️</button>':'')+
+      (canPin||iCan('canPin')?'<button class="action-btn'+(m.pinned?' pin-active':'')+'" data-action="pin" data-msg-id="'+m.id+'" title="'+(m.pinned?'Unpin':'Pin')+'">📌</button>':'')+
+      (canDelete||iCan('canDelete')?'<button class="action-btn danger" data-action="delete" data-msg-id="'+m.id+'" title="Delete">🗑️</button>':'')+
     '</div>';
     let extraCls='';
     if(m._pending)extraCls+=' pending';
@@ -4530,7 +5157,16 @@ function renderMessages(highlightId){
           (warnings>0?'<span class="warn-badge" title="'+warnings+' warning'+(warnings===1?'':'s')+'">⚠️ '+warnings+'</span>':'')+
           '<span class="msg-time">'+t+'</span>'+
         '</div>':'')+
-        (m.text?'<div class="msg-text">'+renderMessageText(m.text)+'</div>':'')+
+        (function(){
+          let replyHtml='';
+          let bodyText=m.text||'';
+          const rm=bodyText.match(/^⟦REPLY:([^|]+)\|([^|]*)\|([^\]]*)⟧\n?/);
+          if(rm){
+            replyHtml='<div class="msg-reply-ref" data-jump="'+escapeHtml(rm[1])+'">↩️ Reply to <b>'+escapeHtml(rm[2]||'user')+'</b> — '+escapeHtml(rm[3]||'')+'</div>';
+            bodyText=bodyText.slice(rm[0].length);
+          }
+          return replyHtml+(bodyText?'<div class="msg-text">'+renderMessageText(bodyText)+'</div>':'');
+        })()+
         fileHtml+reactionsHtml+
       '</div>'+actionBar+
     '</div>';
@@ -4542,10 +5178,19 @@ function renderMessages(highlightId){
     btn.addEventListener('click',ev=>{
       ev.stopPropagation();
       const a=btn.dataset.action,id=btn.dataset.msgId;
-      if(a==='react')openQuickReaction(btn,id);
+      if(a==='reply'){const m=cachedMessages.find(x=>x.id===id);if(m)setReplyTo(m);}
+      else if(a==='react')openQuickReaction(btn,id);
       else if(a==='copy'){const m=cachedMessages.find(x=>x.id===id);if(m&&m.text)navigator.clipboard.writeText(m.text).then(()=>toast('Copied'));}
       else if(a==='pin'){togglePin(id).catch(e=>toast('Pin failed: '+e.message,true));}
       else if(a==='delete'){if(confirm('Delete this message?'))deleteMessage(id).catch(e=>toast('Delete failed: '+e.message,true));}
+    });
+  });
+  // Jump to replied message
+  el.messagesContainer.querySelectorAll('.msg-reply-ref').forEach(ref=>{
+    ref.addEventListener('click',()=>{
+      const id=ref.dataset.jump;
+      const elMsg=el.messagesContainer.querySelector('.msg[data-msg-id="'+id+'"]');
+      if(elMsg){elMsg.scrollIntoView({behavior:'smooth',block:'center'});elMsg.classList.add('new-highlight');setTimeout(()=>elMsg.classList.remove('new-highlight'),1500);}
     });
   });
   // Click @mention → open profile
@@ -5549,6 +6194,7 @@ el.startGroupCallBtn.addEventListener('click',async()=>{
   toast('Group call started','info');
 });
 async function joinCallRoom(roomId,isGroup,expectedPeerId,expectedPeerName){
+  if(expectedPeerId&&isBlocked(expectedPeerId)){toast('User is blocked',true);return;}
   let stream;
   try{stream=await getLocalMedia();}
   catch(e){
@@ -6483,6 +7129,43 @@ document.addEventListener('visibilitychange',()=>{
 (async function init(){
   buildEmojiPicker();buildBgPresets();renderMyAvatars();
   try{bindCallBgUI();updateCallBgPanelUI();}catch(e){console.warn(e);}
+  try{
+    bindStatusUI();
+    applyDensity(lsGet(LS.MSG_DENSITY,'default'));
+    setSnow(!!lsGet(LS.SEASONAL_SNOW,false));
+    initWhiteboard();
+    if(el.replyBarCancel)el.replyBarCancel.addEventListener('click',clearReply);
+    if(el.whiteboardBtn)el.whiteboardBtn.addEventListener('click',openWhiteboard);
+    if(el.whiteboardClose)el.whiteboardClose.addEventListener('click',()=>el.whiteboardModal.classList.remove('show'));
+    if(el.whiteboardModal)el.whiteboardModal.addEventListener('click',ev=>{if(ev.target===el.whiteboardModal)el.whiteboardModal.classList.remove('show');});
+    if(el.playlistBtn)el.playlistBtn.addEventListener('click',()=>{renderPlaylist();el.playlistModal.classList.add('show');});
+    if(el.playlistClose)el.playlistClose.addEventListener('click',()=>el.playlistModal.classList.remove('show'));
+    if(el.playlistModal)el.playlistModal.addEventListener('click',ev=>{if(ev.target===el.playlistModal)el.playlistModal.classList.remove('show');});
+    if(el.playlistAddBtn)el.playlistAddBtn.addEventListener('click',()=>{
+      const url=(el.playlistUrlInput.value||'').trim();
+      if(!url){toast('Paste a link',true);return;}
+      const list=getPlaylist();
+      list.push({url:url,title:url,addedBy:me.username,at:new Date().toISOString()});
+      savePlaylist(list);
+      el.playlistUrlInput.value='';
+      renderPlaylist();
+      toast('Added to playlist');
+    });
+    if(el.playlistShareBtn)el.playlistShareBtn.addEventListener('click',async()=>{
+      const list=getPlaylist();
+      if(!list.length){toast('Playlist empty',true);return;}
+      const body='🎵 **Channel playlist**\n'+list.map((x,i)=>(i+1)+'. '+x.url).join('\n');
+      el.messageInput.value=body;
+      el.playlistModal.classList.remove('show');
+      try{await sendMessage();}catch(e){toast('Share failed',true);}
+    });
+    if(el.miniAppsBtn)el.miniAppsBtn.addEventListener('click',openMiniApps);
+    if(el.miniAppsClose)el.miniAppsClose.addEventListener('click',()=>el.miniAppsModal.classList.remove('show'));
+    if(el.miniAppsModal)el.miniAppsModal.addEventListener('click',ev=>{if(ev.target===el.miniAppsModal)el.miniAppsModal.classList.remove('show');});
+    if(el.miniAppsGrid)el.miniAppsGrid.querySelectorAll('[data-app]').forEach(c=>c.addEventListener('click',()=>playMiniApp(c.dataset.app)));
+    if(el.densityBtn)el.densityBtn.addEventListener('click',cycleDensity);
+    if(el.snowBtn)el.snowBtn.addEventListener('click',()=>setSnow(!el.snowOverlay.classList.contains('show')));
+  }catch(e){console.warn('social init',e);}
   updateChatHeader();updateConnectionUI();
 
   if(SUPABASE_URL==='PASTE_YOUR_PROJECT_URL_HERE'||SUPABASE_KEY==='PASTE_YOUR_ANON_KEY_HERE'){
