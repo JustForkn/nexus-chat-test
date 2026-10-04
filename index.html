@@ -207,6 +207,31 @@ a:hover{text-decoration:underline}
 .emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px}
 .emoji-grid button{width:32px;height:32px;font-size:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all .1s}
 .emoji-grid button:hover{background:#35373c;transform:scale(1.15)}
+.emoji-picker-tabs{display:flex;gap:4px;padding:8px 12px 0;border-bottom:1px solid rgba(0,0,0,.25)}
+.emoji-tab{padding:6px 12px;font-size:12px;font-weight:700;border-radius:6px 6px 0 0;color:var(--text-muted);background:transparent;cursor:pointer}
+.emoji-tab.active{color:var(--text-bright);background:var(--bg);border:1px solid rgba(0,0,0,.3);border-bottom-color:var(--bg)}
+.emoji-grid button.custom-emoji-btn{padding:2px}
+.emoji-grid button.custom-emoji-btn img{width:28px;height:28px;object-fit:contain;border-radius:4px;display:block}
+.emoji-grid button.emoji-add-btn{font-size:22px;font-weight:700;color:var(--blurple);border:1px dashed rgba(88,101,242,.45);background:rgba(88,101,242,.08)}
+.emoji-grid button.emoji-add-btn:hover{background:rgba(88,101,242,.2);transform:scale(1.08)}
+.custom-emoji-item{position:relative}
+.custom-emoji-item .cemoji-del{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--red);color:#fff;font-size:10px;line-height:16px;text-align:center;display:none;z-index:2;padding:0;cursor:pointer}
+.custom-emoji-item:hover .cemoji-del{display:block}
+.msg-text img.custom-emoji,.reaction img.custom-emoji{width:22px;height:22px;object-fit:contain;vertical-align:-5px;display:inline-block}
+.msg-text img.custom-emoji.large{width:48px;height:48px;vertical-align:middle}
+.call-bg-panel{position:absolute;bottom:110px;left:50%;transform:translateX(-50%);background:rgba(20,20,24,.95);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 16px;z-index:30;display:none;min-width:280px;box-shadow:0 12px 40px rgba(0,0,0,.55)}
+.call-bg-panel.show{display:block}
+.call-bg-panel h4{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:10px;font-weight:800}
+.call-bg-options{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.call-bg-opt{padding:8px 12px;border-radius:8px;background:#2b2d31;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;border:2px solid transparent}
+.call-bg-opt:hover{background:#35373c}
+.call-bg-opt.active{border-color:var(--blurple);background:rgba(88,101,242,.2)}
+.call-bg-panel .bg-blur-row{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:var(--text-muted)}
+.call-bg-panel input[type="range"]{flex:1;accent-color:var(--blurple)}
+.call-bg-preview{width:100%;height:72px;border-radius:8px;background:#111;margin-top:8px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.call-bg-preview img{max-width:100%;max-height:100%;object-fit:cover}
+.call-ctrl.active-bg{background:rgba(88,101,242,.35);box-shadow:0 0 0 2px var(--blurple)}
+
 
 .members{width:240px;background:var(--bg-alt);flex-shrink:0;padding:16px 8px;overflow-y:auto}
 .members-category{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;padding:8px;letter-spacing:.02em}
@@ -767,7 +792,12 @@ a:hover{text-decoration:underline}
 
     <div class="emoji-picker" id="emojiPicker">
       <div class="emoji-picker-header"><span>Emoji</span><span class="emoji-picker-close" id="emojiPickerClose">✕</span></div>
+      <div class="emoji-picker-tabs" id="emojiPickerTabs">
+        <button type="button" class="emoji-tab active" data-emoji-tab="standard">Standard</button>
+        <button type="button" class="emoji-tab" data-emoji-tab="custom">Custom</button>
+      </div>
       <div class="emoji-picker-body" id="emojiPickerBody"></div>
+      <input type="file" id="customEmojiFileInput" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif" style="display:none" multiple>
     </div>
   </div>
 
@@ -803,9 +833,30 @@ a:hover{text-decoration:underline}
     <div class="call-topbar-timer" id="callTimer">00:00</div>
   </div>
   <div class="call-body"><div class="call-grid" id="callGrid" data-count="0"></div></div>
+  <div class="call-bg-panel" id="callBgPanel">
+    <h4>Video Background</h4>
+    <div class="call-bg-options">
+      <button type="button" class="call-bg-opt active" data-bg-mode="none">None</button>
+      <button type="button" class="call-bg-opt" data-bg-mode="blur">Blur</button>
+      <button type="button" class="call-bg-opt" data-bg-mode="image">Custom Image</button>
+    </div>
+    <div class="bg-blur-row" id="callBgBlurRow" style="display:none;">
+      <span>Blur strength</span>
+      <input type="range" id="callBgBlurAmount" min="4" max="24" value="12">
+      <span id="callBgBlurVal">12</span>
+    </div>
+    <div id="callBgImageRow" style="display:none;margin-top:8px;">
+      <button type="button" class="call-bg-opt" id="callBgPickImage">📷 Upload image</button>
+      <button type="button" class="call-bg-opt" id="callBgClearImage">Clear</button>
+      <div class="call-bg-preview" id="callBgPreview"><span style="color:#666;font-size:12px;">No image</span></div>
+      <input type="file" id="callBgFileInput" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none">
+    </div>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:10px;line-height:1.4;">Blur &amp; custom backgrounds apply to your camera feed (peers see the effect). Screen share is unchanged.</p>
+  </div>
   <div class="call-controls">
     <button class="call-ctrl" id="ctrlMic" title="Toggle microphone">🎤<span class="ctrl-label">Mic</span></button>
     <button class="call-ctrl" id="ctrlCam" title="Toggle camera">📹<span class="ctrl-label">Camera</span></button>
+    <button class="call-ctrl" id="ctrlBg" title="Background blur / image">🖼️<span class="ctrl-label">Effects</span></button>
     <button class="call-ctrl" id="ctrlScreen" title="Share your screen">🖥️<span class="ctrl-label">Screen</span></button>
     <button class="call-ctrl end" id="ctrlEnd" title="End call">📞<span class="end-label">End Call</span></button>
   </div>
@@ -1411,6 +1462,10 @@ const el={
   callOverlay:$('callOverlay'),callTopbarIcon:$('callTopbarIcon'),callTopbarTitle:$('callTopbarTitle'),
   callTopbarSub:$('callTopbarSub'),callTimer:$('callTimer'),callGrid:$('callGrid'),
   ctrlMic:$('ctrlMic'),ctrlCam:$('ctrlCam'),ctrlScreen:$('ctrlScreen'),ctrlEnd:$('ctrlEnd'),
+  ctrlBg:$('ctrlBg'),callBgPanel:$('callBgPanel'),callBgBlurAmount:$('callBgBlurAmount'),callBgBlurVal:$('callBgBlurVal'),
+  callBgPickImage:$('callBgPickImage'),callBgClearImage:$('callBgClearImage'),callBgFileInput:$('callBgFileInput'),
+  callBgPreview:$('callBgPreview'),callBgBlurRow:$('callBgBlurRow'),callBgImageRow:$('callBgImageRow'),
+  customEmojiFileInput:$('customEmojiFileInput'),emojiPickerTabs:$('emojiPickerTabs'),
   timeoutModal:$('timeoutModal'),timeoutClose:$('timeoutClose'),
   timeoutTargetName:$('timeoutTargetName'),timeoutCustomInput:$('timeoutCustomInput'),
   timeoutApplyCustom:$('timeoutApplyCustom'),timeoutRemove:$('timeoutRemove'),timeoutError:$('timeoutError'),
@@ -1434,7 +1489,9 @@ const LS={
   ADMIN_PINNED_HIDDEN:'nexus_pin_hidden_v3',
   CHANNEL_UNREAD:'nexus_channel_unread_v3',
   USER_RANKS:'nexus_user_ranks_v1',
-  CUSTOM_RANKS:'nexus_custom_ranks_v1'
+  CUSTOM_RANKS:'nexus_custom_ranks_v1',
+  CUSTOM_EMOJIS:'nexus_custom_emojis_v1',
+  CALL_BG:'nexus_call_bg_v1'
 };
 function lsGet(k,fb){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb;}catch(e){return fb;}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
@@ -1628,6 +1685,17 @@ function renderMessageText(text){
     }
     const lang=b.lang?' data-lang="'+escapeHtml(b.lang)+'"':'';
     return '<pre class="code-block"'+lang+'><code>'+escapeHtml(b.code.trim())+'</code></pre>';
+  });
+  // Custom emojis :cemoji_ID: (local library)
+  html=html.replace(/:cemoji_([a-zA-Z0-9_]+):/g,function(full,id){
+    const ce=findCustomEmoji(id);
+    if(!ce||!ce.dataUrl)return full;
+    return '<img class="custom-emoji" src="'+ce.dataUrl+'" alt=":'+escapeHtml(ce.name||id)+':" title=":'+escapeHtml(ce.name||id)+':">';
+  });
+  // Embedded custom emojis from other users ⟦CE:name|dataUrl⟧
+  html=html.replace(/⟦CE:([^|\]]+)\|([^\]]+)⟧/g,function(full,name,dataUrl){
+    if(!dataUrl||dataUrl.indexOf('data:image/')!==0)return escapeHtml(full);
+    return '<img class="custom-emoji" src="'+dataUrl+'" alt=":'+escapeHtml(name)+':" title=":'+escapeHtml(name)+':">';
   });
   return html;
 }
@@ -1926,21 +1994,138 @@ const EMOJI_CATS={
   'Objects':['⌚','📱','💻','⌨️','🖥️','🖨️','🖱️','🕹️','💽','💾','💿','📀','📼','📷','📸','📹','🎥','📞','☎️','📟','📠','📺','📻','🎙️','🧭','⏱️','⏲️','⏰','🕰️','⌛','⏳','📡','🔋','🔌','💡','🔦','🕯️','🧯','💸','💵','💶','💷','💰','💳','💎','⚖️','🧰','🔧','🔨','⚒️','🛠️','⛏️','🔩','⚙️','🧱','⛓️','🧲','🔫','💣','🧨','🪓','🔪','🗡️','⚔️','🛡️','🔮','📿','🧿','🔭','🔬','💊','💉','🩸','🧬','🦠','🧪','🌡️','🧹','🧺','🚽','🚿','🛁','🧼','🧽','🛎️','🔑','🗝️','🚪','🪑','🛋️','🛏️','🧸','🖼️','🛍️','🛒','🎁','🎈','🎀','🎊','🎉','🎎','🏮','🎐','✉️','📩','📨','📧','📦','🏷️','📪','📫','📬','📭','📮','📜','📃','📄','📑','🧾','📊','📈','📉','📆','📅','🗑️','📋','📁','📂','🗂️','📰','📓','📔','📒','📕','📗','📘','📙','📚','📖','🔖','🔗','📎','📐','📏','🧮','📌','📍','✂️','🖊️','✒️','🖍️','📝','✏️','🔍','🔎','🔐','🔒','🔓'],
   'Nature':['🌸','💮','🏵️','🌹','🥀','🌺','🌻','🌼','🌷','🌱','🪴','🌲','🌳','🌴','🌵','🌾','🌿','☘️','🍀','🎍','🎋','🍃','🍂','🍁','🍄','🐚','🌎','🌍','🌏','🌕','🌖','🌗','🌘','🌑','🌒','🌓','🌔','🌙','🌚','🌛','🌜','☀️','🌝','🌞','⭐','🌟','🌠','🌌','☁️','⛅','⛈️','🌤️','🌥️','🌦️','🌧️','🌨️','🌩️','🌪️','🌫️','🌈','☂️','☔','⚡','❄️','☃️','⛄','☄️','🔥','💧','🌊']
 };
+// ============================================================
+// CUSTOM EMOJIS (permanent until edited/deleted)
+// Stored in localStorage — PNG / JPEG / WEBP / GIF supported
+// Insert format in messages: :cemoji_ID:
+// ============================================================
+let emojiPickerTab='standard';
+function getCustomEmojis(){
+  const list=lsGet(LS.CUSTOM_EMOJIS,[]);
+  return Array.isArray(list)?list:[];
+}
+function saveCustomEmojis(list){
+  lsSet(LS.CUSTOM_EMOJIS,list);
+}
+function findCustomEmoji(id){
+  return getCustomEmojis().find(e=>e&&e.id===id)||null;
+}
+function insertAtCursor(text){
+  const input=el.messageInput;
+  const start=input.selectionStart,end=input.selectionEnd,val=input.value;
+  input.value=val.slice(0,start)+text+val.slice(end);
+  input.selectionStart=input.selectionEnd=start+text.length;
+  input.focus();
+  input.dispatchEvent(new Event('input'));
+}
 function buildEmojiPicker(){
+  renderEmojiPickerBody();
+  // tabs
+  if(el.emojiPickerTabs){
+    el.emojiPickerTabs.querySelectorAll('.emoji-tab').forEach(tab=>{
+      tab.addEventListener('click',ev=>{
+        ev.stopPropagation();
+        emojiPickerTab=tab.dataset.emojiTab||'standard';
+        el.emojiPickerTabs.querySelectorAll('.emoji-tab').forEach(t=>t.classList.toggle('active',t.dataset.emojiTab===emojiPickerTab));
+        renderEmojiPickerBody();
+      });
+    });
+  }
+  // body click (delegated once)
+  if(!el.emojiPickerBody._emojiBound){
+    el.emojiPickerBody._emojiBound=true;
+    el.emojiPickerBody.addEventListener('click',ev=>{
+      const del=ev.target.closest('[data-del-cemoji]');
+      if(del){
+        ev.preventDefault();ev.stopPropagation();
+        const id=del.dataset.delCemoji;
+        if(!confirm('Delete this custom emoji permanently?'))return;
+        saveCustomEmojis(getCustomEmojis().filter(e=>e.id!==id));
+        toast('Emoji deleted');
+        renderEmojiPickerBody();
+        return;
+      }
+      const addBtn=ev.target.closest('[data-add-cemoji]');
+      if(addBtn){
+        ev.preventDefault();ev.stopPropagation();
+        if(el.customEmojiFileInput)el.customEmojiFileInput.click();
+        return;
+      }
+      const cbtn=ev.target.closest('button[data-cemoji]');
+      if(cbtn){
+        insertAtCursor(':cemoji_'+cbtn.dataset.cemoji+':');
+        return;
+      }
+      const btn=ev.target.closest('button[data-emoji]');
+      if(!btn)return;
+      insertAtCursor(btn.dataset.emoji);
+    });
+  }
+  if(el.customEmojiFileInput && !el.customEmojiFileInput._bound){
+    el.customEmojiFileInput._bound=true;
+    el.customEmojiFileInput.addEventListener('change',async()=>{
+      const files=Array.from(el.customEmojiFileInput.files||[]);
+      el.customEmojiFileInput.value='';
+      if(!files.length)return;
+      const allowed=['image/png','image/jpeg','image/jpg','image/webp','image/gif'];
+      let list=getCustomEmojis();
+      for(const file of files){
+        if(!allowed.includes(file.type) && !/\.(png|jpe?g|webp|gif)$/i.test(file.name)){
+          toast('Unsupported: '+file.name+' (use PNG, JPEG, WEBP, GIF)',true);
+          continue;
+        }
+        if(file.size>2.5*1024*1024){
+          toast(file.name+' is too large (max ~2.5MB)',true);
+          continue;
+        }
+        try{
+          const dataUrl=await readFileAsDataURL(file);
+          const base=(file.name||'emoji').replace(/\.[^.]+$/,'').replace(/[^a-zA-Z0-9_\-]/g,'_').slice(0,24)||'emoji';
+          const id='ce_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,6);
+          list.push({id:id,name:base,dataUrl:dataUrl,type:file.type||'image/png',createdAt:new Date().toISOString()});
+          toast('Added :'+base+':');
+        }catch(e){toast('Failed to read '+file.name,true);}
+      }
+      if(list.length>80)list=list.slice(-80);
+      saveCustomEmojis(list);
+      emojiPickerTab='custom';
+      if(el.emojiPickerTabs){
+        el.emojiPickerTabs.querySelectorAll('.emoji-tab').forEach(t=>t.classList.toggle('active',t.dataset.emojiTab==='custom'));
+      }
+      renderEmojiPickerBody();
+    });
+  }
+}
+function readFileAsDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=()=>resolve(r.result);
+    r.onerror=reject;
+    r.readAsDataURL(file);
+  });
+}
+function renderEmojiPickerBody(){
+  if(!el.emojiPickerBody)return;
   let html='';
-  for(const[cat,emojis]of Object.entries(EMOJI_CATS)){
-    html+='<div class="emoji-category">'+cat+'</div><div class="emoji-grid">';
-    emojis.forEach(e=>{html+='<button type="button" data-emoji="'+e+'">'+e+'</button>';});
+  if(emojiPickerTab==='custom'){
+    html+='<div class="emoji-category">Custom Emojis</div><div class="emoji-grid">';
+    html+='<button type="button" class="emoji-add-btn" data-add-cemoji="1" title="Upload PNG, JPEG, WEBP, or GIF">+</button>';
+    getCustomEmojis().forEach(ce=>{
+      html+='<div class="custom-emoji-item" style="position:relative;display:inline-block">'+
+        '<button type="button" class="custom-emoji-btn" data-cemoji="'+escapeHtml(ce.id)+'" title=":'+escapeHtml(ce.name)+':">'+
+        '<img src="'+ce.dataUrl+'" alt="'+escapeHtml(ce.name)+'"></button>'+
+        '<button type="button" class="cemoji-del" data-del-cemoji="'+escapeHtml(ce.id)+'" title="Delete">×</button></div>';
+    });
     html+='</div>';
+    html+='<p style="font-size:11px;color:var(--text-muted);margin:10px 4px 0;line-height:1.4;">Upload PNG, JPEG, WEBP, or GIF. Inserted as <code>:cemoji_id:</code> and stay until you delete them. Max ~2.5MB each.</p>';
+  }else{
+    for(const[cat,emojis]of Object.entries(EMOJI_CATS)){
+      html+='<div class="emoji-category">'+cat+'</div><div class="emoji-grid">';
+      emojis.forEach(e=>{html+='<button type="button" data-emoji="'+e+'">'+e+'</button>';});
+      html+='</div>';
+    }
   }
   el.emojiPickerBody.innerHTML=html;
-  el.emojiPickerBody.addEventListener('click',ev=>{
-    const btn=ev.target.closest('button[data-emoji]');if(!btn)return;
-    const emoji=btn.dataset.emoji;const input=el.messageInput;
-    const start=input.selectionStart,end=input.selectionEnd,val=input.value;
-    input.value=val.slice(0,start)+emoji+val.slice(end);
-    input.selectionStart=input.selectionEnd=start+emoji.length;input.focus();
-  });
 }
 
 // ============================================================
@@ -3947,12 +4132,24 @@ async function handleSlashCommand(raw){
   });
 })();
 
+function expandCustomEmojisForSend(text){
+  // Embed custom emoji payloads so other clients can render them
+  return String(text||'').replace(/:cemoji_([a-zA-Z0-9_]+):/g,function(full,id){
+    const ce=findCustomEmoji(id);
+    if(!ce||!ce.dataUrl)return full;
+    // Keep a local short form + embedded data for remote render
+    const name=(ce.name||'emoji').replace(/[|\]\[]/g,'').slice(0,24);
+    return '⟦CE:'+name+'|'+ce.dataUrl+'⟧';
+  });
+}
 async function sendMessage(){
-  const text=(el.messageInput.value||'').trim();
+  let text=(el.messageInput.value||'').trim();
   if(!text&&!pendingFile)return;
   if(!me.username){toast('Set a profile first',true);return;}
   if(!supa){toast('Not connected',true);return;}
   if(!activeChannel){toast('No channel selected',true);return;}
+  // Expand custom emojis into embeddable tokens for everyone
+  if(text)text=expandCustomEmojisForSend(text);
   // Slash commands (do not send the / line as a normal message)
   if(text.startsWith('/')&&!pendingFile){
     el.messageInput.value='';el.messageInput.style.height='auto';
@@ -4821,7 +5018,7 @@ async function getLocalMedia(){
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
     throw new Error('Browser does not support camera/mic');
   }
-  return await navigator.mediaDevices.getUserMedia({
+  const stream=await navigator.mediaDevices.getUserMedia({
     video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'},
     audio:{
       echoCancellation:true,
@@ -4834,7 +5031,298 @@ async function getLocalMedia(){
       googHighpassFilter:true
     }
   });
+  // Attach virtual background processor (blur / custom image) when enabled
+  try{return await applyVirtualBackgroundToStream(stream);}catch(e){console.warn('VB init',e);return stream;}
 }
+
+// ============================================================
+// VIRTUAL BACKGROUND (blur + custom image) for video calls
+// Processes local camera via canvas and replaces the outbound video track
+// ============================================================
+const VirtualBg={
+  mode:'none', // none | blur | image
+  blurAmount:12,
+  imageDataUrl:null,
+  imageEl:null,
+  rawStream:null,
+  rawVideo:null,
+  canvas:null,
+  ctx:null,
+  processedStream:null,
+  raf:0,
+  running:false
+};
+(function loadCallBgPrefs(){
+  const s=lsGet(LS.CALL_BG,{mode:'none',blurAmount:12,imageDataUrl:null});
+  if(s&&typeof s==='object'){
+    VirtualBg.mode=s.mode||'none';
+    VirtualBg.blurAmount=s.blurAmount||12;
+    VirtualBg.imageDataUrl=s.imageDataUrl||null;
+  }
+})();
+function saveCallBgPrefs(){
+  lsSet(LS.CALL_BG,{mode:VirtualBg.mode,blurAmount:VirtualBg.blurAmount,imageDataUrl:VirtualBg.imageDataUrl});
+}
+function ensureVbDom(){
+  if(!VirtualBg.rawVideo){
+    const v=document.createElement('video');
+    v.playsInline=true;v.muted=true;v.autoplay=true;
+    v.style.cssText='position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;';
+    document.body.appendChild(v);
+    VirtualBg.rawVideo=v;
+  }
+  if(!VirtualBg.canvas){
+    VirtualBg.canvas=document.createElement('canvas');
+    VirtualBg.canvas.width=640;
+    VirtualBg.canvas.height=480;
+    VirtualBg.ctx=VirtualBg.canvas.getContext('2d',{willReadFrequently:false});
+  }
+  if(VirtualBg.imageDataUrl && !VirtualBg.imageEl){
+    const img=new Image();
+    img.src=VirtualBg.imageDataUrl;
+    VirtualBg.imageEl=img;
+  }
+}
+function stopVirtualBgLoop(){
+  VirtualBg.running=false;
+  if(VirtualBg.raf){cancelAnimationFrame(VirtualBg.raf);VirtualBg.raf=0;}
+}
+function vbDrawFrame(){
+  if(!VirtualBg.running||!VirtualBg.rawVideo||!VirtualBg.ctx)return;
+  const v=VirtualBg.rawVideo;
+  const c=VirtualBg.canvas;
+  const ctx=VirtualBg.ctx;
+  const vw=v.videoWidth||640, vh=v.videoHeight||480;
+  if(c.width!==vw||c.height!==vh){c.width=vw;c.height=vh;}
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.filter='none';
+  ctx.globalAlpha=1;
+  ctx.clearRect(0,0,c.width,c.height);
+
+  if(VirtualBg.mode==='blur'){
+    // Background: heavily blurred full frame
+    const b=Math.max(4,Math.min(32,VirtualBg.blurAmount||12));
+    ctx.filter='blur('+b+'px)';
+    ctx.drawImage(v,0,0,c.width,c.height);
+    ctx.filter='none';
+    // Foreground: sharper subject approximated with a soft center ellipse mask
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(c.width*0.5, c.height*0.42, c.width*0.28, c.height*0.38, 0, 0, Math.PI*2);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(v,0,0,c.width,c.height);
+    ctx.restore();
+    // Soft edge blend: light re-blur on rim
+    ctx.save();
+    ctx.globalCompositeOperation='source-over';
+    ctx.filter='blur('+Math.max(2,b*0.35)+'px)';
+    ctx.beginPath();
+    ctx.ellipse(c.width*0.5, c.height*0.42, c.width*0.30, c.height*0.40, 0, 0, Math.PI*2);
+    ctx.ellipse(c.width*0.5, c.height*0.42, c.width*0.24, c.height*0.34, 0, 0, Math.PI*2);
+    ctx.clip('evenodd');
+    ctx.drawImage(v,0,0,c.width,c.height);
+    ctx.restore();
+  }else if(VirtualBg.mode==='image' && VirtualBg.imageEl && VirtualBg.imageEl.complete){
+    // Draw custom background covering the frame
+    const img=VirtualBg.imageEl;
+    const ir=img.width/Math.max(1,img.height);
+    const cr=c.width/c.height;
+    let dw,dh,dx,dy;
+    if(ir>cr){dh=c.height;dw=dh*ir;dx=(c.width-dw)/2;dy=0;}
+    else{dw=c.width;dh=dw/ir;dx=0;dy=(c.height-dh)/2;}
+    ctx.drawImage(img,dx,dy,dw,dh);
+    // Subject approx: draw camera only in center ellipse (person silhouette stand-in)
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(c.width*0.5, c.height*0.42, c.width*0.28, c.height*0.38, 0, 0, Math.PI*2);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(v,0,0,c.width,c.height);
+    ctx.restore();
+  }else{
+    ctx.drawImage(v,0,0,c.width,c.height);
+  }
+  VirtualBg.raf=requestAnimationFrame(vbDrawFrame);
+}
+async function startVirtualBgFromRaw(rawStream){
+  ensureVbDom();
+  stopVirtualBgLoop();
+  VirtualBg.rawStream=rawStream;
+  VirtualBg.rawVideo.srcObject=rawStream;
+  try{await VirtualBg.rawVideo.play();}catch(e){}
+  // wait for dimensions
+  await new Promise(r=>setTimeout(r,120));
+  VirtualBg.running=true;
+  vbDrawFrame();
+  const fps=30;
+  const canvasStream=VirtualBg.canvas.captureStream(fps);
+  const processedVideo=canvasStream.getVideoTracks()[0];
+  const audioTracks=rawStream.getAudioTracks();
+  const out=new MediaStream();
+  if(processedVideo)out.addTrack(processedVideo);
+  audioTracks.forEach(t=>out.addTrack(t));
+  VirtualBg.processedStream=out;
+  return out;
+}
+async function applyVirtualBackgroundToStream(stream){
+  // Always keep a reference to the true camera stream
+  if(!VirtualBg.rawStream)VirtualBg.rawStream=stream;
+  if(VirtualBg.mode==='none'){
+    stopVirtualBgLoop();
+    return stream;
+  }
+  if(VirtualBg.mode==='image' && VirtualBg.imageDataUrl){
+    ensureVbDom();
+    if(!VirtualBg.imageEl){
+      VirtualBg.imageEl=new Image();
+      VirtualBg.imageEl.src=VirtualBg.imageDataUrl;
+      await new Promise(res=>{VirtualBg.imageEl.onload=res;VirtualBg.imageEl.onerror=res;});
+    }
+  }
+  return await startVirtualBgFromRaw(stream.getVideoTracks().length?stream:(VirtualBg.rawStream||stream));
+}
+async function replaceLocalVideoTrackForPeers(newStream){
+  if(!CallState.localStream)return;
+  const newTrack=newStream.getVideoTracks()[0];
+  const oldTracks=CallState.localStream.getVideoTracks().slice();
+  if(newTrack){
+    oldTracks.forEach(t=>{
+      try{CallState.localStream.removeTrack(t);}catch(e){}
+      try{if(t!==newTrack)t.stop();}catch(e){}
+    });
+    CallState.localStream.addTrack(newTrack);
+  }
+  // Replace on all peer connections
+  for(const[peerId,peer]of CallState.peers){
+    try{
+      const sender=peer.pc.getSenders().find(s=>s.track&&s.track.kind==='video');
+      if(sender&&newTrack)await sender.replaceTrack(newTrack);
+    }catch(e){console.warn('replaceTrack',e);}
+  }
+  const localVideo=document.getElementById('localVideo');
+  if(localVideo){
+    localVideo.srcObject=CallState.localStream;
+    localVideo.muted=true;localVideo.volume=0;
+    localVideo.play().catch(()=>{});
+  }
+}
+async function setVirtualBgMode(mode){
+  VirtualBg.mode=mode||'none';
+  saveCallBgPrefs();
+  updateCallBgPanelUI();
+  if(!CallState.active||!CallState.localStream)return;
+  // Don't process during screen share
+  if(CallState.screenSharing){toast('Stop screen share to change background',true);return;}
+  try{
+    let base=VirtualBg.rawStream;
+    if(!base||!base.getVideoTracks().some(t=>t.readyState==='live')){
+      base=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'},audio:false});
+      // keep existing audio on CallState.localStream
+      VirtualBg.rawStream=new MediaStream([
+        ...base.getVideoTracks(),
+        ...CallState.localStream.getAudioTracks()
+      ]);
+    }
+    let next;
+    if(VirtualBg.mode==='none'){
+      stopVirtualBgLoop();
+      next=VirtualBg.rawStream;
+    }else{
+      next=await applyVirtualBackgroundToStream(VirtualBg.rawStream);
+    }
+    // Preserve audio tracks on CallState.localStream
+    const audio=CallState.localStream.getAudioTracks();
+    const combined=new MediaStream([
+      ...next.getVideoTracks(),
+      ...audio
+    ]);
+    CallState.localStream=combined;
+    await replaceLocalVideoTrackForPeers(combined);
+    toast(mode==='blur'?'Background blur on':(mode==='image'?'Custom background on':'Background off'));
+  }catch(e){
+    console.error(e);
+    toast('Background effect failed: '+(e.message||e),true);
+  }
+}
+function updateCallBgPanelUI(){
+  if(!el.callBgPanel)return;
+  el.callBgPanel.querySelectorAll('[data-bg-mode]').forEach(b=>{
+    b.classList.toggle('active',b.dataset.bgMode===VirtualBg.mode);
+  });
+  if(el.callBgBlurRow)el.callBgBlurRow.style.display=VirtualBg.mode==='blur'?'flex':'none';
+  if(el.callBgImageRow)el.callBgImageRow.style.display=VirtualBg.mode==='image'?'block':'none';
+  if(el.callBgBlurAmount)el.callBgBlurAmount.value=VirtualBg.blurAmount;
+  if(el.callBgBlurVal)el.callBgBlurVal.textContent=String(VirtualBg.blurAmount);
+  if(el.callBgPreview){
+    if(VirtualBg.imageDataUrl){
+      el.callBgPreview.innerHTML='<img src="'+VirtualBg.imageDataUrl+'" alt="bg">';
+    }else{
+      el.callBgPreview.innerHTML='<span style="color:#666;font-size:12px;">No image</span>';
+    }
+  }
+  if(el.ctrlBg){
+    if(VirtualBg.mode!=='none')el.ctrlBg.classList.add('active-bg');
+    else el.ctrlBg.classList.remove('active-bg');
+  }
+}
+function bindCallBgUI(){
+  if(!el.ctrlBg)return;
+  if(el.ctrlBg._bound)return;
+  el.ctrlBg._bound=true;
+  el.ctrlBg.addEventListener('click',ev=>{
+    ev.stopPropagation();
+    if(!el.callBgPanel)return;
+    el.callBgPanel.classList.toggle('show');
+    updateCallBgPanelUI();
+  });
+  el.callBgPanel.querySelectorAll('[data-bg-mode]').forEach(btn=>{
+    btn.addEventListener('click',()=>setVirtualBgMode(btn.dataset.bgMode));
+  });
+  if(el.callBgBlurAmount){
+    el.callBgBlurAmount.addEventListener('input',()=>{
+      VirtualBg.blurAmount=parseInt(el.callBgBlurAmount.value,10)||12;
+      if(el.callBgBlurVal)el.callBgBlurVal.textContent=String(VirtualBg.blurAmount);
+      saveCallBgPrefs();
+    });
+  }
+  if(el.callBgPickImage){
+    el.callBgPickImage.addEventListener('click',()=>el.callBgFileInput&&el.callBgFileInput.click());
+  }
+  if(el.callBgClearImage){
+    el.callBgClearImage.addEventListener('click',()=>{
+      VirtualBg.imageDataUrl=null;
+      VirtualBg.imageEl=null;
+      saveCallBgPrefs();
+      updateCallBgPanelUI();
+      if(VirtualBg.mode==='image')setVirtualBgMode('none');
+    });
+  }
+  if(el.callBgFileInput){
+    el.callBgFileInput.addEventListener('change',async()=>{
+      const file=el.callBgFileInput.files&&el.callBgFileInput.files[0];
+      el.callBgFileInput.value='';
+      if(!file)return;
+      if(file.size>4*1024*1024){toast('Image too large (max 4MB)',true);return;}
+      try{
+        const dataUrl=await readFileAsDataURL(file);
+        VirtualBg.imageDataUrl=dataUrl;
+        VirtualBg.imageEl=new Image();
+        VirtualBg.imageEl.src=dataUrl;
+        await new Promise(res=>{VirtualBg.imageEl.onload=res;VirtualBg.imageEl.onerror=res;});
+        saveCallBgPrefs();
+        updateCallBgPanelUI();
+        await setVirtualBgMode('image');
+      }catch(e){toast('Failed to load image',true);}
+    });
+  }
+  document.addEventListener('click',ev=>{
+    if(!el.callBgPanel||!el.callBgPanel.classList.contains('show'))return;
+    if(el.callBgPanel.contains(ev.target)||ev.target===el.ctrlBg||(el.ctrlBg&&el.ctrlBg.contains(ev.target)))return;
+    el.callBgPanel.classList.remove('show');
+  });
+}
+
 async function getAudioOnlyMedia(){
   try{return await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:false,googEchoCancellation:true,googAutoGainControl:false}});}
   catch(e){return null;}
@@ -4959,6 +5447,8 @@ async function stopScreenShare(){
 
     CallState.screenSharing=false;
     CallState.cameraOn=restoreTrack?true:false;
+    // Re-apply virtual background if user had blur/image enabled
+    try{if(VirtualBg.mode&&VirtualBg.mode!=='none'){setVirtualBgMode(VirtualBg.mode);}}catch(e){}
 
     // Update local tile
     const localTile=document.querySelector('.call-tile[data-peer-id="self"]');
@@ -5072,8 +5562,11 @@ async function joinCallRoom(roomId,isGroup,expectedPeerId,expectedPeerName){
   CallState.cameraOn=stream.getVideoTracks().length>0&&stream.getVideoTracks()[0].enabled;
   CallState.micOn=stream.getAudioTracks().length>0&&stream.getAudioTracks()[0].enabled;
   CallState.screenSharing=false;
-  CallState.cameraTrackBackup=stream.getVideoTracks()[0]||null;
+  // Prefer true camera track as backup (for screen-share restore), not processed VB track
+  const rawVid=(VirtualBg.rawStream&&VirtualBg.rawStream.getVideoTracks()[0])||stream.getVideoTracks()[0]||null;
+  CallState.cameraTrackBackup=rawVid;
   CallState.screenStream=null;
+  try{updateCallBgPanelUI();}catch(e){}
   CallState.startTime=Date.now();
   el.callOverlay.classList.add('show');
   el.startGroupCallBtn.classList.add('in-call');
@@ -5412,6 +5905,7 @@ function broadcastMediaState(){
 async function leaveCall(showToast){
   if(!CallState.active)return;
   try{exitCallPiP();}catch(e){}
+  try{stopVirtualBgLoop();}catch(e){}
   try{stopSpeakingLoop();}catch(e){}
   try{detachAllAudioMeters();}catch(e){}
   try{playCallLeaveSound();}catch(e){}
@@ -5988,6 +6482,7 @@ document.addEventListener('visibilitychange',()=>{
 // ============================================================
 (async function init(){
   buildEmojiPicker();buildBgPresets();renderMyAvatars();
+  try{bindCallBgUI();updateCallBgPanelUI();}catch(e){console.warn(e);}
   updateChatHeader();updateConnectionUI();
 
   if(SUPABASE_URL==='PASTE_YOUR_PROJECT_URL_HERE'||SUPABASE_KEY==='PASTE_YOUR_ANON_KEY_HERE'){
