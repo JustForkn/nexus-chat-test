@@ -247,6 +247,28 @@ a:hover{text-decoration:underline}
 .rank-mod{background:#23a55a;color:#fff}
 .rank-vip{background:#eb459e;color:#fff}
 .rank-member{display:none}
+.rank-1of1,.rank-one_of_one{
+  background:linear-gradient(90deg,#ff0000,#ff7f00,#ffff00,#00ff00,#0000ff,#4b0082,#9400d3,#ff0000);
+  background-size:300% 100%;
+  animation:rankRgbSlide 3s linear infinite;
+  color:#fff;
+  text-shadow:0 1px 2px rgba(0,0,0,.55);
+  border:1px solid rgba(255,255,255,.35);
+  font-weight:800;
+  letter-spacing:.08em;
+}
+@keyframes rankRgbSlide{
+  0%{background-position:0% 50%}
+  100%{background-position:300% 50%}
+}
+.rank-custom{color:#fff;border:1px solid rgba(255,255,255,.15)}
+.admin-ranks-create{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.admin-ranks-create input[type="text"]{flex:1;min-width:120px;padding:8px 10px;border-radius:6px;border:1px solid #3f4147;background:#1e1f22;color:var(--text);font-size:13px}
+.admin-ranks-create input[type="color"]{width:40px;height:34px;border:none;background:none;cursor:pointer}
+.admin-rank-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:6px;background:#2b2d31;font-size:12px;margin:4px 4px 0 0}
+.admin-rank-chip button{font-size:11px;color:var(--red);padding:2px 6px}
+.call-pip-badge{position:fixed;bottom:16px;right:16px;z-index:99999;background:rgba(0,0,0,.85);color:#fff;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;pointer-events:none;display:none}
+.call-pip-badge.show{display:block}
 .timeout-indicator{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--red);background:rgba(242,63,67,.15);padding:2px 6px;border-radius:3px;font-weight:600;line-height:1;height:15px;flex-shrink:0}
 .warn-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--yellow);background:rgba(240,178,50,.15);padding:2px 6px;border-radius:3px;font-weight:600;line-height:1;height:15px;flex-shrink:0}
 
@@ -1410,7 +1432,9 @@ const LS={
   SNAKE_BEST:'nexus_snake_best_v3',
   ADMIN_AUTH:'nexus_admin_auth_v3',
   ADMIN_PINNED_HIDDEN:'nexus_pin_hidden_v3',
-  CHANNEL_UNREAD:'nexus_channel_unread_v3'
+  CHANNEL_UNREAD:'nexus_channel_unread_v3',
+  USER_RANKS:'nexus_user_ranks_v1',
+  CUSTOM_RANKS:'nexus_custom_ranks_v1'
 };
 function lsGet(k,fb){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb;}catch(e){return fb;}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
@@ -1486,8 +1510,57 @@ function formatSize(b){if(!b)return '0 B';const u=['B','KB','MB','GB'];let i=0;w
 function toast(msg,type){const t=document.createElement('div');t.className='toast'+(type?' '+type:'');t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2500);}
 function codepointLength(s){return [...s].length;}
 function fmtDate(d){if(!d)return '—';return new Date(d).toLocaleString();}
-function rankLabel(r){return {owner:'Owner',admin:'Admin',mod:'Mod',vip:'VIP',member:'Member'}[r||'member']||'Member';}
-function rankBadge(r){if(!r||r==='member')return '';return '<span class="rank-badge rank-'+r+'">'+rankLabel(r)+'</span>';}
+function rankLabel(r){
+  const builtin={owner:'Owner',admin:'Admin',mod:'Mod',vip:'VIP',member:'Member','1of1':'1 of 1',one_of_one:'1 of 1'};
+  if(builtin[r||'member'])return builtin[r||'member'];
+  const custom=(typeof getCustomRanks==='function'?getCustomRanks():[]).find(x=>x.id===r);
+  if(custom)return custom.label||r;
+  return r||'Member';
+}
+function rankBadge(r){
+  if(!r||r==='member')return '';
+  if(r==='1of1'||r==='one_of_one'){
+    return '<span class="rank-badge rank-1of1">1 of 1</span>';
+  }
+  const custom=(typeof getCustomRanks==='function'?getCustomRanks():[]).find(x=>x.id===r);
+  if(custom){
+    const anim=custom.animated?' rank-1of1':'';
+    const style=custom.animated?'':('background:'+escapeHtml(custom.color||'#5865f2')+';');
+    return '<span class="rank-badge rank-custom'+anim+'" style="'+style+'">'+escapeHtml(custom.label||r)+'</span>';
+  }
+  return '<span class="rank-badge rank-'+escapeHtml(r)+'">'+escapeHtml(rankLabel(r))+'</span>';
+}
+function getPersistedRanks(){
+  const m=lsGet(LS.USER_RANKS,{});
+  return (m&&typeof m==='object')?m:{};
+}
+function setPersistedRank(uid,rank){
+  const m=getPersistedRanks();
+  if(!rank||rank==='member')delete m[uid];
+  else m[uid]=rank;
+  lsSet(LS.USER_RANKS,m);
+}
+function getCustomRanks(){
+  let list=lsGet(LS.CUSTOM_RANKS,[]);
+  if(!Array.isArray(list))list=[];
+  // Ensure built-in animated "1 of 1" always exists in catalog
+  if(!list.some(x=>x&&(x.id==='1of1'||x.id==='one_of_one'))){
+    list=[{id:'1of1',label:'1 of 1',color:'#ff0000',animated:true},...list];
+  }
+  return list;
+}
+function saveCustomRanks(list){
+  lsSet(LS.CUSTOM_RANKS,list);
+}
+function resolveUserRank(uid,fallback){
+  const persisted=getPersistedRanks()[uid];
+  if(persisted)return persisted;
+  const known=cachedKnownUsers[uid];
+  if(known&&known.rank&&known.rank!=='member')return known.rank;
+  const online=cachedUsers[uid];
+  if(online&&online.rank)return online.rank;
+  return fallback||'member';
+}
 function newUuid(){
   if(crypto.randomUUID)return crypto.randomUUID();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{
@@ -3442,7 +3515,14 @@ async function registerOnlineUser(){
   try{
     const{data:updated,error}=await supa.from('online_users').update(payload).eq('client_id',me.clientId).select();
     if(error){updErr=error;}
-    else if(updated&&updated.length>0)return;
+    else if(updated&&updated.length>0){
+      // Re-assert persisted rank so reconnect never demotes
+      const pr=resolveUserRank(me.clientId,null);
+      if(pr&&pr!=='member'&&(!updated[0].rank||updated[0].rank!==pr)){
+        try{await supa.from('online_users').update({rank:pr}).eq('client_id',me.clientId);}catch(e){}
+      }
+      return;
+    }
   }catch(e){updErr=e;}
   // Fallback without extended fields if schema rejects them
   if(updErr){
@@ -3451,19 +3531,22 @@ async function registerOnlineUser(){
     if(e2)throw e2;
     if(updated2&&updated2.length>0)return;
   }
-  const insertPayload={client_id:me.clientId,username:me.username,pfp_data_url:me.pfp||null,frame:me.frame||'none',last_seen:payload.last_seen,rank:'member',timeout_until:null,banned:false,warnings:0,force_nick:null};
+  const savedRank=resolveUserRank(me.clientId,'member');
+  const insertPayload={client_id:me.clientId,username:me.username,pfp_data_url:me.pfp||null,frame:me.frame||'none',last_seen:payload.last_seen,rank:savedRank||'member',timeout_until:null,banned:false,warnings:0,force_nick:null};
   const{error:insErr}=await supa.from('online_users').insert(insertPayload);
   if(insErr)throw insErr;
 }
+
 async function upsertKnownUser(){
   if(!supa||!me.username)return;
   const existing=cachedKnownUsers[me.clientId]||{};
-  const row={client_id:me.clientId,username:me.username,pfp_data_url:me.pfp||null,frame:me.frame||'none',last_seen:new Date().toISOString(),rank:existing.rank||'member'};
+  const savedRank=resolveUserRank(me.clientId,existing.rank||'member');
+  const row={client_id:me.clientId,username:me.username,pfp_data_url:me.pfp||null,frame:me.frame||'none',last_seen:new Date().toISOString(),rank:savedRank||'member'};
   try{row.bio=me.bio||null;row.banner_data_url=me.banner||null;row.hobbies=me.hobbies||null;}catch(e){}
   const{error}=await supa.from('known_users').upsert(row,{onConflict:'client_id'});
   if(error){
     // Retry without extended fields
-    const basic={client_id:me.clientId,username:me.username,pfp_data_url:me.pfp||null,frame:me.frame||'none',last_seen:new Date().toISOString(),rank:existing.rank||'member'};
+    const basic={client_id:me.clientId,username:me.username,pfp_data_url:me.pfp||null,frame:me.frame||'none',last_seen:new Date().toISOString(),rank:savedRank||'member'};
     const{error:e2}=await supa.from('known_users').upsert(basic,{onConflict:'client_id'});
     if(e2)console.warn('known_users upsert',e2);
   }
@@ -3553,13 +3636,27 @@ function scanMessageForBotDefs(text){
 }
 
 function fillBotTemplate(tpl,ctx){
+  function genCode12(){
+    const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code='';
+    for(let i=0;i<12;i++)code+=chars[Math.floor(Math.random()*chars.length)];
+    return code;
+  }
+  function genDigits12(){
+    let code='';
+    for(let i=0;i<12;i++)code+=String(Math.floor(Math.random()*10));
+    return code;
+  }
   return String(tpl||'')
     .replace(/\{user\}/gi,ctx.user||'')
     .replace(/\{args\}/gi,ctx.args||'')
     .replace(/\{channel\}/gi,ctx.channel||'')
     .replace(/\{server\}/gi,ctx.server||'')
     .replace(/\{mention\}/gi,ctx.mention||'@'+ctx.user)
-    .replace(/\{random\}/gi,String(Math.floor(Math.random()*100)+1));
+    .replace(/\{random\}/gi,String(Math.floor(Math.random()*100)+1))
+    .replace(/\{code12\}/gi,genCode12())
+    .replace(/\{code\}/gi,genCode12())
+    .replace(/\{digits12\}/gi,genDigits12());
 }
 
 async function postBotReply(botName,text){
@@ -3643,7 +3740,7 @@ async function handleSlashCommand(raw){
       'trigger: !hello',
       'reply: Hey {user}! {args}',
       '```',
-      'Placeholders: `{user}` `{args}` `{channel}` `{server}` `{mention}` `{random}`'
+      'Placeholders: `{user}` `{args}` `{channel}` `{server}` `{mention}` `{random}` `{code12}` `{digits12}`'
     ];
     await sendMessageToSupabase('system',null,lines.join('\n'),null);
     return true;
@@ -3753,7 +3850,7 @@ async function handleSlashCommand(raw){
         '',
         '`/bot list` — list bots',
         '`/bot remove <name>` — remove your bot',
-        'Placeholders: {user} {args} {channel} {server} {mention} {random}'
+        'Placeholders: {user} {args} {channel} {server} {mention} {random} {code12} {digits12}'
       ].join('\n'),null);
     }
     return true;
@@ -3962,7 +4059,14 @@ async function refreshOnlineUsers(){
   try{
     const{data,error}=await supa.from('online_users').select('*');
     if(error)throw error;
-    cachedUsers={};(data||[]).forEach(u=>{cachedUsers[u.client_id]=u;});
+    cachedUsers={};(data||[]).forEach(u=>{
+      const pr=getPersistedRanks()[u.client_id];
+      if(pr)u={...u,rank:pr};
+      else if((!u.rank||u.rank==='member')&&cachedKnownUsers[u.client_id]&&cachedKnownUsers[u.client_id].rank){
+        u={...u,rank:cachedKnownUsers[u.client_id].rank};
+      }
+      cachedUsers[u.client_id]=u;
+    });
     renderMembers();renderMessages();renderMyAvatars();updateLockNotice();
     if(isAdmin)renderAdminPanel();
   }catch(e){console.error(e);}
@@ -3972,7 +4076,11 @@ async function refreshKnownUsers(){
   try{
     const{data,error}=await supa.from('known_users').select('*').order('last_seen',{ascending:false}).limit(500);
     if(error)throw error;
-    cachedKnownUsers={};(data||[]).forEach(u=>{cachedKnownUsers[u.client_id]=u;});
+    cachedKnownUsers={};(data||[]).forEach(u=>{
+      const pr=getPersistedRanks()[u.client_id];
+      if(pr)u={...u,rank:pr};
+      cachedKnownUsers[u.client_id]=u;
+    });
     renderMembers();
   }catch(e){console.warn('known users fetch',e);}
 }
@@ -4614,8 +4722,87 @@ const CallState={
   startTime:0,timerInterval:null,pendingInvite:null,
   ringInterval:null,ringCtx:null,
   cameraTrackBackup:null,  // backup of camera track when screen sharing
-  screenStream:null        // active getDisplayMedia stream
+  screenStream:null,       // active getDisplayMedia stream
+  pipActive:false,
+  pipVideo:null
 };
+
+// ============================================================
+// 1:1 CALL PICTURE-IN-PICTURE (when tab is in background)
+// Only for single-peer calls — shows remote cam / screen share
+// ============================================================
+function isOneToOneCall(){
+  return !!(CallState.active && CallState.peers && CallState.peers.size===1 && !CallState.isGroup);
+}
+function getRemoteCallVideoEl(){
+  if(!isOneToOneCall())return null;
+  const peerId=CallState.peers.keys().next().value;
+  if(!peerId)return null;
+  return document.querySelector('.call-tile[data-peer-id="'+peerId+'"] video')
+    || document.querySelector('#callGrid video:not(#localVideo)');
+}
+async function enterCallPiP(){
+  if(!isOneToOneCall())return;
+  if(document.pictureInPictureElement)return;
+  const video=getRemoteCallVideoEl();
+  if(!video)return;
+  // Ensure stream is attached
+  const peer=CallState.peers.values().next().value;
+  if(peer&&peer.stream&&video.srcObject!==peer.stream){
+    video.srcObject=peer.stream;
+    try{await video.play();}catch(e){}
+  }
+  if(!video.srcObject)return;
+  try{
+    if(document.pictureInPictureEnabled && video.requestPictureInPicture){
+      await video.requestPictureInPicture();
+      CallState.pipActive=true;
+      CallState.pipVideo=video;
+      showPipBadge(true);
+    }
+  }catch(e){
+    console.warn('PiP failed',e);
+  }
+}
+async function exitCallPiP(){
+  try{
+    if(document.pictureInPictureElement){
+      await document.exitPictureInPicture();
+    }
+  }catch(e){}
+  CallState.pipActive=false;
+  CallState.pipVideo=null;
+  showPipBadge(false);
+}
+function showPipBadge(on){
+  let b=document.getElementById('callPipBadge');
+  if(!b){
+    b=document.createElement('div');
+    b.id='callPipBadge';
+    b.className='call-pip-badge';
+    b.textContent='📞 1:1 call — PiP active';
+    document.body.appendChild(b);
+  }
+  b.classList.toggle('show',!!on);
+}
+document.addEventListener('visibilitychange',()=>{
+  if(!CallState.active)return;
+  if(document.hidden){
+    // Only auto-PiP for 1-person (1:1) calls
+    if(isOneToOneCall()){
+      enterCallPiP().catch(()=>{});
+    }
+  }else{
+    // Returning to tab — leave PiP so main UI shows
+    if(CallState.pipActive)exitCallPiP().catch(()=>{});
+  }
+});
+document.addEventListener('leavepictureinpicture',()=>{
+  CallState.pipActive=false;
+  CallState.pipVideo=null;
+  showPipBadge(false);
+});
+
 
 function startRingtone(){
   stopRingtone();
@@ -5224,6 +5411,7 @@ function broadcastMediaState(){
 }
 async function leaveCall(showToast){
   if(!CallState.active)return;
+  try{exitCallPiP();}catch(e){}
   try{stopSpeakingLoop();}catch(e){}
   try{detachAllAudioMeters();}catch(e){}
   try{playCallLeaveSound();}catch(e){}
@@ -5293,7 +5481,10 @@ function renderAdminPanel(){
     setTimeout(()=>input.focus(),100);
     return;
   }
-  const users=Object.values(cachedUsers).filter(u=>u&&u.username);
+  const users=Object.values(cachedUsers).filter(u=>u&&u.username).map(u=>{
+    const pr=resolveUserRank(u.client_id,u.rank);
+    return {...u,rank:pr};
+  });
   users.sort((a,b)=>a.username.localeCompare(b.username));
   const timedOutCount=users.filter(u=>u.timeout_until&&new Date(u.timeout_until)>new Date()).length;
   const bannedCount=users.filter(u=>u.banned).length;
@@ -5343,6 +5534,27 @@ function renderAdminPanel(){
     });
   }
   html+='</div>';
+  // Custom ranks management
+  const customRanks=getCustomRanks();
+  html+='<div class="admin-section"><h4>🏅 Custom Ranks</h4>';
+  html+='<p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Ranks you assign are saved forever (until you change them). Create custom badges below. <b>1 of 1</b> is a built-in sliding RGB rank.</p>';
+  html+='<div id="adminCustomRankList">';
+  customRanks.forEach(cr=>{
+    const preview=cr.animated||cr.id==='1of1'
+      ? '<span class="rank-badge rank-1of1">'+escapeHtml(cr.label||'1 of 1')+'</span>'
+      : '<span class="rank-badge rank-custom" style="background:'+escapeHtml(cr.color||'#5865f2')+'">'+escapeHtml(cr.label||cr.id)+'</span>';
+    html+='<div class="admin-rank-chip" data-crid="'+escapeHtml(cr.id)+'">'+preview+
+      (cr.id==='1of1'||cr.id==='one_of_one'?' <span style="color:var(--text-muted);font-size:11px;">(built-in)</span>':
+        '<button type="button" data-del-rank="'+escapeHtml(cr.id)+'">Remove</button>')+
+      '</div>';
+  });
+  html+='</div>';
+  html+='<div class="admin-ranks-create">'+
+    '<input type="text" id="newRankLabel" maxlength="24" placeholder="Rank name (e.g. Legend)">'+
+    '<input type="color" id="newRankColor" value="#5865f2" title="Rank color">'+
+    '<label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="newRankAnim"> RGB animate</label>'+
+    '<button class="admin-btn success" id="adminCreateRank">➕ Create Rank</button>'+
+    '</div></div>';
   html+='<div class="admin-section"><h4>👥 Users <span class="ap-count">'+users.length+'</span></h4>';
   if(users.length===0){html+='<div class="admin-empty">No users online</div>';}
   else{
@@ -5370,7 +5582,11 @@ function renderAdminPanel(){
         '<button data-setrank="admin" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:#f23f43;"></span>Admin</button>'+
         '<button data-setrank="mod" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:#23a55a;"></span>Mod</button>'+
         '<button data-setrank="vip" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:#eb459e;"></span>VIP</button>'+
+        '<button data-setrank="1of1" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:linear-gradient(90deg,red,orange,yellow,green,blue,purple);"></span>1 of 1</button>'+
         '<button data-setrank="member" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:#4e5058;"></span>Member</button>'+
+        (getCustomRanks().filter(cr=>cr.id!=='1of1'&&cr.id!=='one_of_one').map(cr=>
+          '<button data-setrank="'+escapeHtml(cr.id)+'" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:'+escapeHtml(cr.color||'#5865f2')+';"></span>'+escapeHtml(cr.label||cr.id)+'</button>'
+        ).join(''))+
         '</div></div>'+
         '<button class="admin-btn warn" data-act="warn" data-uid="'+u.client_id+'">⚠️ Warn</button>'+
         '<button class="admin-btn" data-act="rename" data-uid="'+u.client_id+'">✏️ Rename</button>'+
@@ -5397,6 +5613,37 @@ function renderAdminPanel(){
   c.innerHTML=html;
 
   $('adminLogout').addEventListener('click',()=>{isAdmin=false;lsSet(LS.ADMIN_AUTH+'::'+clientId,false);toast('Admin signed out');renderAdminPanel();renderMessages();});
+  // Custom rank create / delete
+  const createRankBtn=$('adminCreateRank');
+  if(createRankBtn){
+    createRankBtn.addEventListener('click',()=>{
+      const label=(($('newRankLabel')&&$('newRankLabel').value)||'').trim();
+      const color=($('newRankColor')&&$('newRankColor').value)||'#5865f2';
+      const animated=!($('newRankAnim')&&!$('newRankAnim').checked);
+      const animChecked=$('newRankAnim')?$('newRankAnim').checked:false;
+      if(!label){toast('Enter a rank name',true);return;}
+      const id=('cr_'+label.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')).slice(0,28)||('cr_'+Date.now());
+      let list=getCustomRanks().filter(x=>x.id!=='1of1'&&x.id!=='one_of_one');
+      if(list.some(x=>x.id===id||(x.label||'').toLowerCase()===label.toLowerCase())){
+        toast('Rank already exists',true);return;
+      }
+      list.push({id:id,label:label,color:color,animated:!!animChecked});
+      saveCustomRanks([{id:'1of1',label:'1 of 1',color:'#ff0000',animated:true},...list]);
+      toast('Rank created: '+label);
+      renderAdminPanel();
+    });
+  }
+  c.querySelectorAll('[data-del-rank]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const id=btn.dataset.delRank;
+      if(id==='1of1'||id==='one_of_one'){toast('Cannot remove built-in rank',true);return;}
+      let list=getCustomRanks().filter(x=>x.id!==id);
+      saveCustomRanks(list);
+      toast('Rank removed');
+      renderAdminPanel();
+    });
+  });
+
   $('adminBroadcastOpen').addEventListener('click',openBroadcastModal);
   $('adminLockToggle').addEventListener('click',async()=>{
     const newLocked=!(cachedSettings&&cachedSettings.locked);
@@ -5618,8 +5865,20 @@ async function adminUnbanUser(uid){
 }
 async function adminSetRank(uid,rank){
   if(!supa)return;
+  // Persist rank forever (local + known_users + online_users) until admin changes it
+  setPersistedRank(uid,rank);
+  if(cachedUsers[uid])cachedUsers[uid]={...cachedUsers[uid],rank:rank};
+  if(cachedKnownUsers[uid])cachedKnownUsers[uid]={...cachedKnownUsers[uid],rank:rank};
+  else cachedKnownUsers[uid]={client_id:uid,rank:rank};
   const{error}=await supa.from('online_users').update({rank:rank}).eq('client_id',uid);
-  if(error)throw error;
+  if(error)console.warn('online_users rank update',error);
+  try{
+    await supa.from('known_users').upsert({client_id:uid,rank:rank,last_seen:new Date().toISOString()},{onConflict:'client_id'});
+  }catch(e){
+    try{await supa.from('known_users').update({rank:rank}).eq('client_id',uid);}catch(e2){console.warn('known rank',e2);}
+  }
+  try{renderMembers();}catch(e){}
+  try{renderMessages();}catch(e){}
 }
 let renameTargetUid=null;
 function openRenameModal(uid){
