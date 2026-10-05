@@ -842,14 +842,15 @@ a:hover{text-decoration:underline}
 .blocked-msg{opacity:.45;font-style:italic;color:var(--text-muted);padding:8px 16px;font-size:13px}
 .note-box{width:100%;min-height:60px;background:var(--bg-alt);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:var(--text);padding:8px;font-size:13px;resize:vertical}
 
-.header-ham-wrap{position:relative;display:flex;align-items:center;}
-.header-ham-btn{width:32px;height:32px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#b5bac1;font-size:18px;cursor:pointer;background:transparent;border:none;}
-.header-ham-btn:hover{background:#35373c;color:var(--text);}
-.header-ham-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:220px;background:var(--bg-alt);border:1px solid #3f4147;border-radius:8px;box-shadow:0 12px 32px rgba(0,0,0,.55);z-index:10000;padding:6px;flex-direction:column;gap:2px;}
-.header-ham-menu.show{display:flex;}
-.header-ham-menu button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:6px;font-size:13px;font-weight:600;color:var(--text);background:transparent;border:none;cursor:pointer;}
-.header-ham-menu button:hover{background:#35373c;}
+.header-ham-wrap{position:relative;display:flex;align-items:center;z-index:50;}
+.header-ham-btn{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#b5bac1;font-size:22px;font-weight:700;cursor:pointer;background:#2b2d31;border:1px solid #3f4147;}
+.header-ham-btn:hover{background:#35373c;color:#fff;}
+.header-ham-menu{display:none;position:fixed;min-width:240px;background:#1e1f22;border:1px solid #3f4147;border-radius:10px;box-shadow:0 16px 40px rgba(0,0,0,.7);z-index:200000;padding:8px;flex-direction:column;gap:2px;}
+.header-ham-menu.show{display:flex !important;}
+.header-ham-menu button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:11px 12px;border-radius:6px;font-size:13px;font-weight:600;color:#dbdee1;background:transparent;border:none;cursor:pointer;}
+.header-ham-menu button:hover{background:#35373c;color:#fff;}
 .header-ham-menu .ham-ico{width:22px;text-align:center;font-size:16px;}
+.chat-header{overflow:visible !important;z-index:20;}
 .device-ban-screen{/* reserved */}
 
 .header-tools{display:flex;gap:4px;align-items:center}
@@ -2475,27 +2476,47 @@ function applyPresenceUI(){
 function bindHeaderHamburger(){
   const btn=$('headerHamBtn');
   const menu=$('headerHamMenu');
-  if(!btn||!menu)return;
+  if(!btn||!menu){console.warn('hamburger missing');return;}
+  if(btn.dataset.bound==='1')return;
+  btn.dataset.bound='1';
   btn.addEventListener('click',ev=>{
+    ev.preventDefault();
     ev.stopPropagation();
-    menu.classList.toggle('show');
+    const open=!menu.classList.contains('show');
+    document.querySelectorAll('.header-ham-menu.show').forEach(m=>m.classList.remove('show'));
+    if(!open)return;
+    const r=btn.getBoundingClientRect();
+    menu.style.top=(r.bottom+6)+'px';
+    menu.style.left=Math.max(8, Math.min(r.right-240, window.innerWidth-250))+'px';
+    menu.classList.add('show');
   });
-  document.addEventListener('click',()=>menu.classList.remove('show'));
-  menu.addEventListener('click',ev=>ev.stopPropagation());
+  document.addEventListener('click',ev=>{
+    if(menu.contains(ev.target)||btn.contains(ev.target))return;
+    menu.classList.remove('show');
+  });
   menu.querySelectorAll('[data-ham]').forEach(b=>{
-    b.addEventListener('click',()=>{
+    b.addEventListener('click',ev=>{
+      ev.preventDefault();
+      ev.stopPropagation();
       const act=b.dataset.ham;
       menu.classList.remove('show');
-      try{
-        if(act==='whiteboard'&&el.whiteboardBtn)el.whiteboardBtn.click();
-        else if(act==='playlist'&&el.playlistBtn)el.playlistBtn.click();
-        else if(act==='miniapps'&&el.miniAppsBtn)el.miniAppsBtn.click();
-        else if(act==='density'&&el.densityBtn)el.densityBtn.click();
-        else if(act==='snow'&&el.snowBtn)el.snowBtn.click();
-        else if(act==='realtime'&&el.realtimeIndicator)el.realtimeIndicator.click();
-        else if(act==='call'&&el.startGroupCallBtn)el.startGroupCallBtn.click();
-        else if(act==='members'&&el.memberToggle)el.memberToggle.click();
-      }catch(e){console.warn('ham',e);}
+      const map={
+        whiteboard:'whiteboardBtn',
+        playlist:'playlistBtn',
+        miniapps:'miniAppsBtn',
+        density:'densityBtn',
+        snow:'snowBtn',
+        realtime:'realtimeIndicator',
+        call:'startGroupCallBtn',
+        members:'memberToggle'
+      };
+      const id=map[act];
+      const node=id?(el[id]||$(id)):null;
+      if(node){
+        try{node.click();}catch(e){console.warn('ham click',e);}
+      }else{
+        toast('Tool unavailable',true);
+      }
     });
   });
 }
@@ -6964,9 +6985,17 @@ function renderAdminPanel(){
   html+='<p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Ranks you assign are saved forever (until you change them). Create custom badges below. <b>1 of 1</b> is a built-in sliding RGB rank.</p>';
   html+='<div id="adminCustomRankList">';
   customRanks.forEach(cr=>{
-    const preview=cr.animated||cr.id==='1of1'
-      ? '<span class="rank-badge rank-1of1">'+escapeHtml(cr.label||'1 of 1')+'</span>'
-      : '<span class="rank-badge rank-custom" style="background:'+escapeHtml(cr.color||'#5865f2')+'">'+escapeHtml(cr.label||cr.id)+'</span>';
+    let preview='';
+    if(cr.id==='1of1'||cr.id==='one_of_one'){
+      preview='<span class="rank-badge rank-1of1">'+escapeHtml(cr.label||'1 of 1')+'</span>';
+    }else if(cr.preset && ['galaxy','gold','silver','bronze','diamond','ruby','emerald','sapphire','obsidian','amethyst'].indexOf(cr.preset)>=0){
+      preview='<span class="rank-badge rank-'+escapeHtml(cr.preset)+'">'+escapeHtml(cr.label||cr.id)+'</span>';
+    }else if(cr.animated){
+      preview='<span class="rank-badge rank-1of1">'+escapeHtml(cr.label||cr.id)+'</span>';
+    }else{
+      const bg=escapeHtml(cr.color||'#5865f2');
+      preview='<span class="rank-badge rank-custom" style="background:'+bg+';border-color:'+bg+';color:#fff;">'+escapeHtml(cr.label||cr.id)+'</span>';
+    }
     html+='<div class="admin-rank-chip" data-crid="'+escapeHtml(cr.id)+'">'+preview+
       (cr.id==='1of1'||cr.id==='one_of_one'?' <span style="color:var(--text-muted);font-size:11px;">(built-in)</span>':
         '<button type="button" data-del-rank="'+escapeHtml(cr.id)+'">Remove</button>')+
@@ -7287,9 +7316,9 @@ el.renameChannelApply.addEventListener('click',async()=>{
 
 let timeoutTargetUid=null;
 function openTimeoutModal(uid){
-  const u=cachedUsers[uid];if(!u)return;
+  const u=getAdminTargetUser(uid);if(!u){toast('User not found',true);return;}
   timeoutTargetUid=uid;
-  el.timeoutTargetName.textContent=u.username;
+  el.timeoutTargetName.textContent=u.username||uid;
   el.timeoutCustomInput.value='';el.timeoutError.textContent='';
   el.timeoutModal.classList.add('show');
 }
@@ -7307,42 +7336,80 @@ el.timeoutApplyCustom.addEventListener('click',async()=>{
   await adminTimeoutUser(timeoutTargetUid,v);el.timeoutModal.classList.remove('show');
 });
 el.timeoutRemove.addEventListener('click',async()=>{await adminRemoveTimeout(timeoutTargetUid);el.timeoutModal.classList.remove('show');});
+
+function getAdminTargetUser(uid){
+  if(!uid)return null;
+  if(cachedUsers[uid])return {...cachedUsers[uid], client_id:uid};
+  if(cachedKnownUsers[uid])return {...cachedKnownUsers[uid], client_id:uid};
+  // offline rows built in admin panel may only exist in merged list — reconstruct
+  const pr=getPersistedRanks()[uid];
+  return {client_id:uid, username:'user_'+String(uid).slice(0,6), rank:pr||'member'};
+}
+async function adminUpsertKnownFlags(uid, patch){
+  if(!supa||!uid)return;
+  const base=getAdminTargetUser(uid)||{};
+  const row={
+    client_id:uid,
+    username:base.username||('user_'+String(uid).slice(0,6)),
+    last_seen:new Date().toISOString(),
+    rank:base.rank||'member',
+    pfp_data_url:base.pfp_data_url||null,
+    frame:base.frame||'none',
+    ...patch
+  };
+  try{
+    await supa.from('known_users').upsert(row,{onConflict:'client_id'});
+  }catch(e){
+    try{await supa.from('known_users').update(patch).eq('client_id',uid);}catch(e2){console.warn(e2);}
+  }
+  cachedKnownUsers[uid]={...(cachedKnownUsers[uid]||{}),...row};
+  if(cachedUsers[uid])cachedUsers[uid]={...cachedUsers[uid],...patch};
+}
+
 async function adminTimeoutUser(uid,minutes){
   if(!supa)return;
-  const u=cachedUsers[uid];if(!u)return;
+  const u=getAdminTargetUser(uid);if(!u){toast('User not found',true);return;}
   const until=new Date(Date.now()+minutes*60000).toISOString();
-  const{error}=await supa.from('online_users').update({timeout_until:until}).eq('client_id',uid);
-  if(error){toast('Failed: '+error.message,true);throw error;}
-  toast('⏱️ '+u.username+' timed out');
-  try{await sendMessageToSupabase('system',null,'⏱️ '+u.username+' timed out by '+me.username+' for '+minutes+'m',null);}catch(e){}
+  try{
+    const{error}=await supa.from('online_users').update({timeout_until:until}).eq('client_id',uid);
+    if(error)console.warn('timeout online',error);
+  }catch(e){console.warn(e);}
+  await adminUpsertKnownFlags(uid,{timeout_until:until});
+  toast('⏱️ '+(u.username||uid)+' timed out');
+  try{await sendMessageToSupabase('system',null,'⏱️ '+(u.username||uid)+' timed out by '+me.username+' for '+minutes+'m',null);}catch(e){}
+  try{renderAdminPanel();}catch(e){}
 }
 async function adminRemoveTimeout(uid){
-  if(!supa)return;const u=cachedUsers[uid];if(!u)return;
-  const{error}=await supa.from('online_users').update({timeout_until:null}).eq('client_id',uid);
-  if(error){toast('Failed: '+error.message,true);throw error;}
+  if(!supa)return;const u=getAdminTargetUser(uid);if(!u){toast('User not found',true);return;}
+  try{await supa.from('online_users').update({timeout_until:null}).eq('client_id',uid);}catch(e){}
+  await adminUpsertKnownFlags(uid,{timeout_until:null});
   toast('✅ Timeout removed');
+  try{renderAdminPanel();}catch(e){}
 }
 async function adminWarnUser(uid){
-  if(!supa)return;const u=cachedUsers[uid];if(!u)return;
+  if(!supa)return;const u=getAdminTargetUser(uid);if(!u){toast('User not found',true);return;}
   const next=(u.warnings||0)+1;
-  const{error}=await supa.from('online_users').update({warnings:next}).eq('client_id',uid);
-  if(error){toast('Failed: '+error.message,true);throw error;}
-  toast('⚠️ '+u.username+' warned ('+next+')');
-  try{await sendMessageToSupabase('system',null,'⚠️ '+u.username+' warned by '+me.username+' (total: '+next+')',null);}catch(e){}
+  try{await supa.from('online_users').update({warnings:next}).eq('client_id',uid);}catch(e){}
+  await adminUpsertKnownFlags(uid,{warnings:next});
+  toast('⚠️ '+(u.username||uid)+' warned ('+next+')');
+  try{await sendMessageToSupabase('system',null,'⚠️ '+(u.username||uid)+' warned by '+me.username+' (total: '+next+')',null);}catch(e){}
+  try{renderAdminPanel();}catch(e){}
 }
 async function adminBanUser(uid){
-  if(!supa)return;const u=cachedUsers[uid];if(!u)return;
-  if(!confirm('Ban '+u.username+'?'))return;
-  const{error}=await supa.from('online_users').update({banned:true,timeout_until:null}).eq('client_id',uid);
-  if(error){toast('Failed: '+error.message,true);throw error;}
+  if(!supa)return;const u=getAdminTargetUser(uid);if(!u){toast('User not found',true);return;}
+  if(!confirm('Ban '+(u.username||uid)+'?'))return;
+  try{await supa.from('online_users').update({banned:true,timeout_until:null}).eq('client_id',uid);}catch(e){}
+  await adminUpsertKnownFlags(uid,{banned:true,timeout_until:null});
   toast('🚫 Banned');
-  try{await sendMessageToSupabase('system',null,'🚫 '+u.username+' banned by '+me.username,null);}catch(e){}
+  try{await sendMessageToSupabase('system',null,'🚫 '+(u.username||uid)+' banned by '+me.username,null);}catch(e){}
+  try{renderAdminPanel();}catch(e){}
 }
 async function adminUnbanUser(uid){
-  if(!supa)return;const u=cachedUsers[uid];if(!u)return;
-  const{error}=await supa.from('online_users').update({banned:false}).eq('client_id',uid);
-  if(error){toast('Failed: '+error.message,true);throw error;}
+  if(!supa)return;const u=getAdminTargetUser(uid);if(!u){toast('User not found',true);return;}
+  try{await supa.from('online_users').update({banned:false}).eq('client_id',uid);}catch(e){}
+  await adminUpsertKnownFlags(uid,{banned:false});
   toast('✔️ Unbanned');
+  try{renderAdminPanel();}catch(e){}
 }
 async function adminSetRank(uid,rank){
   if(!supa)return;
@@ -7363,9 +7430,9 @@ async function adminSetRank(uid,rank){
 }
 let renameTargetUid=null;
 function openRenameModal(uid){
-  const u=cachedUsers[uid];if(!u)return;
-  renameTargetUid=uid;el.renameTargetName.textContent=u.username;
-  el.renameInput.value=u.force_nick||u.username;el.renameError.textContent='';
+  const u=getAdminTargetUser(uid);if(!u){toast('User not found',true);return;}
+  renameTargetUid=uid;el.renameTargetName.textContent=u.username||uid;
+  el.renameInput.value=u.force_nick||u.username||'';el.renameError.textContent='';
   el.renameModal.classList.add('show');
 }
 el.renameClose.addEventListener('click',()=>el.renameModal.classList.remove('show'));
@@ -7373,11 +7440,12 @@ el.renameCancel.addEventListener('click',()=>el.renameModal.classList.remove('sh
 el.renameApply.addEventListener('click',async()=>{
   const newName=(el.renameInput.value||'').trim();
   if(!newName){el.renameError.textContent='Name required';return;}
-  const u=cachedUsers[renameTargetUid];if(!u)return;
-  const{error}=await supa.from('online_users').update({force_nick:newName}).eq('client_id',renameTargetUid);
-  if(error){el.renameError.textContent='Failed: '+error.message;return;}
+  const u=getAdminTargetUser(renameTargetUid);if(!u){el.renameError.textContent='User not found';return;}
+  try{await supa.from('online_users').update({force_nick:newName}).eq('client_id',renameTargetUid);}catch(e){}
+  try{await adminUpsertKnownFlags(renameTargetUid,{force_nick:newName,username:newName});}catch(e){}
   toast('✏️ Renamed');
   el.renameModal.classList.remove('show');
+  try{renderAdminPanel();}catch(e){}
 });
 function openBroadcastModal(){
   el.broadcastInput.value=(cachedSettings&&cachedSettings.announcement)||'';
@@ -7586,6 +7654,7 @@ document.addEventListener('visibilitychange',()=>{
   }else{updateLockNotice();}
 
   startHeartbeat();
+  try{bindHeaderHamburger();}catch(e){}
 })();
 
 })();
