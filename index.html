@@ -678,9 +678,15 @@ a:hover{text-decoration:underline}
 .rank-dropdown{position:relative;display:inline-block}
 .rank-btn{padding:5px 10px;font-size:11px;font-weight:600;border-radius:4px;background:#3f4147;color:var(--text);display:inline-flex;align-items:center;gap:5px}
 .rank-btn:hover{background:#4e5058}
-.rank-menu{position:fixed;background:var(--bg);border:1px solid #3f4147;border-radius:6px;padding:4px;box-shadow:0 12px 32px rgba(0,0,0,.65);z-index:100000;display:none;min-width:180px;max-height:min(70vh,420px);overflow-y:auto}
-.rank-menu.show{display:block}
-.rank-dropdown{position:relative;display:inline-block;z-index:5}
+.rank-menu{position:fixed !important;background:#111214;border:1px solid #4e5058;border-radius:8px;padding:6px;box-shadow:0 20px 50px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.06);z-index:2147483000 !important;display:none;min-width:200px;max-height:min(70vh,480px);overflow-y:auto;isolation:isolate}
+.rank-menu.show{display:block !important}
+.rank-dropdown{position:relative;display:inline-block;z-index:6}
+.admin-user-row{position:relative;z-index:1}
+.admin-user-row:has(.rank-menu.show){z-index:50}
+.admin-panel,.admin-section,#tabAdmin,.tab-panel,.settings-panel{overflow:visible !important}
+#tabAdmin{position:relative;z-index:2}
+.rank-menu-portal-host{position:fixed;inset:0;z-index:2147482990;pointer-events:none}
+.rank-menu-portal-host .rank-menu{pointer-events:auto}
 .rank-menu button{display:flex;align-items:center;gap:8px;width:100%;padding:7px 10px;font-size:12px;color:var(--text);border-radius:4px;text-align:left}
 .rank-menu button:hover{background:#35373c}
 .rank-menu .rank-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
@@ -7242,32 +7248,60 @@ function renderAdminPanel(){
   c.querySelectorAll('[data-act="untimeout"]').forEach(btn=>btn.addEventListener('click',()=>adminRemoveTimeout(btn.dataset.uid)));
   c.querySelectorAll('[data-act="rename"]').forEach(btn=>btn.addEventListener('click',()=>openRenameModal(btn.dataset.uid)));
   c.querySelectorAll('[data-act="kickcall"]').forEach(btn=>btn.addEventListener('click',()=>adminKickFromCall(btn.dataset.uid)));
+  function closeAllRankMenus(){
+    document.querySelectorAll('.rank-menu.show').forEach(m=>{
+      m.classList.remove('show');
+      m.style.left='';m.style.top='';m.style.right='';
+    });
+  }
   c.querySelectorAll('[data-rank-toggle]').forEach(btn=>{
     btn.addEventListener('click',ev=>{
+      ev.preventDefault();
       ev.stopPropagation();
       const uid=btn.dataset.rankToggle;
-      const menu=c.querySelector('[data-rank-menu="'+uid+'"]');
+      let menu=c.querySelector('[data-rank-menu="'+uid+'"]') || document.querySelector('[data-rank-menu="'+uid+'"]');
       if(!menu)return;
       const wasOpen=menu.classList.contains('show');
-      c.querySelectorAll('.rank-menu.show').forEach(m=>m.classList.remove('show'));
+      closeAllRankMenus();
       if(wasOpen)return;
+      // Portal to body so nothing in admin list can cover it
+      if(menu.parentElement!==document.body){
+        document.body.appendChild(menu);
+      }
       const rect=btn.getBoundingClientRect();
-      menu.style.left=Math.min(rect.left, window.innerWidth-200)+'px';
-      menu.style.top=Math.min(rect.bottom+4, window.innerHeight-80)+'px';
+      const menuW=200;
+      let left=rect.left;
+      if(left+menuW>window.innerWidth-8)left=window.innerWidth-menuW-8;
+      if(left<8)left=8;
+      let top=rect.bottom+6;
+      // If near bottom of screen, open upward
+      if(top+220>window.innerHeight){
+        top=Math.max(8, rect.top-220);
+      }
+      menu.style.position='fixed';
+      menu.style.left=left+'px';
+      menu.style.top=top+'px';
       menu.style.right='auto';
+      menu.style.bottom='auto';
+      menu.style.zIndex='2147483000';
       menu.classList.add('show');
     });
   });
   c.querySelectorAll('[data-setrank]').forEach(btn=>{
-    btn.addEventListener('click',async()=>{
+    btn.addEventListener('click',async(ev)=>{
+      ev.preventDefault();
+      ev.stopPropagation();
       const uid=btn.dataset.uid;const rank=btn.dataset.setrank;
-      c.querySelectorAll('.rank-menu.show').forEach(m=>m.classList.remove('show'));
-      try{await adminSetRank(uid,rank);toast('Rank: '+rankLabel(rank));}
+      closeAllRankMenus();
+      try{await adminSetRank(uid,rank);toast('Rank: '+rankLabel(rank)); try{renderAdminPanel();}catch(e){}}
       catch(e){toast('Failed: '+e.message,true);}
     });
   });
 }
-document.addEventListener('click',()=>{document.querySelectorAll('.rank-menu.show').forEach(m=>m.classList.remove('show'));});
+document.addEventListener('click',(ev)=>{
+  if(ev.target.closest && (ev.target.closest('.rank-menu')||ev.target.closest('[data-rank-toggle]')))return;
+  document.querySelectorAll('.rank-menu.show').forEach(m=>m.classList.remove('show'));
+});
 
 async function adminDeleteChannel(chId){
   if(chId==='global'){toast('Cannot delete global-chat',true);return;}
