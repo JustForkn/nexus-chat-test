@@ -678,8 +678,9 @@ a:hover{text-decoration:underline}
 .rank-dropdown{position:relative;display:inline-block}
 .rank-btn{padding:5px 10px;font-size:11px;font-weight:600;border-radius:4px;background:#3f4147;color:var(--text);display:inline-flex;align-items:center;gap:5px}
 .rank-btn:hover{background:#4e5058}
-.rank-menu{position:absolute;top:calc(100% + 4px);right:0;background:var(--bg);border:1px solid #3f4147;border-radius:6px;padding:4px;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:100;display:none;min-width:150px}
+.rank-menu{position:fixed;background:var(--bg);border:1px solid #3f4147;border-radius:6px;padding:4px;box-shadow:0 12px 32px rgba(0,0,0,.65);z-index:100000;display:none;min-width:180px;max-height:min(70vh,420px);overflow-y:auto}
 .rank-menu.show{display:block}
+.rank-dropdown{position:relative;display:inline-block;z-index:5}
 .rank-menu button{display:flex;align-items:center;gap:8px;width:100%;padding:7px 10px;font-size:12px;color:var(--text);border-radius:4px;text-align:left}
 .rank-menu button:hover{background:#35373c}
 .rank-menu .rank-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
@@ -840,6 +841,17 @@ a:hover{text-decoration:underline}
 .role-perm-hint{font-size:10px;color:var(--text-muted);margin-left:4px}
 .blocked-msg{opacity:.45;font-style:italic;color:var(--text-muted);padding:8px 16px;font-size:13px}
 .note-box{width:100%;min-height:60px;background:var(--bg-alt);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:var(--text);padding:8px;font-size:13px;resize:vertical}
+
+.header-ham-wrap{position:relative;display:flex;align-items:center;}
+.header-ham-btn{width:32px;height:32px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#b5bac1;font-size:18px;cursor:pointer;background:transparent;border:none;}
+.header-ham-btn:hover{background:#35373c;color:var(--text);}
+.header-ham-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:220px;background:var(--bg-alt);border:1px solid #3f4147;border-radius:8px;box-shadow:0 12px 32px rgba(0,0,0,.55);z-index:10000;padding:6px;flex-direction:column;gap:2px;}
+.header-ham-menu.show{display:flex;}
+.header-ham-menu button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:6px;font-size:13px;font-weight:600;color:var(--text);background:transparent;border:none;cursor:pointer;}
+.header-ham-menu button:hover{background:#35373c;}
+.header-ham-menu .ham-ico{width:22px;text-align:center;font-size:16px;}
+.device-ban-screen{/* reserved */}
+
 .header-tools{display:flex;gap:4px;align-items:center}
 .header-tools .header-icon-btn{width:32px;height:32px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#b5bac1;font-size:16px;cursor:pointer;background:transparent;border:none}
 .header-tools .header-icon-btn:hover{background:#35373c;color:var(--text)}
@@ -896,16 +908,30 @@ a:hover{text-decoration:underline}
       <span class="chat-header-title" id="chatHeaderTitle">global-chat</span>
       <span class="chat-header-sub" id="chatHeaderSub"></span>
       <div class="chat-header-spacer"></div>
-      <div class="header-tools">
+      <div class="header-ham-wrap">
+        <button class="header-ham-btn" id="headerHamBtn" title="Menu">≡</button>
+        <div class="header-ham-menu" id="headerHamMenu">
+          <button type="button" data-ham="whiteboard"><span class="ham-ico">🖌️</span> Whiteboard</button>
+          <button type="button" data-ham="playlist"><span class="ham-ico">🎵</span> Playlist</button>
+          <button type="button" data-ham="miniapps"><span class="ham-ico">🎮</span> Mini apps</button>
+          <button type="button" data-ham="density"><span class="ham-ico">☰</span> Message density</button>
+          <button type="button" data-ham="snow"><span class="ham-ico">❄️</span> Seasonal snow</button>
+          <button type="button" data-ham="realtime"><span class="ham-ico">📡</span> Connection status</button>
+          <button type="button" data-ham="call"><span class="ham-ico">📹</span> Group video call</button>
+          <button type="button" data-ham="members"><span class="ham-ico">👥</span> Members panel</button>
+        </div>
+      </div>
+      <!-- Hidden originals kept so existing listeners still work -->
+      <div class="header-tools" id="headerToolsLegacy" style="position:absolute;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none;" aria-hidden="true">
         <button class="header-icon-btn" id="whiteboardBtn" title="Whiteboard — draw & send">🖌️</button>
         <button class="header-icon-btn" id="playlistBtn" title="Shared playlist">🎵</button>
         <button class="header-icon-btn" id="miniAppsBtn" title="Mini apps">🎮</button>
         <button class="header-icon-btn" id="densityBtn" title="Message density (compact/cozy)">☰</button>
         <button class="header-icon-btn" id="snowBtn" title="Seasonal snow">❄️</button>
       </div>
-      <button class="header-icon-btn" id="realtimeIndicator" title="Realtime connection status">📡</button>
-      <button class="header-icon-btn" id="startGroupCallBtn" title="Start group call in this channel">📹</button>
-      <button class="header-icon-btn" id="memberToggle" title="Toggle members">👥</button>
+      <button class="header-icon-btn" id="realtimeIndicator" title="Realtime connection status" style="position:absolute;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none;" aria-hidden="true">📡</button>
+      <button class="header-icon-btn" id="startGroupCallBtn" title="Start group call in this channel" style="position:absolute;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none;" aria-hidden="true">📹</button>
+      <button class="header-icon-btn" id="memberToggle" title="Toggle members" style="position:absolute;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none;" aria-hidden="true">👥</button>
       <div class="header-avatar-btn" id="headerAvatar" title="Profile settings">?</div>
     </div>
 
@@ -1718,6 +1744,9 @@ const LS={
   ADMIN_PINNED_HIDDEN:'nexus_pin_hidden_v3',
   CHANNEL_UNREAD:'nexus_channel_unread_v3',
   USER_RANKS:'nexus_user_ranks_v1',
+  DEVICE_BANS:'nexus_device_bans_v1',
+  DEVICE_ID:'nexus_device_id_v1',
+  DEVICE_ID_MAP:'nexus_device_id_map_v1',
   CUSTOM_RANKS:'nexus_custom_ranks_v1',
   CUSTOM_EMOJIS:'nexus_custom_emojis_v1',
   CALL_BG:'nexus_call_bg_v1',
@@ -1849,29 +1878,26 @@ function setPersistedRank(uid,rank){
   else m[uid]=rank;
   lsSet(LS.USER_RANKS,m);
 }
+function getAnimatedColorStyleIds(){
+  return ['galaxy','gold','silver','bronze','diamond','ruby','emerald','sapphire','obsidian','amethyst','1of1','one_of_one'];
+}
 function getCustomRanks(){
   let list=lsGet(LS.CUSTOM_RANKS,[]);
   if(!Array.isArray(list))list=[];
+  // Strip accidental "rank" entries that were only color styles (galaxy, gold, etc.)
+  const styleOnly=new Set(getAnimatedColorStyleIds().filter(x=>x!=='1of1'&&x!=='one_of_one'));
+  list=list.filter(x=>{
+    if(!x||!x.id)return false;
+    // Keep user-created ranks (cr_*) and 1of1, and any rank that is not a bare style id
+    if(x.id==='1of1'||x.id==='one_of_one')return true;
+    if(String(x.id).startsWith('cr_'))return true;
+    if(styleOnly.has(x.id) && !x.userCreated)return false;
+    return true;
+  });
   // Ensure built-in animated "1 of 1" always exists in catalog
   if(!list.some(x=>x&&(x.id==='1of1'||x.id==='one_of_one'))){
     list=[{id:'1of1',label:'1 of 1',color:'#ff0000',animated:true},...list];
   }
-  // Built-in animated metal/gem ranks (always available for assignment)
-  const presets=[
-    {id:'galaxy',label:'Galaxy',color:'#2d1b69',animated:true,preset:'galaxy'},
-    {id:'gold',label:'Gold',color:'#ffd700',animated:true,preset:'gold'},
-    {id:'silver',label:'Silver',color:'#c0c0c0',animated:true,preset:'silver'},
-    {id:'bronze',label:'Bronze',color:'#cd7f32',animated:true,preset:'bronze'},
-    {id:'diamond',label:'Diamond',color:'#4dd0e1',animated:true,preset:'diamond'},
-    {id:'ruby',label:'Ruby',color:'#e0115f',animated:true,preset:'ruby'},
-    {id:'emerald',label:'Emerald',color:'#10b981',animated:true,preset:'emerald'},
-    {id:'sapphire',label:'Sapphire',color:'#3b82f6',animated:true,preset:'sapphire'},
-    {id:'obsidian',label:'Obsidian',color:'#2d2d2d',animated:true,preset:'obsidian'},
-    {id:'amethyst',label:'Amethyst',color:'#7c3aed',animated:true,preset:'amethyst'}
-  ];
-  presets.forEach(pr=>{
-    if(!list.some(x=>x&&x.id===pr.id)) list.push(pr);
-  });
   return list;
 }
 function getRankColorPresets(){
@@ -1893,6 +1919,107 @@ function getRankColorPresets(){
 function saveCustomRanks(list){
   lsSet(LS.CUSTOM_RANKS,list);
 }
+function getDeviceId(){
+  let id=lsGet(LS.DEVICE_ID,null);
+  if(id&&typeof id==='string'&&id.length>8)return id;
+  const parts=[
+    navigator.userAgent||'',
+    navigator.language||'',
+    screen.width+'x'+screen.height,
+    String(screen.colorDepth||''),
+    Intl.DateTimeFormat().resolvedOptions().timeZone||''
+  ].join('|');
+  let h=2166136261;
+  for(let i=0;i<parts.length;i++){h^=parts.charCodeAt(i);h=Math.imul(h,16777619);}
+  id='dev_'+Math.abs(h).toString(16)+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);
+  lsSet(LS.DEVICE_ID,id);
+  return id;
+}
+function getDeviceBanList(){
+  const list=lsGet(LS.DEVICE_BANS,[]);
+  return Array.isArray(list)?list:[];
+}
+function saveDeviceBanList(list){
+  lsSet(LS.DEVICE_BANS,Array.isArray(list)?list:[]);
+}
+function isDeviceBannedLocally(deviceId){
+  const id=deviceId||getDeviceId();
+  return getDeviceBanList().some(x=>x&&(x.device_id===id||x===id));
+}
+function rememberUserDevice(uid,deviceId){
+  if(!uid||!deviceId)return;
+  const map=lsGet(LS.DEVICE_ID_MAP,{})||{};
+  map[uid]=deviceId;
+  lsSet(LS.DEVICE_ID_MAP,map);
+}
+function getKnownDeviceForUser(uid){
+  const map=lsGet(LS.DEVICE_ID_MAP,{})||{};
+  if(map[uid])return map[uid];
+  const u=cachedUsers[uid]||cachedKnownUsers[uid];
+  return (u&&u.device_id)||null;
+}
+async function adminDeviceBan(uid){
+  if(!isAdmin){toast('Admin only',true);return;}
+  const u=cachedUsers[uid]||cachedKnownUsers[uid];
+  if(!u){toast('User not found',true);return;}
+  // Never device-ban yourself
+  if(uid===me.clientId){toast('Cannot device-ban your own account',true);return;}
+  let deviceId=getKnownDeviceForUser(uid);
+  if(!deviceId){
+    // Fallback: ban a sticky key derived from client_id so this account stays blocked on known maps
+    deviceId='uid_'+uid;
+  }
+  if(!confirm('DEVICE BAN forever for '+ (u.username||uid)+'?\nDevice: '+deviceId.slice(0,24)+'…\nThis will block that device from Nexus Chat.'))return;
+  const list=getDeviceBanList().filter(x=>x&&x.device_id!==deviceId);
+  list.push({device_id:deviceId,username:u.username||'',client_id:uid,by:me.username,at:new Date().toISOString(),forever:true});
+  saveDeviceBanList(list);
+  // Mirror to known_users as a ban marker document (works across sessions when loaded)
+  try{
+    await supa.from('known_users').upsert({
+      client_id:'DEVBAN_'+deviceId.slice(0,40),
+      username:'[DEVICE_BAN]',
+      rank:'banned',
+      last_seen:new Date().toISOString(),
+      pfp_data_url:null,
+      frame:'none'
+    },{onConflict:'client_id'});
+  }catch(e){console.warn('device ban mirror',e);}
+  try{
+    await supa.from('online_users').update({banned:true}).eq('client_id',uid);
+  }catch(e){}
+  toast('🚫 Device banned forever');
+  try{renderAdminPanel();}catch(e){}
+}
+async function adminDeviceUnban(deviceId){
+  if(!isAdmin)return;
+  saveDeviceBanList(getDeviceBanList().filter(x=>x&&x.device_id!==deviceId));
+  try{await supa.from('known_users').delete().eq('client_id','DEVBAN_'+String(deviceId).slice(0,40));}catch(e){}
+  toast('Device unbanned');
+  try{renderAdminPanel();}catch(e){}
+}
+async function syncDeviceBansFromServer(){
+  if(!supa)return;
+  try{
+    const{data,error}=await supa.from('known_users').select('client_id,username,last_seen').like('client_id','DEVBAN_%').limit(200);
+    if(error||!data)return;
+    const list=getDeviceBanList();
+    const have=new Set(list.map(x=>x.device_id));
+    data.forEach(row=>{
+      const did=String(row.client_id||'').replace(/^DEVBAN_/,'');
+      if(!did||have.has(did))return;
+      list.push({device_id:did,username:row.username||'',at:row.last_seen||new Date().toISOString(),forever:true,fromServer:true});
+      have.add(did);
+    });
+    saveDeviceBanList(list);
+  }catch(e){console.warn('sync device bans',e);}
+}
+function enforceDeviceBanGate(){
+  const myDev=getDeviceId();
+  if(!isDeviceBannedLocally(myDev))return false;
+  document.body.innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#1e1f22;color:#dbdee1;font-family:Inter,sans-serif;padding:24px;text-align:center;"><div style="max-width:420px;"><div style="font-size:48px;margin-bottom:12px;">🚫</div><h1 style="font-size:22px;margin-bottom:8px;">Device banned</h1><p style="color:#949ba4;line-height:1.5;">This computer has been permanently banned from Nexus Chat by an administrator. Clearing site data will not restore access while the ban is active on the server.</p></div></div>';
+  return true;
+}
+
 function resolveUserRank(uid,fallback){
   const persisted=getPersistedRanks()[uid];
   if(persisted)return persisted;
@@ -2344,6 +2471,35 @@ function applyPresenceUI(){
   }
   if(el.customStatusInput)el.customStatusInput.value=myPresence.custom||'';
 }
+
+function bindHeaderHamburger(){
+  const btn=$('headerHamBtn');
+  const menu=$('headerHamMenu');
+  if(!btn||!menu)return;
+  btn.addEventListener('click',ev=>{
+    ev.stopPropagation();
+    menu.classList.toggle('show');
+  });
+  document.addEventListener('click',()=>menu.classList.remove('show'));
+  menu.addEventListener('click',ev=>ev.stopPropagation());
+  menu.querySelectorAll('[data-ham]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const act=b.dataset.ham;
+      menu.classList.remove('show');
+      try{
+        if(act==='whiteboard'&&el.whiteboardBtn)el.whiteboardBtn.click();
+        else if(act==='playlist'&&el.playlistBtn)el.playlistBtn.click();
+        else if(act==='miniapps'&&el.miniAppsBtn)el.miniAppsBtn.click();
+        else if(act==='density'&&el.densityBtn)el.densityBtn.click();
+        else if(act==='snow'&&el.snowBtn)el.snowBtn.click();
+        else if(act==='realtime'&&el.realtimeIndicator)el.realtimeIndicator.click();
+        else if(act==='call'&&el.startGroupCallBtn)el.startGroupCallBtn.click();
+        else if(act==='members'&&el.memberToggle)el.memberToggle.click();
+      }catch(e){console.warn('ham',e);}
+    });
+  });
+}
+
 function bindStatusUI(){
   if(!el.statusBtn)return;
   el.statusBtn.addEventListener('click',ev=>{
@@ -4417,6 +4573,12 @@ el.memberToggle.addEventListener('click',()=>{el.membersSidebar.style.display=el
 // ============================================================
 async function registerOnlineUser(){
   if(!supa||!me.username)return;
+  try{
+    const did=getDeviceId();
+    rememberUserDevice(me.clientId, did);
+    if(typeof me==='object')me.device_id=did;
+  }catch(e){}
+
   const payload={username:me.username,pfp_data_url:me.pfp||null,frame:me.frame||'none',last_seen:new Date().toISOString()};
   // Best-effort extended profile fields (ignored if columns don't exist in DB)
   try{
@@ -6880,25 +7042,17 @@ function renderAdminPanel(){
         '<button data-setrank="mod" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:#23a55a;"></span>Mod</button>'+
         '<button data-setrank="vip" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:#eb459e;"></span>VIP</button>'+
         '<button data-setrank="1of1" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:linear-gradient(90deg,red,orange,yellow,green,blue,purple);"></span>1 of 1</button>'+
-        '<button data-setrank="galaxy" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:linear-gradient(90deg,#0b0b2b,#2d1b69,#e8d5ff);"></span>Galaxy</button>'+
-        '<button data-setrank="gold" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:linear-gradient(90deg,#b8860b,#ffd700);"></span>Gold</button>'+
-        '<button data-setrank="silver" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:linear-gradient(90deg,#6e7a86,#c0c0c0);"></span>Silver</button>'+
-        '<button data-setrank="bronze" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:linear-gradient(90deg,#5c3317,#cd7f32);"></span>Bronze</button>'+
-        '<button data-setrank="diamond" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:linear-gradient(90deg,#4dd0e1,#fff);"></span>Diamond</button>'+
-        '<button data-setrank="ruby" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:linear-gradient(90deg,#5c0a0a,#e0115f);"></span>Ruby</button>'+
-        '<button data-setrank="emerald" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:linear-gradient(90deg,#064e3b,#10b981);"></span>Emerald</button>'+
-        '<button data-setrank="sapphire" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:linear-gradient(90deg,#0c2340,#3b82f6);"></span>Sapphire</button>'+
-        '<button data-setrank="obsidian" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:linear-gradient(90deg,#0a0a0a,#4a4a4a);"></span>Obsidian</button>'+
-        '<button data-setrank="amethyst" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:linear-gradient(90deg,#3b0764,#7c3aed);"></span>Amethyst</button>'+
+        (getCustomRanks().filter(cr=>cr.id!=='1of1'&&cr.id!=='one_of_one').map(cr=>{
+          const dot=cr.preset?('class="rank-dot rank-'+cr.preset+'" style="width:10px;height:10px;"'):('class="rank-dot" style="background:'+escapeHtml(cr.color||'#5865f2')+';"');
+          return '<button data-setrank="'+escapeHtml(cr.id)+'" data-uid="'+u.client_id+'"><span '+dot+'></span>'+escapeHtml(cr.label||cr.id)+'</button>';
+        }).join(''))+
         '<button data-setrank="member" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:#4e5058;"></span>Member</button>'+
-        (getCustomRanks().filter(cr=>cr.id!=='1of1'&&cr.id!=='one_of_one').map(cr=>
-          '<button data-setrank="'+escapeHtml(cr.id)+'" data-uid="'+u.client_id+'"><span class="rank-dot" style="background:'+escapeHtml(cr.color||'#5865f2')+';"></span>'+escapeHtml(cr.label||cr.id)+'</button>'
-        ).join(''))+
         '</div></div>'+
         '<button class="admin-btn warn" data-act="warn" data-uid="'+u.client_id+'">⚠️ Warn</button>'+
         '<button class="admin-btn" data-act="rename" data-uid="'+u.client_id+'">✏️ Rename</button>'+
         '<button class="admin-btn '+(isTO?'ghost':'danger')+'" data-act="'+(isTO?'untimeout':'ban')+'" data-uid="'+u.client_id+'">'+(isTO?'✅ Clear TO':'🚫 Ban')+'</button>'+
         (isBan?'<button class="admin-btn success" data-act="unban" data-uid="'+u.client_id+'">✔️ Unban</button>':'')+
+        '<button class="admin-btn danger" data-act="deviceban" data-uid="'+u.client_id+'" title="Ban this device forever (not your PC)">💻 Device ban</button>'+
         '<button class="admin-btn ghost" data-act="kickcall" data-uid="'+u.client_id+'">📞 Kick call</button>'+
         '</div></div>';
     });
@@ -7054,6 +7208,7 @@ function renderAdminPanel(){
   c.querySelectorAll('[data-act="timeout"]').forEach(btn=>btn.addEventListener('click',()=>openTimeoutModal(btn.dataset.uid)));
   c.querySelectorAll('[data-act="warn"]').forEach(btn=>btn.addEventListener('click',()=>adminWarnUser(btn.dataset.uid)));
   c.querySelectorAll('[data-act="ban"]').forEach(btn=>btn.addEventListener('click',()=>adminBanUser(btn.dataset.uid)));
+  c.querySelectorAll('[data-act="deviceban"]').forEach(btn=>btn.addEventListener('click',()=>adminDeviceBan(btn.dataset.uid)));
   c.querySelectorAll('[data-act="unban"]').forEach(btn=>btn.addEventListener('click',()=>adminUnbanUser(btn.dataset.uid)));
   c.querySelectorAll('[data-act="untimeout"]').forEach(btn=>btn.addEventListener('click',()=>adminRemoveTimeout(btn.dataset.uid)));
   c.querySelectorAll('[data-act="rename"]').forEach(btn=>btn.addEventListener('click',()=>openRenameModal(btn.dataset.uid)));
@@ -7063,9 +7218,15 @@ function renderAdminPanel(){
       ev.stopPropagation();
       const uid=btn.dataset.rankToggle;
       const menu=c.querySelector('[data-rank-menu="'+uid+'"]');
+      if(!menu)return;
       const wasOpen=menu.classList.contains('show');
       c.querySelectorAll('.rank-menu.show').forEach(m=>m.classList.remove('show'));
-      if(!wasOpen)menu.classList.add('show');
+      if(wasOpen)return;
+      const rect=btn.getBoundingClientRect();
+      menu.style.left=Math.min(rect.left, window.innerWidth-200)+'px';
+      menu.style.top=Math.min(rect.bottom+4, window.innerHeight-80)+'px';
+      menu.style.right='auto';
+      menu.classList.add('show');
     });
   });
   c.querySelectorAll('[data-setrank]').forEach(btn=>{
@@ -7313,6 +7474,11 @@ document.addEventListener('visibilitychange',()=>{
 // INIT
 // ============================================================
 (async function init(){
+  try{ getDeviceId(); }catch(e){}
+  try{
+    // Pull server device bans then enforce (never bans the open admin session before login)
+    // Gate runs after we can sync; local list also applies
+  }catch(e){}
   buildEmojiPicker();buildBgPresets();renderMyAvatars();
   try{bindCallBgUI();updateCallBgPanelUI();}catch(e){console.warn(e);}
   try{
@@ -7368,6 +7534,11 @@ document.addEventListener('visibilitychange',()=>{
     el.messagesContainer.innerHTML='<div style="padding:32px;text-align:center;color:var(--red);">⚠ Init failed: '+escapeHtml(e.message)+'</div>';
     return;
   }
+
+  try{ await syncDeviceBansFromServer(); }catch(e){}
+  try{
+    if(enforceDeviceBanGate())return;
+  }catch(e){}
 
   if(identitySet&&me.username){
     try{await registerOnlineUser();}catch(e){console.warn(e);}
