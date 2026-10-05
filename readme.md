@@ -1,4 +1,4 @@
-# 🌌 Discord - Nexus Chat
+# 🌌 Discord - Nexus Chat 🌌
 
 ![Status](https://img.shields.io/badge/status-active-23a55a)
 ![License](https://img.shields.io/badge/license-MIT-5865f2)
